@@ -1214,31 +1214,34 @@ show device manager. For that, the adapter must support device manager protocol.
 
 Here is an example of how to show device manager in a tab:
 
-```json
-"_deviceManager": {
-  "type": "panel",
-  "label": "Device manager",
-  "items": {
-    "_dm": {
-      "type": "deviceManager",
-      "sm": 12,
-      "style": {
-        "width": "100%",
-        "height": "100%",
-        "overflow": "hidden"
-      }
+```json5
+{
+    //...
+    "_deviceManager": {
+        "type": "panel",
+        "label": "Device manager",
+        "items": {
+            "_dm": {
+                "type": "deviceManager",
+                "sm": 12,
+                "style": {
+                    "width": "100%",
+                    "height": "100%",
+                    "overflow": "hidden"
+                }
+            }
+        },
+        "style": {
+            "width": "100%",
+            "height": "100%",
+            "overflow": "hidden"
+        },
+        "innerStyle": {
+            "width": "100%",
+            "height": "100%",
+            "overflow": "hidden"
+        }
     }
-  },
-  "style": {
-    "width": "100%",
-    "height": "100%",
-    "overflow": "hidden"
-  },
-  "innerStyle": {
-    "width": "100%",
-    "height": "100%",
-    "overflow": "hidden"
-  }
 }
 ```
 
@@ -1289,30 +1292,30 @@ In the Settings of the Web developer tools, you can create your own devices with
 
 ### Further options
 
-| option                   | description                                                                                                                                                                          |
-|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `type`                   | If element has no attribute `type`, assume it has default type 'panel'. Type of an element. For currently available options see [Common Control Elements:](#common-control-elements) |
-| `newLine`                | should be shown from new line                                                                                                                                                        |
-| `label`                  | String or object like {en: 'Name', ru: 'Имя'}                                                                                                                                        |
-| `hidden`                 | JS function that could use `native.attribute` for calculation                                                                                                                        |
-| `hideOnlyControl`        | if hidden the place will be shown, but no control                                                                                                                                    |
-| `disabled`               | JS function that could use `native.attribute` for calculation                                                                                                                        |
-| `help`                   | help text (multi-language)                                                                                                                                                           |
-| `helpLink`               | href to help (could be used only together with `help`)                                                                                                                               |
-| `style`                  | CSS style in ReactJS notation: `radiusBorder` and not `radius-border`.                                                                                                               |
-| `darkStyle`              | CSS style for dark mode                                                                                                                                                              |
-| `validator`              | JS function: true no error, false - error                                                                                                                                            |
-| `validatorErrorText`     | Text to show if validator fails                                                                                                                                                      |
-| `validatorNoSaveOnError` | disable save button if error                                                                                                                                                         |
-| `tooltip`                | optional tooltip                                                                                                                                                                     |
-| `default`                | default value                                                                                                                                                                        |
-| `defaultFunc`            | JS function to calculate default value                                                                                                                                               |
-| `placeholder`            | placeholder (for text control)                                                                                                                                                       |
-| `noTranslation`          | do not translate selects or other options (not for help, label or placeholder)                                                                                                       |
-| `onChange`               | Structure in form `{"alsoDependsOn": ["attr1", "attr2"], "calculateFunc": "data.attr1 + data.attr2", "ignoreOwnChanges": true}`                                                      |
-| `doNotSave`              | Do not save this attribute as used only for internal calculations                                                                                                                    |
-| `noMultiEdit`            | if this flag set to true, this field will not be shown if user selected more than one object for edit.                                                                               |
-| `expertMode`             | if this flag set to true, this field will be shown only if the expert mode is true  (from Admin 7.4.3)                                                                                                 |
+| option                   | description                                                                                                                                                                           |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`                   | If element has no attribute `type`, assume it has default type 'panel'. Type of an element. For currently available options see [Common Control Elements:](#common-control-elements)  |
+| `newLine`                | should be shown from new line                                                                                                                                                         |
+| `label`                  | String or object like {en: 'Name', ru: 'Имя'}                                                                                                                                         |
+| `hidden`                 | JS function that could use `native.attribute` for calculation                                                                                                                         |
+| `hideOnlyControl`        | if hidden the place will be shown, but no control                                                                                                                                     |
+| `disabled`               | JS function that could use `native.attribute` for calculation                                                                                                                         |
+| `help`                   | help text (multi-language)                                                                                                                                                            |
+| `helpLink`               | href to help (could be used only together with `help`)                                                                                                                                |
+| `style`                  | CSS style in ReactJS notation: `radiusBorder` and not `radius-border`.                                                                                                                |
+| `darkStyle`              | CSS style for dark mode                                                                                                                                                               |
+| `validator`              | JS function: true no error, false - error                                                                                                                                             |
+| `validatorErrorText`     | Text to show if validator fails                                                                                                                                                       |
+| `validatorNoSaveOnError` | disable save button if error                                                                                                                                                          |
+| `tooltip`                | optional tooltip                                                                                                                                                                      |
+| `default`                | default value                                                                                                                                                                         |
+| `defaultFunc`            | JS function to calculate default value                                                                                                                                                |
+| `placeholder`            | placeholder (for text control)                                                                                                                                                        |
+| `noTranslation`          | do not translate selects or other options (not for help, label or placeholder)                                                                                                        |
+| `onChange`               | Structure in form `{"alsoDependsOn": ["attr1", "attr2"], "calculateFunc": "data.attr1 + data.attr2", "ignoreOwnChanges": true}`                                                       |
+| `doNotSave`              | Do not save this attribute as used only for internal calculations                                                                                                                     |
+| `noMultiEdit`            | if this flag set to true, this field will not be shown if user selected more than one object for edit.                                                                                |
+| `expertMode`             | if this flag set to true, this field will be shown only if the expert mode is true  (from Admin 7.4.3)                                                                                |
 
 ### Options with detailed configuration
 
