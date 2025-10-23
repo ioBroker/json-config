@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { InputLabel, FormControl, Button, TextField } from '@mui/material';
 
-import { DialogCron, I18n } from '@iobroker/gui-components';
+import { DialogCron, I18n } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemCRON } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

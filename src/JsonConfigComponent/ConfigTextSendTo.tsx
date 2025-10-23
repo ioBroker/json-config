@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { TextField, IconButton } from '@mui/material';
 
-import { I18n, Icon, IconCopy, Utils } from '@iobroker/gui-components';
+import { I18n, Icon, IconCopy, Utils } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemSendTo } from '../types';
 import getIconByName from './Icons';

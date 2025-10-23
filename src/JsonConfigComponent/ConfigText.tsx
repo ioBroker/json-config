@@ -4,7 +4,7 @@ import { Autocomplete, TextField, TextareaAutosize, InputAdornment, IconButton }
 
 import { Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n, IconCopy, Utils } from '@iobroker/gui-components';
+import { I18n, IconCopy, Utils } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemText } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

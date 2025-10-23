@@ -16,7 +16,7 @@ import {
     type ThemeName,
     type ThemeType,
     Utils,
-} from '@iobroker/gui-components';
+} from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemAny, ConfigItemPanel, ConfigItemTabs } from './types';
 import ConfigGeneric, { type DeviceManagerPropsProps } from './JsonConfigComponent/ConfigGeneric';

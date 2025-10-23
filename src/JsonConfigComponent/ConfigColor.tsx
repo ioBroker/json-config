@@ -5,7 +5,7 @@ import { IconButton, TextField, Dialog } from '@mui/material';
 
 import { Close as ClearIcon } from '@mui/icons-material';
 
-import { Utils } from '@iobroker/gui-components';
+import { Utils } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemText } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

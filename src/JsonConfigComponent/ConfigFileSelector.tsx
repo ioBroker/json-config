@@ -24,7 +24,7 @@ import {
     UploadFile as UploadIcon,
 } from '@mui/icons-material';
 
-import { DialogConfirm, Utils, I18n } from '@iobroker/gui-components';
+import { DialogConfirm, Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemFileSelector } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

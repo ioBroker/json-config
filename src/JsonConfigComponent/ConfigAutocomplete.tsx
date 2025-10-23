@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
-import { I18n } from '@iobroker/gui-components';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemAutocomplete, ConfigItemSelectOption } from '../types';
 import ConfigGeneric, { type ConfigGenericState, type ConfigGenericProps } from './ConfigGeneric';
