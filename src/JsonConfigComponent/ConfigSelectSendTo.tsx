@@ -19,7 +19,7 @@ import {
 
 import { Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/gui-components';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemSelectSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

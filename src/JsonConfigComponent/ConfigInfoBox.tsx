@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Box } from '@mui/material';
 
-import { InfoBox } from '@iobroker/gui-components';
+import { InfoBox } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemInfoBox } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

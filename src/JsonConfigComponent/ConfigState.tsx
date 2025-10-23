@@ -13,7 +13,7 @@ import {
     MenuItem,
 } from '@mui/material';
 
-import { I18n, Icon, type IobTheme } from '@iobroker/gui-components';
+import { I18n, Icon, type IobTheme } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemState } from '../types';
 import getIconByName from './Icons';

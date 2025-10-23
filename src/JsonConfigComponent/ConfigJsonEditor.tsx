@@ -3,7 +3,7 @@ import JSON5 from 'json5';
 
 import { FormHelperText, FormControl, Button } from '@mui/material';
 
-import { I18n } from '@iobroker/gui-components';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { ConfigItemJsonEditor } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import CustomModal from './wrapper/Components/CustomModal';

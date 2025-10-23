@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { InputLabel, TextField, MenuItem, FormHelperText, FormControl, Select } from '@mui/material';
 
-import { Icon, Utils, I18n } from '@iobroker/gui-components';
+import { Icon, Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemUser } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

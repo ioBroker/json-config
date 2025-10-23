@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Box, Checkbox } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
-import { I18n, Icon, type IobTheme, Utils } from '@iobroker/gui-components';
+import { I18n, Icon, type IobTheme, Utils } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemStaticInfo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

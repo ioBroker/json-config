@@ -6,7 +6,7 @@ import type {
     ObjectBrowserType,
     ThemeType,
     ThemeName,
-} from '@iobroker/gui-components';
+} from '@iobroker/adapter-react-v5';
 import type { ConfigGeneric, DeviceManagerPropsProps } from './JsonConfigComponent/ConfigGeneric';
 
 declare module '@mui/material/Button' {

@@ -4,7 +4,7 @@ import { Grid2, Accordion, AccordionSummary, AccordionDetails, Typography, Box }
 
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 
-import { type AdminConnection, type IobTheme, Utils } from '@iobroker/gui-components';
+import { type AdminConnection, type IobTheme, Utils } from '@iobroker/adapter-react-v5';
 import type { ConfigItemPanel } from '../types';
 
 import ConfigGeneric, { type ConfigGenericState, type ConfigGenericProps } from './ConfigGeneric';

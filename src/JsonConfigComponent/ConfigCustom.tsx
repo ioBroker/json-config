@@ -4,8 +4,8 @@ import { registerRemotes, loadRemote, init } from '@module-federation/runtime';
 
 import * as IconsMaterial from '@mui/icons-material';
 
-import * as AdapterReact from '@iobroker/gui-components';
-import { I18n } from '@iobroker/gui-components';
+import * as AdapterReact from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import * as JsonConfig from '../';
@@ -23,7 +23,7 @@ interface ConfigCustomState extends ConfigGenericState {
 init({
     name: 'iobroker_admin',
     shared: {
-        '@iobroker/gui-components': {
+        '@iobroker/adapter-react-v5': {
             lib: () => AdapterReact,
             version: '*',
         },

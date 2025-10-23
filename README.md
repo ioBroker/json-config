@@ -1593,6 +1593,9 @@ To update the location of JsonConfig schema, create pull request to this file: h
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Renamed gui-components to adapter-react-v5
+
 ### 8.0.1 (2025-10-23)
 - (@GermanBluefox) initial commit
 
