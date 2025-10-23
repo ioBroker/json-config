@@ -1593,7 +1593,7 @@ To update the location of JsonConfig schema, create pull request to this file: h
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.0.1 (2025-10-23)
 - (@GermanBluefox) initial commit
 
 ## License
