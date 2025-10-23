@@ -1,0 +1,25 @@
+{
+    "include": ["./src"],
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "useUnknownInCatchVariables": false,
+        "target": "ES2022",
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "checkJs": false,
+        "noEmit": false,
+        "declaration": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "outDir": "./build",
+        "baseUrl": "./",
+        "sourceRoot": "./src",
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "lib": ["es2018", "DOM"],
+        "jsx": "react",
+        "types": ["@iobroker/types"]
+    }
+}
