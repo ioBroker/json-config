@@ -43,6 +43,9 @@ jobs:
       contains(github.event.head_commit.message, '[skip ci]') == false &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v')
+
+    needs: [check-and-lint]
+
     runs-on: ubuntu-latest
 
     steps:
