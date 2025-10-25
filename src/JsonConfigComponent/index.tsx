@@ -6,7 +6,6 @@ import { type AdminConnection, I18n, type ThemeName, type ThemeType, type IobThe
 
 import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext } from '../types';
 import type ConfigGeneric from './ConfigGeneric';
-// eslint-disable-next-line no-duplicate-imports
 import { type DeviceManagerPropsProps } from './ConfigGeneric';
 import ConfigTabs from './ConfigTabs';
 import ConfigPanel from './ConfigPanel';

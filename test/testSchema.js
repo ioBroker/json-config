@@ -1,23 +1,20 @@
-import Ajv from 'ajv';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
-const ajv = new Ajv({ allErrors: true, strict: false });
-const basePath = join(__dirname, '..', 'schemas');
-
-const schema = readFileSync(join(basePath, 'jsonConfig.json'), { encoding: 'utf-8' });
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ajv_1 = require("ajv");
+const node_fs_1 = require("node:fs");
+const node_path_1 = require("node:path");
+const ajv = new ajv_1.default({ allErrors: true, strict: false });
+const basePath = (0, node_path_1.join)(__dirname, '..', 'schemas');
+const schema = (0, node_fs_1.readFileSync)((0, node_path_1.join)(basePath, 'jsonConfig.json'), { encoding: 'utf-8' });
 const validate = ajv.compile(JSON.parse(schema));
-
 /**
  * Tests which need to be passed
  */
-function positiveTests(): void {
+function positiveTests() {
     for (const fileName of ['testJsonConfig.json', 'testJSONConfigPanel.json']) {
-        const content = readFileSync(join(basePath, fileName), { encoding: 'utf-8' });
+        const content = (0, node_fs_1.readFileSync)((0, node_path_1.join)(basePath, fileName), { encoding: 'utf-8' });
         const config = JSON.parse(content);
         const valid = validate(config);
-
         if (!valid) {
             const errors = validate.errors.map(entry => JSON.stringify(entry, null, 2));
             console.error(errors.join('\n'));
@@ -26,7 +23,6 @@ function positiveTests(): void {
         }
     }
 }
-
 /** Expected errors per test */
 const expectedErrorsPerTest = {
     'testFailJsonConfig.json': [
@@ -96,24 +92,20 @@ const expectedErrorsPerTest = {
             message: 'must match "else" schema',
         },
     ],
-} as const;
-
+};
 /**
  * Tests which should be failed
  */
-function failingTests(): void {
-    for (const fileName of ['testFailJsonConfig.json', 'testFailJsonConfigPanel.json'] as const) {
-        const content = readFileSync(join(basePath, fileName), { encoding: 'utf-8' });
+function failingTests() {
+    for (const fileName of ['testFailJsonConfig.json', 'testFailJsonConfigPanel.json']) {
+        const content = (0, node_fs_1.readFileSync)((0, node_path_1.join)(basePath, fileName), { encoding: 'utf-8' });
         const config = JSON.parse(content);
         const valid = validate(config);
-
         if (valid) {
             console.error(`Schema validation was successful at ${fileName}, but a fail was expected`);
             process.exit(1);
         }
-
         const expectedErrors = expectedErrorsPerTest[fileName];
-
         if (JSON.stringify(expectedErrors) !== JSON.stringify(validate.errors)) {
             console.error(`Got different errors than expected on file ${fileName}`);
             console.error(`Expected ${JSON.stringify(expectedErrors, null, 2)}`);
@@ -121,9 +113,8 @@ function failingTests(): void {
             process.exit(1);
         }
     }
-
     console.log('Tests successful!');
 }
-
 positiveTests();
 failingTests();
+//# sourceMappingURL=testSchema.js.map

@@ -1591,11 +1591,18 @@ Create an issue here: https://github.com/ioBroker/ioBroker.admin/issues
 ## For maintainer
 To update the location of JsonConfig schema, create pull request to this file: https://github.com/ioBroker/ioBroker.admin/blob/master/packages/jsonConfig/schemas/jsonConfig.json
 
+## For developer
+The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd9d7cc240fb4980625f0de6cf7bd8dfd06/src/api/json/catalog.json#L3214
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Do not translate certificates names
+- (@GermanBluefox) Update packages
+
 ### 8.0.3 (2025-10-23)
 - (@GermanBluefox) Do not translate certificates names
 

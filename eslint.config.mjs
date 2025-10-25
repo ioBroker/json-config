@@ -20,4 +20,7 @@ export default [
             'jsdoc/require-param': 'off',
         },
     },
+    {
+        ignores: ['build/**/*', 'node_modules/**', 'test/**/*'],
+    },
 ];

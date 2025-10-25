@@ -59,7 +59,9 @@ class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfac
                         }
 
                         // find ipv4 address
-                        let ip: NetworkInterfaceInfo = list[inter].find(_ip => _ip.family === 'IPv4') as NetworkInterfaceInfo;
+                        let ip: NetworkInterfaceInfo = list[inter].find(
+                            _ip => _ip.family === 'IPv4',
+                        ) as NetworkInterfaceInfo;
                         ip ||= list[inter].find(_ip => _ip.family === 'IPv6');
                         interfaces.push({ value: inter, address: ip.address });
                     });

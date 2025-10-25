@@ -21,7 +21,7 @@
     "clean": "rimraf build",
     "prepublishOnly": "npm run build",
     "build:ts": "tsc -p tsconfig.json",
-    "lint": "eslint -c eslint.config.mjs src",
+    "lint": "eslint -c eslint.config.mjs",
     "test": "tsc -p test/tsconfig.build.json && node test/testSchema.js",
     "tsc-test": "tsc -p test/tsconfig.build.json",
     "release": "release-script --noPush --yes --lf",
@@ -34,13 +34,13 @@
     "access": "public"
   },
   "dependencies": {
-    "@iobroker/adapter-react-v5": "^8.0.3",
-    "@module-federation/runtime": "^0.15.0",
+    "@iobroker/adapter-react-v5": "^8.0.4",
+    "@module-federation/runtime": "^0.21.1",
     "@mui/x-date-pickers": "^7.29.4",
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react-ace": "^14.0.1",
-    "react-qr-code": "^2.0.15"
+    "react-qr-code": "^2.0.18"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^5.0.0",
