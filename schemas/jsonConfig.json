@@ -1564,7 +1564,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "system"]
@@ -1934,7 +1935,8 @@
                                         "tooltip": true,
                                         "expertMode": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "size", "text"]
@@ -1985,7 +1987,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2045,7 +2048,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2209,7 +2213,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2276,7 +2281,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"],
@@ -2367,7 +2373,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2594,7 +2601,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "filename"]
@@ -2660,7 +2668,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -3258,7 +3267,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "pattern"]
@@ -3343,7 +3353,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "id", "val"]
@@ -3414,7 +3425,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "data"]
@@ -3469,7 +3481,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -3524,7 +3537,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -3579,7 +3593,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -3645,7 +3660,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -3701,7 +3717,8 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "certType"]
@@ -4111,7 +4128,8 @@
                                         "default": true,
                                         "defaultFunc": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -4331,7 +4349,8 @@
                                         "style": true,
                                         "darkStyle": true,
                                         "noMultiEdit": true,
-                                        "noTranslation": true
+                                        "noTranslation": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false
                                 }
@@ -4371,7 +4390,8 @@
                                         "hideOnlyControl": true,
                                         "disabled": true,
                                         "style": true,
-                                        "darkStyle": true
+                                        "darkStyle": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false
                                 }
@@ -4410,7 +4430,8 @@
                                         "style": true,
                                         "darkStyle": true,
                                         "noMultiEdit": true,
-                                        "noTranslation": true
+                                        "noTranslation": true,
+                                        "width": true
                                     },
                                     "additionalProperties": false
                                 }
@@ -4457,7 +4478,8 @@
                                 "tooltip": true,
                                 "expertMode": true,
                                 "noTranslation": true,
-                                "confirm": true
+                                "confirm": true,
+                                "width": true
                             },
                             "additionalProperties": false,
                             "required": ["type"]
@@ -4543,7 +4565,8 @@
                                 "tooltip": true,
                                 "expertMode": true,
                                 "noTranslation": true,
-                                "confirm": true
+                                "confirm": true,
+                                "width": true
                             },
                             "additionalProperties": false,
                             "required": ["type"]
@@ -4610,7 +4633,8 @@
                                 "tooltip": true,
                                 "expertMode": true,
                                 "noTranslation": true,
-                                "confirm": true
+                                "confirm": true,
+                                "width": true
                             },
                             "additionalProperties": false,
                             "required": ["type"]
