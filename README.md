@@ -1599,7 +1599,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.0.6 (2025-11-10)
 - (@GermanBluefox) Added width to many table elements
 
 ### 8.0.5 (2025-10-25)
