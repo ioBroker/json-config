@@ -165,7 +165,7 @@ interface ConfigPanelState extends ConfigGenericState {
     expanded?: boolean;
 }
 
-class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigPanelState> {
+export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigPanelState> {
     componentDidMount(): void {
         super.componentDidMount();
         if (this.props.schema?.collapsable) {
@@ -414,5 +414,3 @@ class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigPanelState> {
         return content;
     }
 }
-
-export default ConfigPanel;

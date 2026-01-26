@@ -544,7 +544,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         return null;
     }
 
-    // this function is called recursively and trims all text fields, that must be trimmed
+    // this function is called recursively and trims all text fields that must be trimmed
     postProcessing(data: Record<string, unknown>, attr: string, schema: ConfigItemAny): void {
         schema = schema || this.state.schema;
         if (!data) {

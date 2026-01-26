@@ -7,7 +7,7 @@ interface ConfigDeviceManagerProps extends ConfigGenericProps {
     schema: ConfigItemDeviceManager;
 }
 
-class ConfigDeviceManager extends ConfigGeneric<ConfigDeviceManagerProps, ConfigGenericState> {
+export default class ConfigDeviceManager extends ConfigGeneric<ConfigDeviceManagerProps, ConfigGenericState> {
     renderItem(): JSX.Element | null {
         const schema = this.props.schema;
 
@@ -35,5 +35,3 @@ class ConfigDeviceManager extends ConfigGeneric<ConfigDeviceManagerProps, Config
         return <div>DeviceManager not found</div>;
     }
 }
-
-export default ConfigDeviceManager;
