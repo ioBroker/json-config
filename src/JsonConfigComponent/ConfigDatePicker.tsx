@@ -12,8 +12,16 @@ interface ConfigDatePickerProps extends ConfigGenericProps {
 export default class ConfigDatePicker extends ConfigGeneric<ConfigDatePickerProps> {
     componentDidMount(): void {
         super.componentDidMount();
-        const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
-        this.setState({ value });
+        const str = ConfigGeneric.getValue(this.props.data, this.props.attr);
+        // Date picker expects a Date object
+        if (str) {
+            try {
+                const date = new Date(str);
+                this.setState({ value: date });
+            } catch {
+                // ignore
+            }
+        }
     }
 
     renderItem(_error: unknown, disabled: boolean /* , defaultValue */): JSX.Element {
@@ -38,10 +46,10 @@ export default class ConfigDatePicker extends ConfigGeneric<ConfigDatePickerProp
                 })}
                 format={this.props.oContext.systemConfig.dateFormat.toLowerCase().replace('mm', 'MM')}
                 disabled={!!disabled}
-                value={this.state.value as never}
-                onChange={value => {
-                    this.setState({ value }, () => this.onChange(this.props.attr, this.state.value));
-                }}
+                value={(this.state.value as never) || null}
+                onChange={(value: Date): void =>
+                    this.setState({ value }, () => this.onChange(this.props.attr, this.state.value.toISOString()))
+                }
                 label={this.getText(this.props.schema.label)}
             />
         );

@@ -1600,7 +1600,8 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
-- (@GermanBluefox) Fixing the alive component
+- (@GermanBluefox) Fixing the `alive` component
+- (@GermanBluefox) Fixing the `datePicker` component
 
 ### 8.0.7 (2026-01-27)
 - (@GermanBluefox) Updated adapter-react-v5
