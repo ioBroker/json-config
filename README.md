@@ -1599,7 +1599,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.0.7 (2026-01-27)
 - (@GermanBluefox) Updated adapter-react-v5
 
 ### 8.0.6 (2025-11-10)
