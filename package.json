@@ -35,7 +35,7 @@
         "access": "public"
     },
     "dependencies": {
-        "@iobroker/adapter-react-v5": "^8.0.16",
+        "@iobroker/adapter-react-v5": "^8.0.17",
         "@module-federation/runtime": "^0.23.0",
         "@mui/x-date-pickers": "^7.29.4",
         "crypto-js": "^4.2.0",
