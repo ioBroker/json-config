@@ -22,16 +22,29 @@ interface ConfigAliveState extends ConfigGenericState {
     instance?: string;
 }
 
-class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigAliveState> {
-    componentDidMount(): void {
+export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigAliveState> {
+    private aliveId: string | null = null;
+
+    async componentDidMount(): Promise<void> {
         super.componentDidMount();
 
         const instance = this.getInstance();
-
-        void this.props.oContext.socket
-            .getState(`${instance}.alive`)
-            .then(state => this.setState({ alive: !!(state && state.val), instance }));
+        this.aliveId = `${instance}.alive`;
+        const state = await this.props.oContext.socket.getState(this.aliveId);
+        this.setState({ alive: !!(state && state.val), instance }, async (): Promise<void> => {
+            await this.props.oContext.socket.subscribeState(this.aliveId, this.onAliveChanged);
+        });
     }
+
+    componentWillUnmount(): void {
+        this.props.oContext.socket.unsubscribeState(this.aliveId, this.onAliveChanged);
+    }
+
+    onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === this.aliveId && this.state.alive !== !!state?.val) {
+            this.setState({ alive: !!state?.val });
+        }
+    };
 
     getInstance(): string {
         let instance =
@@ -81,5 +94,3 @@ class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigAliveState> {
         );
     }
 }
-
-export default ConfigAlive;
