@@ -2414,8 +2414,15 @@
                                 {
                                     "properties": {
                                         "accept": {
-                                            "description": "HTML accept attribute, like { 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }",
-                                            "type": "object"
+                                            "description": "HTML accept attribute, like { 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }. String is possible, but deprecated",
+                                            "oneOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "object"
+                                                }
+                                            ]
                                         },
                                         "crop": {
                                             "description": "If true, allow user to crop the image (only for non svg)",
@@ -5601,8 +5608,15 @@
                                     "then": {
                                         "properties": {
                                             "accept": {
-                                                "description": "HTML accept attribute, like { 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }",
-                                                "type": "object"
+                                                "description": "HTML accept attribute, like { 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }. String is possible, but deprecated",
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "object"
+                                                    }
+                                                ]
                                             },
                                             "crop": {
                                                 "description": "If true, allow user to crop the image (only for non svg)",
