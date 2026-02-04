@@ -12,7 +12,7 @@ const styles: Record<string, React.CSSProperties> = {
         display: 'flex',
     },
     button: {
-        height: 48,
+        maxheight: 48,
         marginLeft: 4,
         minWidth: 48,
     },
