@@ -32,7 +32,7 @@ const expectedErrorsPerTest = {
     'testFailJsonConfig.json': [
         {
             instancePath: '/items/demoTab/items/myTable/items/2',
-            schemaPath: '#/items/allOf/18/then/additionalProperties',
+            schemaPath: '#/items/allOf/20/then/additionalProperties',
             keyword: 'additionalProperties',
             params: {
                 additionalProperty: 'test',
@@ -41,7 +41,7 @@ const expectedErrorsPerTest = {
         },
         {
             instancePath: '/items/demoTab/items/myTable/items/2',
-            schemaPath: '#/items/allOf/18/if',
+            schemaPath: '#/items/allOf/20/if',
             keyword: 'if',
             params: {
                 failingKeyword: 'then',
@@ -50,7 +50,7 @@ const expectedErrorsPerTest = {
         },
         {
             instancePath: '/items/demoTab/items/myTable',
-            schemaPath: '#/patternProperties/%5E.%2B/allOf/27/if',
+            schemaPath: '#/patternProperties/%5E.%2B/allOf/29/if',
             keyword: 'if',
             params: {
                 failingKeyword: 'then',
@@ -59,7 +59,7 @@ const expectedErrorsPerTest = {
         },
         {
             instancePath: '/items/demoTab',
-            schemaPath: '#/properties/items/patternProperties/%5E.%2B/allOf/9/if',
+            schemaPath: '#/properties/items/patternProperties/%5E.%2B/allOf/11/if',
             keyword: 'if',
             params: {
                 failingKeyword: 'then',
@@ -99,7 +99,7 @@ const expectedErrorsPerTest = {
 } as const;
 
 /**
- * Tests which should be failed
+ * Tests, which should be failed
  */
 function failingTests(): void {
     for (const fileName of ['testFailJsonConfig.json', 'testFailJsonConfigPanel.json'] as const) {
