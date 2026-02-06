@@ -40,6 +40,8 @@ export type ConfigItemType =
     | 'fileSelector'
     | 'func'
     | 'header'
+    | 'iframe'
+    | 'iframeSendTo'
     | 'image'
     | 'imageSendTo'
     | 'infoBox'
@@ -188,7 +190,7 @@ export interface ConfigItem {
     default?: boolean | number | string;
     defaultFunc?: string;
     defaultSendTo?: string;
-    /** Allow saving of configuration even with error */
+    /** Allow saving of configuration even with an error */
     allowSaveWithError?: boolean;
     data?: string | number | boolean;
     jsonData?: string;
@@ -224,21 +226,21 @@ interface ConfigItemIndexed extends ConfigItem {
 
 interface ConfigItemTableIndexed extends ConfigItem {
     attr?: string;
-    /** show filter options in the header of table */
+    /** show filter options in the header of the table */
     filter?: boolean;
-    /** show sorting options in the header of table */
+    /** show sorting options in the header of the table */
     sort?: boolean;
-    /** tooltip in the header of table */
+    /** tooltip in the header of the table */
     title?: string;
 }
 
 export interface ConfigItemAlive extends ConfigItem {
     type: 'alive';
-    /** check if the instance is alive. If not defined, it will be used current instance. You can use `${data.number}` pattern in the text. */
+    /** check if the instance is alive. If not defined, it will be used current instance. You can use the ` $ {data.number} ` pattern in the text. */
     instance?: string;
-    /** default text is `Instance %s is alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
+    /** the default text is `Instance %s is alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
     textAlive?: string;
-    /** default text is `Instance %s is not alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
+    /** the default text is `Instance %s is not alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
     textNotAlive?: string;
 }
 
@@ -301,17 +303,17 @@ export interface ConfigItemTabs extends ConfigItem {
 
 export interface ConfigItemText extends ConfigItem {
     type: 'text';
-    /** max length of the text in field */
+    /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
     /** read-only field */
     readOnly?: boolean;
-    /** show copy to clipboard button, but only if disabled or read-only */
+    /** show copy-to-clipboard button, but only if disabled or read-only */
     copyToClipboard?: boolean;
     /** default is true. Set this attribute to `false` if trim is not desired. */
     trim?: boolean;
-    /** default is 1. Set this attribute to `2` or more if you want to have a textarea with more than one row. */
+    /** the default is 1. Set this attribute to `2` or more if you want to have a textarea with more than one row. */
     minRows?: number;
     /** max rows of textarea. Used only if `minRows` > 1. */
     maxRows?: number;
@@ -378,7 +380,7 @@ export interface ConfigItemPassword extends ConfigItem {
     visible?: boolean;
     /** The read-only flag. Visible is automatically true if readOnly is true */
     readOnly?: boolean;
-    /** max length of the text in field */
+    /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
@@ -430,7 +432,7 @@ export interface ConfigItemSlider extends ConfigItem {
 
 export interface ConfigItemTopic extends ConfigItem {
     type: 'topic';
-    /** max length of the text in field */
+    /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
@@ -480,11 +482,11 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     label?: ioBroker.StringOrTranslated;
     /** link. Link could be dynamic like `#tab-objects/customs/${data.parentId} */
     href?: string;
-    /** target of the link: _self, _blank or window name. For relative links default is _self and for absolute - _blank */
+    /** target of the link: _self, _blank or window name. For relative links the default is _self and for absolute - _blank */
     target?: string;
     /** If the GUI should be closed after a link was opened (only if the target is equal to '_self') */
     close?: boolean;
-    /** show a link as button */
+    /** show a link as a button */
     button?: boolean;
     /** type of button (`outlined`, `contained`, `text`) */
     variant?: 'contained' | 'outlined' | 'text';
@@ -506,13 +508,13 @@ export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
     unit?: ioBroker.StringOrTranslated;
     /** Normally, the title and value are shown on the left and right of the line. With this flag, the value will appear just after the label*/
     narrow?: boolean;
-    /** Add to label the colon at the end if not exist in label */
+    /** Add to the label the colon at the end if not exist in the label */
     addColon?: boolean;
     /** Value should blink when updated (true or color) */
     blinkOnUpdate?: boolean | string;
     /** Value should blink continuously (true or color) */
     blink?: boolean | string;
-    /** Show copy to clipboard button for value */
+    /** Show a copy-to-clipboard button for value */
     copyToClipboard?: boolean;
     /** Label style */
     styleLabel?: CustomCSSProperties;
@@ -524,7 +526,7 @@ export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
     size?: number | 'small' | 'normal' | 'large';
     /** Highlight line on mouse over */
     highlight?: boolean;
-    /** Show boolean values as checkbox */
+    /** Show boolean values as a checkbox */
     booleanAsCheckbox?: boolean;
     /** Show string values as HTML */
     html?: boolean;
@@ -577,7 +579,7 @@ export interface ConfigItemSelect extends ConfigItem {
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;
-    /** show item even if no label was found for it (by multiple), default=`true` */
+    /** show an item even if no label was found for it (by multiple), default=`true` */
     showAllValues?: boolean;
 }
 
@@ -595,7 +597,7 @@ export interface ConfigItemSetState extends ConfigItem {
     ack?: boolean;
     /** '${data.myText}_test' or number. Type will be detected automatically from the state type and converting done too */
     val: ioBroker.StateValue;
-    /** Alert which will be shown by pressing the button */
+    /** Alert, which will be shown by pressing the button */
     okText?: ioBroker.StringOrTranslated;
     variant?: 'contained' | 'outlined';
     color?: 'primary' | 'secondary' | 'grey';
@@ -610,7 +612,7 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     options?: (string | ConfigItemSelectOption)[];
     data?: Record<string, any>;
     freeSolo?: boolean;
-    /** max length of the text in field */
+    /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: string;
@@ -623,7 +625,7 @@ export interface ConfigItemAccordion extends ConfigItem {
     titleAttr?: string;
     /** If delete or add disabled, If noDelete is false, add, delete and move up/down should work */
     noDelete?: boolean;
-    /** If clone button should be shown. If true, the clone button will be shown. If attribute name, this name will be unique. */
+    /** If the clone button should be shown. If true, the clone button will be shown. If attribute name, this name will be unique. */
     clone?: boolean | string;
     /** Items of accordion */
     items: ConfigItemIndexed[];
@@ -654,7 +656,7 @@ export interface ConfigItemCoordinates extends ConfigItem {
     latitudeName?: string;
     /** if defined, the checkbox with "Use system settings" will be shown and latitude, longitude will be read from system.config, a boolean will be saved to the given name */
     useSystemName?: string;
-    /** max length of the text in field */
+    /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
@@ -676,7 +678,7 @@ export interface ConfigItemCustom extends ConfigItem {
 
 export interface ConfigItemDatePicker extends ConfigItem {
     type: 'datePicker';
-    /** max length of the text in field */
+    /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
@@ -697,6 +699,28 @@ export interface ConfigItemPort extends ConfigItem {
     min?: number;
     max?: number;
     readOnly?: boolean;
+}
+
+export interface ConfigItemIFrame extends ConfigItem {
+    type: 'iframe';
+    /* If URL is defined, the data attribute will be ignored. For static URLs */
+    url?: string;
+    sandbox?: string;
+    allowFullscreen?: boolean;
+    frameBorder?: number | string;
+    /** if true, the iframe will be loaded only when it becomes visible */
+    lazyLoad?: 'lazy' | 'eager';
+    /** if true, the iframe will be reloaded every time it becomes visible */
+    reloadOnShow?: boolean;
+    /** CSS Styles in React format (`marginLeft` and not `margin-left`) for the IFrame component */
+    innerStyle?: CustomCSSProperties;
+}
+
+export interface ConfigItemIFrameSendTo extends Omit<ConfigItemIFrame, 'data' | 'url' | 'type'> {
+    type: 'iframeSendTo';
+    command?: string;
+    alsoDependsOn?: string[];
+    data?: Record<string, any>;
 }
 
 export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
@@ -729,13 +753,13 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     alsoDependsOn?: string[];
     container?: 'text' | 'div' | 'html';
     copyToClipboard?: boolean;
-    /** Styles for button itself */
+    /** Styles for the button itself */
     controlStyle?: CustomCSSProperties;
 }
 
 export interface ConfigItemState extends ConfigItem {
     type: 'state';
-    /** Describes, which object ID should be taken for the controlling. The ID is without `ADAPTER.I.` prefix */
+    /** Describes which object ID should be taken for the controlling. The ID is without `ADAPTER.I.` prefix */
     oid: string;
     /** The `oid` is absolute and no need to add `ADAPTER.I` or `system.adapter.ADAPTER.I.` to oid */
     foreign?: boolean;
@@ -745,7 +769,7 @@ export interface ConfigItemState extends ConfigItem {
     control?: 'text' | 'html' | 'input' | 'slider' | 'select' | 'button' | 'switch' | 'number';
     /** If true, the state will be shown as switch, select, button, slider or text input. Used only if no control property is defined */
     controlled?: boolean;
-    /** Add unit to the value */
+    /** Add a unit to the value */
     unit?: string;
     /** this text will be shown if the value is true */
     trueText?: string;
@@ -775,15 +799,15 @@ export interface ConfigItemState extends ConfigItem {
     labelIcon?: string;
     /** Normally, the title and value are shown on the left and right of the line. With this flag, the value will appear just after the label*/
     narrow?: boolean;
-    /** Add to label the colon at the end if not exist in label */
+    /** Add to the label the colon at the end if not exist in the label */
     addColon?: boolean;
     /** Value should blink when updated (true or color) */
     blinkOnUpdate?: boolean | string;
     /** Font size */
     size?: number | 'small' | 'normal' | 'large';
-    /** Optional value, that will be sent for button */
+    /** Optional value that will be sent for the button */
     buttonValue?: ioBroker.StateValue;
-    /** Show SET button. The value in this case will be sent only when the button is pressed. You can define the text of the button. Default text is "Set" */
+    /** Show the SET button. The value in this case will be sent only when the button is pressed. You can define the text of the button. The default text is "Set" */
     showEnterButton?: boolean | ioBroker.StringOrTranslated;
     /** The value in this case will be sent only when the "Enter" button is pressed. It can be combined with `showEnterButton` */
     setOnEnterKey?: boolean;
@@ -794,7 +818,7 @@ export interface ConfigItemState extends ConfigItem {
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
     type: 'textSendTo';
     container?: 'text' | 'div';
-    /** if true - show copy to clipboard button */
+    /** if true - show copy-to-clipboard button */
     copyToClipboard?: boolean;
     /** by change of which attributes, the command must be resent */
     alsoDependsOn?: string[];
@@ -808,11 +832,11 @@ export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
 
 export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
     type: 'selectSendTo';
-    /** allow manual editing. Without drop-down menu (if instance is offline). Default `true`. */
+    /** allow manual editing. Without a drop-down menu (if the instance is offline). Default `true`. */
     manual?: boolean;
     /** Multiple choice select */
     multiple?: boolean;
-    /** show item even if no label was found for it (by multiple), default=`true` */
+    /** show an item even if no label was found for it (by multiple), default=`true` */
     showAllValues?: boolean;
     /** if true, the clear button will not be shown */
     noClearButton?: boolean;
@@ -835,15 +859,15 @@ export interface ConfigItemTable extends ConfigItem {
     objKeyName?: string;
     /** @deprecated don't use */
     objValueName?: string;
-    /** If add allowed even if filter is set */
+    /** If add allowed even if a filter is set */
     allowAddByFilter?: boolean;
-    /** The number of lines from which the second add button at the bottom of the table will be shown. Default 5 */
+    /** The number of lines from which the second adding button at the bottom of the table will be shown. Default 5 */
     showSecondAddAt?: number;
-    /** Show first plus button on top of the first column and not on the left. */
+    /** Show the first plus button on top of the first column and not on the left. */
     showFirstAddOnTop?: boolean;
-    /** If clone button should be shown. If true, the clone button will be shown. If attribute name, this name will be unique. */
+    /** If the clone button should be shown. If true, the clone button will be shown. If attribute name, this name will be unique. */
     clone?: boolean | string;
-    /** If export button should be shown. Export as csv file. */
+    /** If export button should be shown. Export as a csv file. */
     export?: boolean;
     /** If import button should be shown. Import from csv file. */
     import?: boolean;
@@ -851,7 +875,7 @@ export interface ConfigItemTable extends ConfigItem {
     compact?: boolean;
     /** Specify the 'attr' name of columns which need to be unique */
     uniqueColumns?: string[];
-    /** These items will be encrypted before saving with simple (not SHA) encryption method */
+    /** These items will be encrypted before saving with a simple (not SHA) encryption method */
     encryptedAttributes?: string[];
     /** Breakpoint that will be rendered as cards */
     useCardFor?: ('xs' | 'sm' | 'md' | 'lg' | 'xl')[];
@@ -937,7 +961,7 @@ export interface ConfigItemJsonEditor extends ConfigItem {
     allowEmpty?: boolean;
     /** Allow JSON5 format. Default is disabled */
     json5?: boolean;
-    /** Do not allow to save the value if error in JSON or JSON5 */
+    /** Do not allow saving the value if error in JSON or JSON5 */
     doNotApplyWithError?: boolean;
     /** Open the editor in read-only mode - editor can be opened but content cannot be modified */
     readOnly?: boolean;
@@ -953,7 +977,7 @@ export interface ConfigItemInterface extends ConfigItem {
 
 export interface ConfigItemImageUpload extends ConfigItem {
     type: 'image';
-    /** name of a file is structure name. In the below example `login-bg.png` is file name for `writeFile("myAdapter.INSTANCE", "login-bg.png")` */
+    /** the name of a file is the structure name. In the below example `login-bg.png` is the file name for `writeFile("myAdapter.INSTANCE", "login-bg.png")` */
     filename?: string;
     /** HTML accept attribute, like `{ 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }` */
     accept?: Record<string, string[]>;
@@ -961,17 +985,17 @@ export interface ConfigItemImageUpload extends ConfigItem {
     maxSize?: number;
     /** if true, the image will be saved as data-url in attribute, elsewise as binary in file storage */
     base64?: boolean;
-    /** if true, allow user to crop the image */
+    /** if true, allow the user to crop the image */
     crop?: boolean;
 }
 
 export interface ConfigItemInstanceSelect extends ConfigItem {
     type: 'instance';
-    /** name of adapter. With special name `_dataSources` you can get all adapters with flag `common.getHistory`. */
+    /** name of adapter. With the special name `_dataSources` you can get all adapters with the flag `common.getHistory`. */
     adapter?: string;
-    /** optional list of adapters, that should be shown. If not defined, all adapters will be shown. Only active if `adapter` attribute is not defined. */
+    /** optional list of adapters that should be shown. If not defined, all adapters will be shown. Only active if the ` adapter ` attribute is not defined. */
     adapters?: string[];
-    /** if true. Additional option "deactivate" is shown */
+    /** if true. The additional option "deactivate" is shown */
     allowDeactivate?: boolean;
     /** if true. Only enabled instances will be shown */
     onlyEnabled?: boolean;
@@ -985,7 +1009,7 @@ export interface ConfigItemInstanceSelect extends ConfigItem {
 
 export interface ConfigItemFile extends ConfigItem {
     type: 'file';
-    /** if a user can manually enter the file name and not only through select dialog */
+    /** if a user can manually enter the file name and not only through a select dialog */
     disableEdit?: boolean;
     /** limit selection to one specific object of type `meta` and the following path (not mandatory) */
     limitPath?: string;
@@ -1001,7 +1025,7 @@ export interface ConfigItemFile extends ConfigItem {
     allowView?: boolean;
     /** show toolbar (default true) */
     showToolbar?: boolean;
-    /** user can select only folders (e.g., for uploading path) */
+    /** user can select only folders (e.g., for the uploading path) */
     selectOnlyFolders?: boolean;
     /** trim the filename */
     trim?: boolean;
@@ -1013,15 +1037,15 @@ export interface ConfigItemFile extends ConfigItem {
 
 export interface ConfigItemFileSelector extends ConfigItem {
     type: 'fileSelector';
-    /** File extension pattern. Allowed `**\/*.ext` to show all files from subfolders too, `*.ext` to show from root folder or `folderName\/*.ext` to show all files in sub-folder `folderName`. Default `**\/*.*`. */
+    /** File extension pattern. Allowed `**\/*.ext` to show all files from subfolders too, `*.ext` to show from the root folder or `folderName\/*.ext` to show all files in subfolder `folderName`. Default `**\/*.*`. */
     pattern: string;
     /** type of files: `audio`, `image`, `text` */
     fileTypes?: 'audio' | 'image' | 'text';
-    /** Object ID of type `meta`. You can use special placeholder `%INSTANCE%`: like `myAdapter.%INSTANCE%.files` */
+    /** Object ID of the type `meta`. You can use special placeholder `%INSTANCE%`: like `myAdapter.%INSTANCE%.files` */
     objectID?: string;
     /** path, where the uploaded files will be stored. Like `folderName`. If not defined, no upload field will be shown. To upload in the root, set this field to `/`. */
     upload?: string;
-    /** Show refresh button near the select. */
+    /** Show the refresh button near the select. */
     refresh?: boolean;
     /** max file size (default 2MB) */
     maxSize?: number;
@@ -1079,6 +1103,8 @@ export type ConfigItemAny =
     | ConfigItemCRON
     | ConfigItemFile
     | ConfigItemFileSelector
+    | ConfigItemIFrame
+    | ConfigItemIFrameSendTo
     | ConfigItemImageSendTo
     | ConfigItemInstanceSelect
     | ConfigItemImageUpload

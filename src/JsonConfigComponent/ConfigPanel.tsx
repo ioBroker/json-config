@@ -28,6 +28,8 @@ import ConfigDeviceManager from './ConfigDeviceManager';
 import ConfigFile from './ConfigFile';
 import ConfigFileSelector from './ConfigFileSelector';
 import ConfigFunc from './ConfigFunc';
+import ConfigIFrame from './ConfigIFrame';
+import ConfigIFrameSendTo from './ConfigIFrameSendTo';
 import ConfigIP from './ConfigIP';
 import ConfigImageSendTo from './ConfigImageSendTo';
 import ConfigImageUpload from './ConfigImageUpload';
@@ -88,6 +90,8 @@ const components: Record<string, typeof ConfigGeneric<any, any>> = {
     fileSelector: ConfigFileSelector,
     func: ConfigFunc,
     header: ConfigStaticHeader,
+    iframe: ConfigIFrame,
+    iframeSendTo: ConfigIFrameSendTo,
     image: ConfigImageUpload,
     imageSendTo: ConfigImageSendTo,
     infoBox: ConfigInfoBox,

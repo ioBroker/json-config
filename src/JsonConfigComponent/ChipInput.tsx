@@ -5,9 +5,8 @@
 import React, { type RefObject, type JSX } from 'react';
 import ReactDOM from 'react-dom';
 
-import { Input, OutlinedInput, InputLabel, Chip, FormControl, FormHelperText, Box } from '@mui/material';
-import FilledInput from '@mui/material/FilledInput/FilledInput';
-import blue from '@mui/material/colors/blue';
+import { Input, OutlinedInput, InputLabel, Chip, FormControl, FormHelperText, Box, FilledInput } from '@mui/material';
+import { blue } from '@mui/material/colors';
 
 import { type IobTheme, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
 
@@ -200,7 +199,7 @@ export const defaultChipRenderer = (
 );
 
 interface ChipInputProps {
-    /** Allows duplicate chips if set to true. */
+    /** Allows duplicated (not unique) chips if set to true. */
     allowDuplicates?: boolean;
     /** If true, the placeholder will always be visible. */
     alwaysShowPlaceholder?: boolean;
@@ -366,15 +365,6 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
     }
 
     /**
-     * Blurs this component.
-     */
-    // blur() {
-    //     if (this.input) {
-    //         this.actualInput.blur();
-    //     }
-    // }
-
-    /**
      * Focuses this component.
      */
     focus = (): void => {
@@ -437,10 +427,10 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
         this._preventChipCreation = false;
 
         if (this.props.onKeyDown) {
-            // Needed for arrow controls on a menu in autocomplete scenario
+            // Needed for arrow controls on a menu in an autocomplete scenario
             this.props.onKeyDown(event);
             // Check if the callback marked the event as isDefaultPrevented() and skip further actions
-            // enter key, for example, should not always add the current value of the inputField
+            // an enter key, for example, should not always add the current value of the inputField
             if (event.isDefaultPrevented()) {
                 return;
             }
@@ -509,13 +499,6 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
             this.props.onKeyUp(event);
         }
     };
-
-    // handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    //     this._keyPressed = true;
-    //     if (this.props.onKeyPress) {
-    //         this.props.onKeyPress(event);
-    //     }
-    // };
 
     handleUpdateInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
         if (this.props.inputValue === null || this.props.inputValue === undefined) {

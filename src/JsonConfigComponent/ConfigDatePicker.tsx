@@ -24,12 +24,12 @@ export default class ConfigDatePicker extends ConfigGeneric<ConfigDatePickerProp
         }
     }
 
-    renderItem(_error: unknown, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: boolean, disabled: boolean /* , defaultValue */): JSX.Element {
         return (
             <DatePicker
                 sx={theme => ({
                     width: '100%',
-                    borderBottom: `1px solid ${theme.palette.text.primary}`,
+                    borderBottom: `1px solid ${error ? '#F00' : theme.palette.text.primary}`,
                     '& fieldset': {
                         display: 'none',
                     },
