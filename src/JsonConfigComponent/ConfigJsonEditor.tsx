@@ -37,7 +37,7 @@ interface ConfigJsonEditorState extends ConfigGenericState {
     jsonError?: boolean;
 }
 
-class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEditorState> {
+export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEditorState> {
     componentDidMount(): void {
         super.componentDidMount();
         const { data, attr } = this.props;
@@ -72,7 +72,7 @@ class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEd
 
         const { schema, data, attr } = this.props;
         const { value, showSelectId } = this.state;
-        const isReadOnly = schema.readOnly === true;
+        const isReadOnly = schema.readOnly === true || disabled;
 
         return (
             <FormControl
@@ -82,7 +82,6 @@ class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEd
                 <div style={styles.flex}>
                     <Button
                         color="grey"
-                        disabled={disabled}
                         style={styles.button}
                         size="small"
                         variant="outlined"
@@ -96,9 +95,13 @@ class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEd
                         title={this.getText(schema.label)}
                         overflowHidden
                         applyDisabled={(this.state.jsonError && this.props.schema.doNotApplyWithError) || isReadOnly}
-                        onClose={() =>
-                            this.setState({ showSelectId: false, value: ConfigGeneric.getValue(data, attr) || {} })
-                        }
+                        onClose={() => {
+                            if (isReadOnly) {
+                                this.setState({ showSelectId: false });
+                            } else {
+                                this.setState({ showSelectId: false, value: ConfigGeneric.getValue(data, attr) || {} });
+                            }
+                        }}
                         onApply={
                             isReadOnly
                                 ? undefined
@@ -144,5 +147,3 @@ class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEd
         );
     }
 }
-
-export default ConfigJsonEditor;
