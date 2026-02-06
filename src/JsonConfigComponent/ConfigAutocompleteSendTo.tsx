@@ -16,7 +16,10 @@ interface ConfigAutocompleteSendToState extends ConfigAutocompleteState {
     loading?: boolean;
 }
 
-class ConfigAutocompleteSendTo extends ConfigGeneric<ConfigAutocompleteSendToProps, ConfigAutocompleteSendToState> {
+export default class ConfigAutocompleteSendTo extends ConfigGeneric<
+    ConfigAutocompleteSendToProps,
+    ConfigAutocompleteSendToState
+> {
     private initialized = false;
 
     private localContext: string | undefined;
@@ -148,20 +151,16 @@ class ConfigAutocompleteSendTo extends ConfigGeneric<ConfigAutocompleteSendToPro
                     value={this.state.value === null || this.state.value === undefined ? '' : this.state.value}
                     error={!!error}
                     disabled={disabled}
-                    inputProps={{
-                        maxLength: this.props.schema.maxLength || this.props.schema.max || undefined,
+                    slotProps={{
+                        htmlInput: { maxLength: this.props.schema.maxLength || this.props.schema.max || undefined },
+                        input: {
+                            endAdornment: this.state.loading ? (
+                                <InputAdornment position="end">
+                                    <CircularProgress size={20} />
+                                </InputAdornment>
+                            ) : null,
+                        },
                     }}
-                    InputProps={
-                        this.state.loading
-                            ? {
-                                  endAdornment: (
-                                      <InputAdornment position="end">
-                                          <CircularProgress size={20} />
-                                      </InputAdornment>
-                                  ),
-                              }
-                            : undefined
-                    }
                     onChange={e => {
                         const value = e.target.value;
                         this.setState({ value }, () => this.onChange(this.props.attr, (value || '').trim()));
@@ -182,6 +181,7 @@ class ConfigAutocompleteSendTo extends ConfigGeneric<ConfigAutocompleteSendToPro
                 fullWidth
                 freeSolo={!!this.props.schema.freeSolo}
                 options={options}
+                disabled={disabled}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 filterOptions={(options: { value: string; label: string }[], params) => {
                     const filtered = options.filter(option => {
@@ -235,18 +235,20 @@ class ConfigAutocompleteSendTo extends ConfigGeneric<ConfigAutocompleteSendToPro
                             this.props.schema.noTranslation,
                         )}
                         disabled={disabled}
-                        InputProps={{
-                            ...params.InputProps,
-                            endAdornment: (
-                                <>
-                                    {this.state.loading ? (
-                                        <InputAdornment position="end">
-                                            <CircularProgress size={20} />
-                                        </InputAdornment>
-                                    ) : null}
-                                    {params.InputProps.endAdornment}
-                                </>
-                            ),
+                        slotProps={{
+                            input: {
+                                ...params.InputProps,
+                                endAdornment: (
+                                    <>
+                                        {this.state.loading ? (
+                                            <InputAdornment position="end">
+                                                <CircularProgress size={20} />
+                                            </InputAdornment>
+                                        ) : null}
+                                        {disabled ? null : params.InputProps.endAdornment}
+                                    </>
+                                ),
+                            },
                         }}
                     />
                 )}
@@ -254,5 +256,3 @@ class ConfigAutocompleteSendTo extends ConfigGeneric<ConfigAutocompleteSendToPro
         );
     }
 }
-
-export default ConfigAutocompleteSendTo;
