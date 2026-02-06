@@ -1663,7 +1663,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.1.0 (2026-02-06)
 - (@GermanBluefox) Added `iframe` and `iframeSendTo` components
 
 ### 8.0.8 (2026-01-27)
