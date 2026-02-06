@@ -48,7 +48,16 @@ export default class ConfigDatePicker extends ConfigGeneric<ConfigDatePickerProp
                 disabled={!!disabled}
                 value={(this.state.value as never) || null}
                 onChange={(value: Date): void =>
-                    this.setState({ value }, () => this.onChange(this.props.attr, this.state.value.toISOString()))
+                    this.setState({ value }, () => {
+                        try {
+                            const dateStr = this.state.value.toISOString();
+                            this.onChange(this.props.attr, dateStr).catch(e =>
+                                console.warn(`Error saving value for ${this.props.attr}:`, e),
+                            );
+                        } catch {
+                            // ignore
+                        }
+                    })
                 }
                 label={this.getText(this.props.schema.label)}
             />
