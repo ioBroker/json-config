@@ -64,6 +64,7 @@ export type {
     ConfigItemCheckLicense,
     ConfigItemUUID,
     ConfigItemJsonEditor,
+    ConfigItemYamlEditor,
     ConfigItemInterface,
     ConfigItemImageUpload,
     ConfigItemInstanceSelect,

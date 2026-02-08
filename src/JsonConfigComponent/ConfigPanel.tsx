@@ -64,6 +64,7 @@ import ConfigTimePicker from './ConfigTimePicker';
 import ConfigTopic from './ConfigTopic';
 import ConfigUUID from './ConfigUUID';
 import ConfigUser from './ConfigUser';
+import ConfigYamlEditor from './ConfigYamlEditor';
 import ConfigQrCode from './ConfigQrCode';
 
 const components: Record<string, typeof ConfigGeneric<any, any>> = {
@@ -128,6 +129,7 @@ const components: Record<string, typeof ConfigGeneric<any, any>> = {
     topic: ConfigTopic,
     uuid: ConfigUUID,
     user: ConfigUser,
+    yamlEditor: ConfigYamlEditor,
 };
 
 const styles: Record<string, any> = {

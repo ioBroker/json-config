@@ -41,7 +41,8 @@
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react-ace": "^14.0.1",
-    "react-qr-code": "^2.0.18"
+    "react-qr-code": "^2.0.18",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^5.0.0",

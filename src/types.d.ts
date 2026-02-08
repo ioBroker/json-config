@@ -77,7 +77,8 @@ export type ConfigItemType =
     | 'timePicker'
     | 'topic'
     | 'user'
-    | 'uuid';
+    | 'uuid'
+    | 'yamlEditor';
 
 export type ConfigIconType =
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -967,6 +968,18 @@ export interface ConfigItemJsonEditor extends ConfigItem {
     readOnly?: boolean;
 }
 
+export interface ConfigItemYamlEditor extends ConfigItem {
+    type: 'yamlEditor';
+    /** if false, the text will be not validated as YAML */
+    validateYaml?: boolean;
+    /** if true, the YAML will be validated only if the value is not empty */
+    allowEmpty?: boolean;
+    /** Do not allow saving the value if error in YAML */
+    doNotApplyWithError?: boolean;
+    /** Open the editor in read-only mode - editor can be opened but content cannot be modified */
+    readOnly?: boolean;
+}
+
 export interface ConfigItemInterface extends ConfigItem {
     type: 'interface';
     /** do not show loopback interface (127.0.0.1) */
@@ -1110,6 +1123,7 @@ export type ConfigItemAny =
     | ConfigItemImageUpload
     | ConfigItemInterface
     | ConfigItemJsonEditor
+    | ConfigItemYamlEditor
     | ConfigItemLicense
     | ConfigItemPassword
     | ConfigItemSetState

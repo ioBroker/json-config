@@ -3,6 +3,7 @@ import React, { type JSX } from 'react';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-min-noconflict/mode-json';
 import 'ace-builds/src-min-noconflict/mode-json5';
+import 'ace-builds/src-min-noconflict/mode-yaml';
 import 'ace-builds/src-min-noconflict/worker-json';
 import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
 import 'ace-builds/src-min-noconflict/theme-chrome';
@@ -23,7 +24,7 @@ interface EditorProps {
     fontSize?: number;
     value?: string;
     defaultValue?: string;
-    mode?: 'json' | 'css' | 'html' | 'json5';
+    mode?: 'json' | 'css' | 'html' | 'json5' | 'yaml';
     name: string;
     onChange?: (newValue: string) => void;
     themeType: string;
