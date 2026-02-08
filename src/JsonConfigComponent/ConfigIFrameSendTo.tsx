@@ -27,7 +27,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
 
         if (this.props.schema.reloadOnShow) {
             this.observer = new IntersectionObserver(([entry]) => {
-                if (entry.isIntersecting && this.state.isVisible && this.iframeRef.current) {
+                if (entry.isIntersecting && this.state.isVisible === false && this.iframeRef.current) {
                     const currentSrc = this.iframeRef.current.src;
                     this.iframeRef.current.src = '';
                     setTimeout(() => {
@@ -104,6 +104,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
                     style={{
                         width: '100%',
                         height: '100%',
+                        borderWidth: this.props.schema.frameBorder ?? 0,
                         ...this.props.schema.innerStyle,
                         border: error ? '1px solid red' : undefined,
                     }}

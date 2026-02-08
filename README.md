@@ -160,6 +160,7 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`interface`:**](#interface) Selects the interface from of the host, where the instance runs
 - [**`ip`:**](#ip) Input field for IP addresses with advanced options
 - [**`jsonEditor`:**](#jsoneditor) JSON editor for complex configuration data
+- [**`yamlEditor`:**](#yamleditor) YAML editor for complex configuration data
 - [**`language`:**](#language) Selects the user interface language
 - [**`license`:**](#license) shows the license information if not already accepted.
 - [**`number`:**](#number) Numeric input field with min/max values and step size
@@ -755,12 +756,23 @@ accordion with items that could be deleted, added, moved up, moved down (Admin 6
 
 Button to open a JSON(5) editor. JSON5 is supported from admin version 5.7.3
 
-| Property               | Description                                                           |
-|------------------------|-----------------------------------------------------------------------|
-| `validateJson`         | if false, the text will be not validated as JSON                      |
-| `allowEmpty`           | if true, the JSON will be validated only if the value is not empty    |
-| `json5`                | if JSON5 format allowed (From 7.5.3)                                  |
-| `doNotApplyWithError`  | Do not allow to save the value if error in JSON or JSON5 (From 7.5.3) |
+| Property               | Description                                                                             |
+|------------------------|-----------------------------------------------------------------------------------------|
+| `validateJson`         | if false, the text will be not validated as JSON                                        |
+| `allowEmpty`           | if true, the JSON will be validated only if the value is not empty                      |
+| `json5`                | if JSON5 format allowed (From 7.5.3)                                                    |
+| `doNotApplyWithError`  | Do not allow to save the value if error in JSON or JSON5 (From 7.5.3)                   |
+| `readOnly`             | Open the editor in read-only mode - editor can be opened but content cannot be modified |
+
+### `yamlEditor`
+
+Button to open a YAML editor with syntax validation. (From admin version 7.7.30)
+
+| Property               | Description                                                                             |
+|------------------------|-----------------------------------------------------------------------------------------|
+| `validateYaml`         | if false, the text will be not validated as YAML                                        |
+| `allowEmpty`           | if true, the YAML will be validated only if the value is not empty                      |
+| `doNotApplyWithError`  | Do not allow to save the value if error in YAML                                         |
 | `readOnly`             | Open the editor in read-only mode - editor can be opened but content cannot be modified |
 
 ### `language`
