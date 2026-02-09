@@ -153,8 +153,8 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`fileSelector`:**](#fileselector) Allows users to select files from the system (only Admin6)
 - [**`func`:**](#func) Selects a function from the enum.func list (Admin 6 only)
 - [**`header`:**](#header) Creates a heading with different sizes (h1-h5)
-- [**`iframe`:**](#iframe) Show Iframe with given URL
-- [**`iframeSendTo`:**](#iframe) Show Iframe with URL from backend
+- [**`iframe`:**](#iframe) Show Iframe with given URL (admin >= 7.7.28)
+- [**`iframeSendTo`:**](#iframe) Show Iframe with URL from backend (admin >= 7.7.28)
 - [**`image`:**](#image) Uploads or displays an image
 - [**`imageSendTo`:**](#imagesendto) Displays an image received from the backend and sends data based on a command
 - [**`instance`:**](#instance) Selects an adapter instance
@@ -189,7 +189,7 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`timePicker`:**](#timepicker) Allows users to select a time
 - [**`user`:**](#user) Selects a user from the `system.user` list
 - [**`uuid`:**](#uuid) Show iobroker UUID
-- [**`yamlEditor`:**](#yamleditor) YAML editor for complex configuration data
+- [**`yamlEditor`:**](#yamleditor) YAML editor for complex configuration data (admin >= 7.7.30)
 
 By leveraging JSON configuration, you can create a user-friendly and \
 adaptable configuration experience for your ioBroker adapter.
