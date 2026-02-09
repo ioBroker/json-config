@@ -143,6 +143,7 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`checkLicense`:**](#checklicense) Very special component to check the license online
 - [**`chips`:**](#chips) User can enter words that are added to an array
 - [**`color`:**](#color) Color picker
+- [**`coordinates`:**](#coordinates) Determines current location and used `system.config` coordinates if not possible in form "latitude,longitude"
 - [**`cron`:**](#cron) Configures cron expressions for scheduling tasks
 - [**`custom`:**](#custom) Integrates custom components for specific functionalities (Admin 6 only)
 - [**`datePicker`:**](#datepicker) Allows users to select a date
@@ -160,7 +161,6 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`interface`:**](#interface) Selects the interface from of the host, where the instance runs
 - [**`ip`:**](#ip) Input field for IP addresses with advanced options
 - [**`jsonEditor`:**](#jsoneditor) JSON editor for complex configuration data
-- [**`yamlEditor`:**](#yamleditor) YAML editor for complex configuration data
 - [**`language`:**](#language) Selects the user interface language
 - [**`license`:**](#license) shows the license information if not already accepted.
 - [**`number`:**](#number) Numeric input field with min/max values and step size
@@ -182,7 +182,6 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`staticInfo`:**](#staticinfo) Shows static information in preformatted form, like "Title: value unit" (admin >= 7.3.3)
 - [**`staticLink`:**](#staticlink) Creates a static link
 - [**`staticText`:**](#statictext) Displays static text (e.g., description)
-- [**`coordinates`:**](#coordinates) Determines current location and used `system.config` coordinates if not possible in form "latitude,longitude"
 - [**`table`:**](#table) Table with rows that can be added, deleted, or reordered
 - [**`tabs`:**](#tabs) Tabs with items
 - [**`text`:**](#text) Single- or multi-line text input field
@@ -190,6 +189,7 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`timePicker`:**](#timepicker) Allows users to select a time
 - [**`user`:**](#user) Selects a user from the `system.user` list
 - [**`uuid`:**](#uuid) Show iobroker UUID
+- [**`yamlEditor`:**](#yamleditor) YAML editor for complex configuration data
 
 By leveraging JSON configuration, you can create a user-friendly and \
 adaptable configuration experience for your ioBroker adapter.
