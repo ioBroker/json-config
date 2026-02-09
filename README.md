@@ -384,7 +384,7 @@ show checkbox
 show slider (only Admin6)
 
 | Property | Description                   |
-| -------- | ----------------------------- |
+|----------|-------------------------------|
 | `min`    | (default 0)                   |
 | `max`    | (default 100)                 |
 | `step`   | (default `(max - min) / 100`) |
@@ -395,7 +395,7 @@ show slider (only Admin6)
 show data in a QR Code (admin >= 7.0.18)
 
 | Property  | Description                           |
-| --------- | ------------------------------------- |
+|-----------|---------------------------------------|
 | `data`    | the data to be encoded in the QR Code |
 | `size`    | size of the QR code                   |
 | `fgColor` | Foreground color                      |
@@ -1599,8 +1599,8 @@ For that you must define in `io-package.json` in `common` part following:
          // all following parameters are optional
          "icon": "AABBCC", // base64 icon. If not provided, the adapter icon will be taken
          "name": "TabName", // String or multi-language object for menu label 
-         "singleton": true, // Tab will not have an instance number and for all instances will exist only one menu item. 
-         "order": 10, // Order in admin tab (0 is disabled, 1 - first after static menu items, 200 is last) 
+         "singleton": true, // Tab will not have an instance number, and for all instances will exist only one menu item. 
+         "order": 10, // Order in the admin tab (0 is disabled, 1 - first after static menu items, 200 is last) 
       },
       // ....
    }
@@ -1675,7 +1675,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.1.2 (2026-02-08)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added component `yamlEditor` for editing yaml files in admin
 
 ### 8.1.1 (2026-02-06)
