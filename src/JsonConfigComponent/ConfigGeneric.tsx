@@ -95,7 +95,7 @@ export interface ConfigGenericProps {
     isParentTab?: boolean;
     onChange: (attrOrData: string | Record<string, any>, val?: any, cb?: () => void, saveConfig?: boolean) => void;
     onError: (attr: string, error?: string) => void;
-    onHiddenChanged: (attr: string, hidden?: boolean) => void;
+    onHiddenChanged?: (attr: string, hidden?: boolean) => void;
     originalData: Record<string, any>;
     /** This indicates that the component is the very firsts one - root */
     root?: boolean;

@@ -165,6 +165,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                     this.setState({ value: newObj } as ConfigAccordionState, () => this.onChangeWrapper(newObj));
                 }}
                 onError={this.onAccordionError(idx)}
+                onHiddenChanged={this.props.onHiddenChanged}
                 table={this.props.table}
             />
         );

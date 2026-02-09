@@ -231,6 +231,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                           data={this.props.data}
                           originalData={this.props.originalData}
                           onError={this.props.onError}
+                          onHiddenChanged={this.props.onHiddenChanged}
                           onChange={this.props.onChange}
                           disabled={disabled}
                           customObj={this.props.customObj}
