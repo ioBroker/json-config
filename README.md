@@ -937,7 +937,7 @@ adapter.on("message", (obj) => {
 
 ### `iframe`
 
-Shows an iframe with the specified URL. (from Admin 7.7.24)
+Shows an iframe with the specified URL. (from Admin 7.7.28)
 
 | Property          | Description                                                                              |
 |-------------------|------------------------------------------------------------------------------------------|
@@ -963,7 +963,7 @@ Shows an iframe with the specified URL. (from Admin 7.7.24)
 
 ### `iframeSendTo`
 
-Shows an iframe with a URL received from the backend. (from Admin 7.7.24)
+Shows an iframe with a URL received from the backend. (from Admin 7.7.28)
 
 | Property   | Description                                                                                                                                                 |
 |------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
