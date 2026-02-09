@@ -95,6 +95,7 @@ export interface ConfigGenericProps {
     isParentTab?: boolean;
     onChange: (attrOrData: string | Record<string, any>, val?: any, cb?: () => void, saveConfig?: boolean) => void;
     onError: (attr: string, error?: string) => void;
+    onHiddenChanged: (attr: string, hidden?: boolean) => void;
     originalData: Record<string, any>;
     /** This indicates that the component is the very firsts one - root */
     root?: boolean;
@@ -140,6 +141,8 @@ export default class ConfigGeneric<
     private sendToTimeout?: any;
 
     private noPlaceRequired: any;
+
+    private reportedHidden: boolean = false;
 
     constructor(props: Props) {
         super(props);
@@ -1107,7 +1110,17 @@ export default class ConfigGeneric<
                 }
                 return item;
             }
+
+            // Used in table to not render hidden elements at all, so we need to inform about it
+            if (this.props.onHiddenChanged && !this.reportedHidden) {
+                this.reportedHidden = true;
+                setTimeout(() => this.props.onHiddenChanged(this.props.attr, true), 10);
+            }
             return null;
+        }
+        if (this.props.onHiddenChanged && this.reportedHidden) {
+            this.reportedHidden = false;
+            setTimeout(() => this.props.onHiddenChanged(this.props.attr, false), 10);
         }
         // Add error
         if (schema.validatorNoSaveOnError) {

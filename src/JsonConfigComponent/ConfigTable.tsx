@@ -261,6 +261,7 @@ interface ConfigTableState extends ConfigGenericState {
     icon: boolean;
     width: number;
     tableErrors: Record<number, Record<string, string>>;
+    listOfHiddenElements?: string[][];
 }
 
 function encrypt(secret: string, value: string): string {
@@ -367,7 +368,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
         super.componentWillUnmount();
     }
 
-    itemTable(attrItem: string, data: Record<string, any>, idx: number): JSX.Element | null {
+    itemTable(attrItem: string, data: Record<string, any>, idx: number, asCard: boolean): JSX.Element | null {
         const { schema } = this.props;
         const schemaForAttribute = schema.items?.find((el: ConfigItemTableIndexed) => el.attr === attrItem);
 
@@ -406,6 +407,27 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                 schema={schemaItem as ConfigItemPanel}
                 table
                 themeName={this.props.themeName}
+                onHiddenChanged={
+                    asCard
+                        ? (attr: string, hidden: boolean): void => {
+                              // if element is hidden, so hide
+                              const listOfHiddenElements = [...(this.state.listOfHiddenElements || [])];
+                              if (hidden) {
+                                  listOfHiddenElements[idx] ||= [];
+                                  if (!listOfHiddenElements[idx].includes(attr)) {
+                                      listOfHiddenElements[idx].push(attr);
+                                      this.setState({ listOfHiddenElements });
+                                  }
+                              } else if (listOfHiddenElements[idx]) {
+                                  const pos = listOfHiddenElements[idx].indexOf(attr);
+                                  if (pos !== -1) {
+                                      listOfHiddenElements[idx].splice(pos, 1);
+                                      this.setState({ listOfHiddenElements });
+                                  }
+                              }
+                          }
+                        : undefined
+                }
             />
         );
     }
@@ -1343,6 +1365,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
         if (this.props.schema.compact) {
             tdStyle = { paddingTop: 1, paddingBottom: 1 };
         }
+        const tdStyleHidden = { padding: 0, borderBottom: 'none' };
         visibleValue ||= this.state.value.map((_, i) => i);
 
         const doAnyFilterSet = this.isAnyFilterSet();
@@ -1367,24 +1390,36 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                             <Paper style={styles.paper}>
                                 <Table>
                                     <TableBody>
-                                        {schema.items?.map((headCell: ConfigItemTableIndexed) => (
-                                            <TableRow key={`${headCell.attr}_${idx}`}>
-                                                <TableCell
-                                                    align="left"
-                                                    style={tdStyle}
-                                                >
-                                                    <span style={styles.headerText}>
-                                                        {this.getText(headCell.title)}
-                                                    </span>
-                                                </TableCell>
-                                                <TableCell
-                                                    align="left"
-                                                    style={tdStyle}
-                                                >
-                                                    {this.itemTable(headCell.attr, this.state.value[idx], idx)}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {schema.items?.map((headCell: ConfigItemTableIndexed) => {
+                                            const hidden = this.state.listOfHiddenElements?.[idx]?.includes(
+                                                headCell.attr,
+                                            );
+                                            return (
+                                                <TableRow key={`${headCell.attr}_${idx}`}>
+                                                    <TableCell
+                                                        align="left"
+                                                        style={hidden ? tdStyleHidden : tdStyle}
+                                                    >
+                                                        {hidden ? null : (
+                                                            <span style={styles.headerText}>
+                                                                {this.getText(headCell.title)}
+                                                            </span>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        align="left"
+                                                        style={hidden ? tdStyleHidden : tdStyle}
+                                                    >
+                                                        {this.itemTable(
+                                                            headCell.attr,
+                                                            this.state.value[idx],
+                                                            idx,
+                                                            true,
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
                                         {!schema.noDelete && (
                                             <TableRow>
                                                 <TableCell
@@ -1519,7 +1554,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                                             align="left"
                                             style={tdStyle}
                                         >
-                                            {this.itemTable(headCell.attr, this.state.value[idx], idx)}
+                                            {this.itemTable(headCell.attr, this.state.value[idx], idx, false)}
                                         </TableCell>
                                     ))}
                                     {!schema.noDelete && (
