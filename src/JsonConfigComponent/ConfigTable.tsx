@@ -7,6 +7,7 @@ import {
     AccordionSummary,
     Button,
     Card,
+    Collapse,
     Dialog,
     DialogActions,
     DialogContent,
@@ -1433,7 +1434,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             <Paper style={styles.paper}>
                                 {this.props.schema.titleAttribute ? (
                                     <Box sx={styles.cardHeader}>
-                                        {this.state.value[idx][this.props.schema.titleAttribute]}
+                                        <div>{this.state.value[idx][this.props.schema.titleAttribute]}</div>
                                         <div>
                                             {!doAnyFilterSet && !this.state.orderBy ? (
                                                 <Tooltip
@@ -1515,8 +1516,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                     <ExpandMoreIcon
                                                         style={{
                                                             rotate: this.state.collapsed?.includes(idx)
-                                                                ? '90deg'
-                                                                : '0deg',
+                                                                ? '0deg'
+                                                                : '180deg',
+                                                            transition: '0.3s',
+                                                            transitionProperty: 'rotate',
                                                         }}
                                                     />
                                                 </IconButton>
@@ -1524,109 +1527,117 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                         </div>
                                     </Box>
                                 ) : null}
-                                <Table>
-                                    <TableBody>
-                                        {schema.items?.map((headCell: ConfigItemTableIndexed) => {
-                                            const hidden = this.listOfHiddenElements?.[idx]?.includes(headCell.attr);
-                                            return (
-                                                <TableRow key={`${headCell.attr}_${idx}`}>
+                                <Collapse
+                                    in={!this.state.collapsed?.includes(idx)}
+                                    timeout="auto"
+                                    unmountOnExit
+                                >
+                                    <Table>
+                                        <TableBody>
+                                            {schema.items?.map((headCell: ConfigItemTableIndexed) => {
+                                                const hidden = this.listOfHiddenElements?.[idx]?.includes(
+                                                    headCell.attr,
+                                                );
+                                                return (
+                                                    <TableRow key={`${headCell.attr}_${idx}`}>
+                                                        <TableCell
+                                                            align="left"
+                                                            style={hidden ? tdStyleHidden : tdStyle}
+                                                        >
+                                                            {hidden ? null : (
+                                                                <span style={styles.headerText}>
+                                                                    {this.getText(headCell.title)}
+                                                                </span>
+                                                            )}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            align="left"
+                                                            style={hidden ? tdStyleHidden : tdStyle}
+                                                        >
+                                                            {this.itemTable(
+                                                                headCell.attr,
+                                                                this.state.value[idx],
+                                                                idx,
+                                                                true,
+                                                            )}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                            {!this.props.schema.titleAttribute && !schema.noDelete && (
+                                                <TableRow>
                                                     <TableCell
                                                         align="left"
-                                                        style={hidden ? tdStyleHidden : tdStyle}
+                                                        style={tdStyle}
                                                     >
-                                                        {hidden ? null : (
-                                                            <span style={styles.headerText}>
-                                                                {this.getText(headCell.title)}
-                                                            </span>
-                                                        )}
+                                                        <span style={styles.headerText}>{this.getText('Actions')}</span>
                                                     </TableCell>
                                                     <TableCell
                                                         align="left"
-                                                        style={hidden ? tdStyleHidden : tdStyle}
+                                                        style={tdStyle}
                                                     >
-                                                        {this.itemTable(
-                                                            headCell.attr,
-                                                            this.state.value[idx],
-                                                            idx,
-                                                            true,
-                                                        )}
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                        {!this.props.schema.titleAttribute && !schema.noDelete && (
-                                            <TableRow>
-                                                <TableCell
-                                                    align="left"
-                                                    style={tdStyle}
-                                                >
-                                                    <span style={styles.headerText}>{this.getText('Actions')}</span>
-                                                </TableCell>
-                                                <TableCell
-                                                    align="left"
-                                                    style={tdStyle}
-                                                >
-                                                    {!doAnyFilterSet && !this.state.orderBy ? (
+                                                        {!doAnyFilterSet && !this.state.orderBy ? (
+                                                            <Tooltip
+                                                                title={I18n.t('ra_Move up')}
+                                                                slotProps={{ popper: { sx: styles.tooltip } }}
+                                                            >
+                                                                <span>
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={() => this.onMoveUp(idx)}
+                                                                        disabled={i === 0}
+                                                                    >
+                                                                        <UpIcon />
+                                                                    </IconButton>
+                                                                </span>
+                                                            </Tooltip>
+                                                        ) : null}
+                                                        {!doAnyFilterSet && !this.state.orderBy ? (
+                                                            <Tooltip
+                                                                title={I18n.t('ra_Move down')}
+                                                                slotProps={{ popper: { sx: styles.tooltip } }}
+                                                            >
+                                                                <span>
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={() => this.onMoveDown(idx)}
+                                                                        disabled={i === visibleValue.length - 1}
+                                                                    >
+                                                                        <DownIcon />
+                                                                    </IconButton>
+                                                                </span>
+                                                            </Tooltip>
+                                                        ) : null}
                                                         <Tooltip
-                                                            title={I18n.t('ra_Move up')}
-                                                            slotProps={{ popper: { sx: styles.tooltip } }}
-                                                        >
-                                                            <span>
-                                                                <IconButton
-                                                                    size="small"
-                                                                    onClick={() => this.onMoveUp(idx)}
-                                                                    disabled={i === 0}
-                                                                >
-                                                                    <UpIcon />
-                                                                </IconButton>
-                                                            </span>
-                                                        </Tooltip>
-                                                    ) : null}
-                                                    {!doAnyFilterSet && !this.state.orderBy ? (
-                                                        <Tooltip
-                                                            title={I18n.t('ra_Move down')}
-                                                            slotProps={{ popper: { sx: styles.tooltip } }}
-                                                        >
-                                                            <span>
-                                                                <IconButton
-                                                                    size="small"
-                                                                    onClick={() => this.onMoveDown(idx)}
-                                                                    disabled={i === visibleValue.length - 1}
-                                                                >
-                                                                    <DownIcon />
-                                                                </IconButton>
-                                                            </span>
-                                                        </Tooltip>
-                                                    ) : null}
-                                                    <Tooltip
-                                                        title={I18n.t('ra_Delete current row')}
-                                                        slotProps={{ popper: { sx: styles.tooltip } }}
-                                                    >
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={this.onDelete(idx)}
-                                                        >
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    {this.props.schema.clone ? (
-                                                        <Tooltip
-                                                            title={I18n.t('ra_Clone current row')}
+                                                            title={I18n.t('ra_Delete current row')}
                                                             slotProps={{ popper: { sx: styles.tooltip } }}
                                                         >
                                                             <IconButton
                                                                 size="small"
-                                                                onClick={this.onClone(idx)}
+                                                                onClick={this.onDelete(idx)}
                                                             >
-                                                                <CopyContentIcon />
+                                                                <DeleteIcon />
                                                             </IconButton>
                                                         </Tooltip>
-                                                    ) : null}
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
+                                                        {this.props.schema.clone ? (
+                                                            <Tooltip
+                                                                title={I18n.t('ra_Clone current row')}
+                                                                slotProps={{ popper: { sx: styles.tooltip } }}
+                                                            >
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={this.onClone(idx)}
+                                                                >
+                                                                    <CopyContentIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        ) : null}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </Collapse>
                             </Paper>
                         </Card>
                     </Grid2>
