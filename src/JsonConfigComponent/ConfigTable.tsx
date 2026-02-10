@@ -195,9 +195,12 @@ const styles: Record<string, any> = {
         color: theme.palette.mode === 'light' ? theme.palette.secondary.main : theme.palette.text.primary,
         height: '100%',
         fontWeight: 'bold',
-        fontSize: 'larger',
+        fontSize: 20,
         fontStyle: 'italic',
+        padding: '4px 16px',
         backgroundColor: theme.palette.primary.main,
+        display: 'flex',
+        justifyContent: 'space-between',
     }),
 };
 
@@ -270,6 +273,7 @@ interface ConfigTableState extends ConfigGenericState {
     icon: boolean;
     width: number;
     tableErrors: Record<number, Record<string, string>>;
+    collapsed: number[];
 }
 
 function encrypt(secret: string, value: string): string {
@@ -288,7 +292,7 @@ function decrypt(secret: string, value: string): string {
     return result;
 }
 
-class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
+export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
     private readonly filterRefs: Record<string, RefObject<HTMLInputElement>>;
 
     private typingTimer: ReturnType<typeof setTimeout> | null = null;
@@ -306,7 +310,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
     constructor(props: ConfigTableProps) {
         super(props);
         this.filterRefs = {};
-        this.props.schema.items = this.props.schema.items || [];
+        this.props.schema.items ||= [];
         this.props.schema.items.forEach((el: ConfigItemTableIndexed) => {
             if (el.filter) {
                 this.filterRefs[el.attr] = createRef();
@@ -353,6 +357,18 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
             });
         }
 
+        const collapsedStr = window.localStorage.getItem(
+            `table.collapsed.${this.props.oContext.instance}.${this.props.attr}`,
+        );
+        let collapsed: number[] = [];
+        if (collapsedStr) {
+            try {
+                collapsed = JSON.parse(collapsedStr);
+            } catch {
+                // ignore
+            }
+        }
+
         this.setState(
             {
                 value,
@@ -363,6 +379,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                 filterOn: [],
                 width: 0,
                 tableErrors: {},
+                collapsed,
             },
             () => this.validateUniqueProps(),
         );
@@ -1417,6 +1434,94 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                                 {this.props.schema.titleAttribute ? (
                                     <Box sx={styles.cardHeader}>
                                         {this.state.value[idx][this.props.schema.titleAttribute]}
+                                        <div>
+                                            {!doAnyFilterSet && !this.state.orderBy ? (
+                                                <Tooltip
+                                                    title={I18n.t('ra_Move up')}
+                                                    slotProps={{ popper: { sx: styles.tooltip } }}
+                                                >
+                                                    <span>
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => this.onMoveUp(idx)}
+                                                            disabled={i === 0}
+                                                        >
+                                                            <UpIcon />
+                                                        </IconButton>
+                                                    </span>
+                                                </Tooltip>
+                                            ) : null}
+                                            {!doAnyFilterSet && !this.state.orderBy ? (
+                                                <Tooltip
+                                                    title={I18n.t('ra_Move down')}
+                                                    slotProps={{ popper: { sx: styles.tooltip } }}
+                                                >
+                                                    <span>
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => this.onMoveDown(idx)}
+                                                            disabled={i === visibleValue.length - 1}
+                                                        >
+                                                            <DownIcon />
+                                                        </IconButton>
+                                                    </span>
+                                                </Tooltip>
+                                            ) : null}
+                                            <Tooltip
+                                                title={I18n.t('ra_Delete current row')}
+                                                slotProps={{ popper: { sx: styles.tooltip } }}
+                                            >
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={this.onDelete(idx)}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            {this.props.schema.clone ? (
+                                                <Tooltip
+                                                    title={I18n.t('ra_Clone current row')}
+                                                    slotProps={{ popper: { sx: styles.tooltip } }}
+                                                >
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={this.onClone(idx)}
+                                                    >
+                                                        <CopyContentIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            ) : null}
+                                            <Tooltip
+                                                title={I18n.t('ra_Expand/Collapse card')}
+                                                slotProps={{ popper: { sx: styles.tooltip } }}
+                                            >
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => {
+                                                        const collapsed = [...this.state.collapsed];
+                                                        const pos = collapsed.indexOf(idx);
+                                                        if (pos === -1) {
+                                                            collapsed.push(idx);
+                                                        } else {
+                                                            collapsed.splice(pos, 1);
+                                                        }
+                                                        window.localStorage.setItem(
+                                                            `table.collapsed.${this.props.oContext.instance}.${this.props.attr}`,
+                                                            JSON.stringify(collapsed),
+                                                        );
+                                                        this.setState({ collapsed });
+                                                    }}
+                                                >
+                                                    <ExpandMoreIcon
+                                                        style={{
+                                                            rotate: this.state.collapsed?.includes(idx)
+                                                                ? '90deg'
+                                                                : '0deg',
+                                                        }}
+                                                    />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div>
                                     </Box>
                                 ) : null}
                                 <Table>
@@ -1449,7 +1554,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                                                 </TableRow>
                                             );
                                         })}
-                                        {!schema.noDelete && (
+                                        {!this.props.schema.titleAttribute && !schema.noDelete && (
                                             <TableRow>
                                                 <TableCell
                                                     align="left"
@@ -1760,5 +1865,3 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
         );
     }
 }
-
-export default ConfigTable;
