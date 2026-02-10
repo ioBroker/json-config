@@ -261,7 +261,6 @@ interface ConfigTableState extends ConfigGenericState {
     icon: boolean;
     width: number;
     tableErrors: Record<number, Record<string, string>>;
-    listOfHiddenElements?: string[][];
 }
 
 function encrypt(secret: string, value: string): string {
@@ -290,6 +289,10 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
     private secret: string = 'Zgfr56gFe87jJOM';
 
     private readonly refDiv: React.RefObject<HTMLDivElement>;
+
+    private readonly listOfHiddenElements: string[][] = [];
+
+    private refreshBecauseOfHiddenElements: ReturnType<typeof setTimeout> | null = null;
 
     constructor(props: ConfigTableProps) {
         super(props);
@@ -365,6 +368,10 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
             clearTimeout(this.resizeTimeout);
             this.resizeTimeout = null;
         }
+        if (this.refreshBecauseOfHiddenElements) {
+            clearTimeout(this.refreshBecauseOfHiddenElements);
+            this.refreshBecauseOfHiddenElements = null;
+        }
         super.componentWillUnmount();
     }
 
@@ -411,18 +418,28 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                     asCard
                         ? (attr: string, hidden: boolean): void => {
                               // if element is hidden, so hide
-                              const listOfHiddenElements = [...(this.state.listOfHiddenElements || [])];
                               if (hidden) {
-                                  listOfHiddenElements[idx] ||= [];
-                                  if (!listOfHiddenElements[idx].includes(attr)) {
-                                      listOfHiddenElements[idx].push(attr);
-                                      this.setState({ listOfHiddenElements });
+                                  this.listOfHiddenElements[idx] ||= [];
+                                  if (!this.listOfHiddenElements[idx].includes(attr)) {
+                                      this.listOfHiddenElements[idx].push(attr);
+
+                                      if (this.refreshBecauseOfHiddenElements) {
+                                          clearTimeout(this.refreshBecauseOfHiddenElements);
+                                      }
+                                      this.refreshBecauseOfHiddenElements = setTimeout(() => {
+                                          this.forceUpdate();
+                                      }, 100);
                                   }
-                              } else if (listOfHiddenElements[idx]) {
-                                  const pos = listOfHiddenElements[idx].indexOf(attr);
+                              } else if (this.listOfHiddenElements[idx]) {
+                                  const pos = this.listOfHiddenElements[idx].indexOf(attr);
                                   if (pos !== -1) {
-                                      listOfHiddenElements[idx].splice(pos, 1);
-                                      this.setState({ listOfHiddenElements });
+                                      this.listOfHiddenElements[idx].splice(pos, 1);
+                                      if (this.refreshBecauseOfHiddenElements) {
+                                          clearTimeout(this.refreshBecauseOfHiddenElements);
+                                      }
+                                      this.refreshBecauseOfHiddenElements = setTimeout(() => {
+                                          this.forceUpdate();
+                                      }, 100);
                                   }
                               }
                           }
@@ -1391,7 +1408,7 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                                 <Table>
                                     <TableBody>
                                         {schema.items?.map((headCell: ConfigItemTableIndexed) => {
-                                            const hidden = this.state.listOfHiddenElements?.[idx]?.includes(
+                                            const hidden = this.listOfHiddenElements?.[idx]?.includes(
                                                 headCell.attr,
                                             );
                                             return (
