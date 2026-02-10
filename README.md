@@ -1675,7 +1675,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.1.4 (2026-02-09)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Hiding the whole line in the table if shown as card and the line is empty
 
 ### 8.1.3 (2026-02-09)
