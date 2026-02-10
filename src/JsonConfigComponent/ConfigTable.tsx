@@ -27,6 +27,7 @@ import {
     Tooltip,
     Typography,
     FormHelperText,
+    Box,
 } from '@mui/material';
 
 import {
@@ -45,7 +46,7 @@ import {
     ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, IobTheme } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemTableIndexed, ConfigItemPanel, ConfigItemTable } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -53,7 +54,7 @@ import ConfigPanel from './ConfigPanel';
 
 const MAX_SIZE = 1024 * 1024; // 1MB
 
-const styles: Record<string, React.CSSProperties> = {
+const styles: Record<string, any> = {
     fullWidth: {
         width: '100%',
     },
@@ -190,6 +191,14 @@ const styles: Record<string, React.CSSProperties> = {
     tooltip: {
         pointerEvents: 'none',
     },
+    cardHeader: (theme: IobTheme): any => ({
+        color: theme.palette.mode === 'light' ? theme.palette.secondary.main : theme.palette.text.primary,
+        height: '100%',
+        fontWeight: 'bold',
+        fontSize: 'larger',
+        fontStyle: 'italic',
+        backgroundColor: theme.palette.primary.main,
+    }),
 };
 
 function objectToArray(
@@ -1405,12 +1414,15 @@ class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
                     >
                         <Card>
                             <Paper style={styles.paper}>
+                                {this.props.schema.titleAttribute ? (
+                                    <Box sx={styles.cardHeader}>
+                                        {this.state.value[idx][this.props.schema.titleAttribute]}
+                                    </Box>
+                                ) : null}
                                 <Table>
                                     <TableBody>
                                         {schema.items?.map((headCell: ConfigItemTableIndexed) => {
-                                            const hidden = this.listOfHiddenElements?.[idx]?.includes(
-                                                headCell.attr,
-                                            );
+                                            const hidden = this.listOfHiddenElements?.[idx]?.includes(headCell.attr);
                                             return (
                                                 <TableRow key={`${headCell.attr}_${idx}`}>
                                                     <TableCell

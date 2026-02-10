@@ -6497,6 +6497,10 @@
                                                     "enum": ["xs", "sm", "md", "lg", "xl"]
                                                 }
                                             },
+                                            "titleAttribute": {
+                                                "description": "Define the name of the attribute of the item which should be shown as a title of the item in cards mode.",
+                                                "type": "string"
+                                            },
                                             "allowAddByFilter": {
                                                 "$ref": "#/definitions/allowAddByFilterProp"
                                             },

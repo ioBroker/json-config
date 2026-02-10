@@ -739,6 +739,8 @@ table with items that could be deleted, added, moved up, moved down
 | `import`              | [optional] - if import button should be shown. Import from csv file.                                                                            |
 | `uniqueColumns`       | [optional] - specify an array of columns, which need to have unique entries                                                                     |
 | `encryptedAttributes` | [optional] - specify an array of columns, which should be encrypted                                                                             |
+| `useCardFor`          | [optional] - Breakpoint that will be rendered as cards: ["xs", "sm", "md", "lg", "xl"]                                                          |
+| `titleAttribute`      | [optional] - Define the name of the attribute of the item which should be shown as a title of the item in cards mode.                           |
 | `compact`             | [optional] - if true, the table will be shown in a compact mode                                                                                 |
 
 ### `accordion`
@@ -1675,8 +1677,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.1.5 (2026-02-10)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Hiding the whole line in the table if shown as card and the line is empty
+- (@GermanBluefox) Added the header to table in the card mode
 
 ### 8.1.3 (2026-02-09)
 - (@GermanBluefox) Added component `yamlEditor` for editing yaml files in admin

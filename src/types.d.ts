@@ -854,6 +854,8 @@ export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
 export interface ConfigItemTable extends ConfigItem {
     type: 'table';
     items?: ConfigItemTableIndexed[];
+    /** Define the name of the attribute of the item which should be shown as a title of the item in cards mode. */
+    titleAttribute?: string;
     /** If delete or add disabled, If noDelete is false, add, delete and move up/down should work */
     noDelete?: boolean;
     /** @deprecated don't use */
