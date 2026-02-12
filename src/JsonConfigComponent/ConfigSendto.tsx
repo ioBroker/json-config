@@ -4,10 +4,12 @@ import { Button, CircularProgress } from '@mui/material';
 
 import { Warning as IconWarning, Error as IconError, Info as IconInfo } from '@mui/icons-material';
 
-import { DialogConfirm, DialogError, DialogMessage, I18n } from '@iobroker/adapter-react-v5';
+import { DialogConfirm, DialogError, DialogMessage, I18n, copy } from '@iobroker/adapter-react-v5';
 
-import type { ConfigItemSendTo } from '../types';
+import type { BackEndCommand, ConfigItemSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
+import Editor from './wrapper/Components/Editor';
+import CustomModal from './wrapper/Components/CustomModal';
 
 const styles: Record<string, React.CSSProperties> = {
     fullWidth: {
@@ -139,11 +141,16 @@ interface ConfigSendToProps extends ConfigGenericProps {
 interface ConfigSendToState extends ConfigGenericState {
     _error: string;
     _message: string;
+    _copyDialog: {
+        text: string;
+        title?: ioBroker.StringOrTranslated;
+        type?: 'json' | 'css' | 'html' | 'json5' | 'yaml';
+    };
     hostname: string;
     running?: boolean;
 }
 
-class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
+export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
     async componentDidMount(): Promise<void> {
         super.componentDidMount();
 
@@ -204,6 +211,36 @@ class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
         return null;
     }
 
+    renderCopyDialog(): JSX.Element | null {
+        if (this.state._copyDialog) {
+            return (
+                <CustomModal
+                    title={this.getText(this.state._copyDialog.title || I18n.t('ra_Result'))}
+                    overflowHidden
+                    onClose={() => {
+                        this.setState({ _copyDialog: null });
+                    }}
+                    onApply={() => {
+                        // Copy to clipboard
+                        copy(this.state._copyDialog.text);
+                        window.alert(I18n.t('ra_Copied to clipboard'));
+                        this.setState({ _copyDialog: null });
+                    }}
+                >
+                    <div style={{ width: 'calc(100vw - 40px)', height: 'calc(100vh - 188px)' }}>
+                        <Editor
+                            mode={this.state._copyDialog.type}
+                            value={this.state._copyDialog.text}
+                            name="CopyDialog"
+                            themeType={this.props.oContext.themeType}
+                        />
+                    </div>
+                </CustomModal>
+            );
+        }
+        return null;
+    }
+
     _onClick(): void {
         this.props.oContext.onCommandRunning(true);
         this.setState({ running: true });
@@ -255,63 +292,83 @@ class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
                 this.props.schema.command || 'send',
                 data,
             )
-            .then(async (response: Record<string, any>) => {
-                if (timeout) {
-                    clearTimeout(timeout);
-                    timeout = undefined;
-                }
-                if (response?.error) {
-                    if (this.props.schema.error && this.props.schema.error[response.error]) {
-                        let error = this.getText(this.props.schema.error[response.error]);
-                        response.args?.forEach((arg: string) => (error = error.replace('%s', arg)));
-                        this.setState({ _error: error });
+            .then(
+                async (response: {
+                    error?: string;
+                    args?: string[];
+                    command?: BackEndCommand;
+                    reloadBrowser?: boolean;
+                    openUrl?: string;
+                    window?: string;
+                    result?: string;
+                    native?: Record<string, any>;
+                    saveConfig?: boolean;
+                    /** Title for copy dialog */
+                    copyDialog?: {
+                        title?: ioBroker.StringOrTranslated;
+                        text: string;
+                        type?: 'json' | 'css' | 'html' | 'json5' | 'yaml';
+                    };
+                }) => {
+                    if (timeout) {
+                        clearTimeout(timeout);
+                        timeout = undefined;
+                    }
+                    if (response?.error) {
+                        if (this.props.schema.error?.[response.error]) {
+                            let error = this.getText(this.props.schema.error[response.error]);
+                            response.args?.forEach((arg: string) => (error = error.replace('%s', arg)));
+                            this.setState({ _error: error });
+                        } else {
+                            this.setState({
+                                _error: response.error
+                                    ? typeof response.error === 'string'
+                                        ? I18n.t(response.error)
+                                        : JSON.stringify(response.error)
+                                    : I18n.t('ra_Error'),
+                            });
+                        }
                     } else {
-                        this.setState({
-                            _error: response.error
-                                ? typeof response.error === 'string'
-                                    ? I18n.t(response.error)
-                                    : JSON.stringify(response.error)
-                                : I18n.t('ra_Error'),
-                        });
-                    }
-                } else {
-                    if (response?.command) {
-                        // If backend requested to refresh the config
-                        this.props.oContext.onBackEndCommand?.(response.command);
-                        return;
-                    }
-                    if (response?.reloadBrowser && this.props.schema.reloadBrowser) {
-                        window.location.reload();
-                    } else if (response?.openUrl && this.props.schema.openUrl) {
-                        window.open(response.openUrl, response.window || this.props.schema.window || '_blank');
-                    } else if (response?.result && this.props.schema.result?.[response.result]) {
-                        let text = this.getText(this.props.schema.result[response.result]);
-                        response.args?.forEach((arg: string) => (text = text.replace('%s', arg)));
-                        window.alert(text);
-                    }
-
-                    if (response?.native && this.props.schema.useNative) {
-                        for (const [attr, val] of Object.entries(response.native)) {
-                            await this.onChangeAsync(attr, val);
+                        if (response?.command) {
+                            // If backend requested to refresh the config
+                            this.props.oContext.onBackEndCommand?.(response.command);
+                            return;
+                        }
+                        if (response?.reloadBrowser && this.props.schema.reloadBrowser) {
+                            window.location.reload();
+                        } else if (response?.openUrl && this.props.schema.openUrl) {
+                            window.open(response.openUrl, response.window || this.props.schema.window || '_blank');
+                        } else if (response?.result && this.props.schema.result?.[response.result]) {
+                            let text = this.getText(this.props.schema.result[response.result]);
+                            response.args?.forEach((arg: string) => (text = text.replace('%s', arg)));
+                            window.alert(text);
                         }
 
-                        setTimeout(
-                            () => this.props.oContext.forceUpdate(Object.keys(response.native), this.props.data),
-                            300,
-                        );
-                    } else if (response?.result) {
-                        window.alert(
-                            typeof response.result === 'object' ? JSON.stringify(response.result) : response.result,
-                        );
-                    } else {
-                        window.alert(I18n.t('ra_Ok'));
-                    }
+                        if (response?.native && this.props.schema.useNative) {
+                            for (const [attr, val] of Object.entries(response.native)) {
+                                await this.onChangeAsync(attr, val);
+                            }
 
-                    if (response?.saveConfig) {
-                        this.props.onChange(null, null, null, true);
+                            setTimeout(
+                                () => this.props.oContext.forceUpdate(Object.keys(response.native), this.props.data),
+                                300,
+                            );
+                        } else if (response?.result) {
+                            window.alert(
+                                typeof response.result === 'object' ? JSON.stringify(response.result) : response.result,
+                            );
+                        } else if (response?.copyDialog) {
+                            this.setState({ _copyDialog: response.copyDialog });
+                        } else {
+                            window.alert(I18n.t('ra_Ok'));
+                        }
+
+                        if (response?.saveConfig) {
+                            this.props.onChange(null, null, null, true);
+                        }
                     }
-                }
-            })
+                },
+            )
             .catch((e: any) => {
                 if (this.props.schema.error && this.props.schema.error[e.toString()]) {
                     this.setState({ _error: this.getText(this.props.schema.error[e.toString()]) });
@@ -385,9 +442,8 @@ class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
                 </Button>
                 {this.renderErrorDialog()}
                 {this.renderMessageDialog()}
+                {this.renderCopyDialog()}
             </div>
         );
     }
 }
-
-export default ConfigSendto;

@@ -1677,12 +1677,15 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added the copy-to-clipboard dialog for `sendTo`
+
 ### 8.1.9 (2026-02-10)
 - (@GermanBluefox) Hiding the whole line in the table if shown as card and the line is empty
-- (@GermanBluefox) Added the header to table in the card mode
+- (@GermanBluefox) Added the header to the table in the card mode
 
 ### 8.1.3 (2026-02-09)
-- (@GermanBluefox) Added component `yamlEditor` for editing yaml files in admin
+- (@GermanBluefox) Added component `yamlEditor` for editing YAML files in admin
 
 ### 8.1.1 (2026-02-06)
 - (@GermanBluefox) Added `iframe` and `iframeSendTo` components

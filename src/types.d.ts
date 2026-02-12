@@ -737,8 +737,10 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     command?: string;
     jsonData?: string;
     data?: Record<string, any>;
-    result?: string;
-    error?: string;
+    /** Translations for possible result codes. E.g. `{"RESULT_OK": "Operation successful"}`. The translation must exist in i18n files. */
+    result?: Record<string, ioBroker.StringOrTranslated>;
+    /** Translations for possible error codes. E.g. `{"ERR_NO_OBJECT": "Object not found"}`. The translation must exist in i18n files. */
+    error?: Record<string, ioBroker.StringOrTranslated>;
     variant?: 'contained' | 'outlined';
     openUrl?: boolean;
     reloadBrowser?: boolean;
