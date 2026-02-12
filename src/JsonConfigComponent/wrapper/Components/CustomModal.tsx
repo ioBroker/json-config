@@ -115,7 +115,7 @@ const CustomModal = ({
                             size="large"
                             style={{ ...styles.languageButton, ...(noTranslation ? styles.languageButtonActive : {}) }}
                             onClick={() => toggleTranslation()}
-                            title={I18n.t('Disable/Enable translation')}
+                            title={I18n.t('ra_Disable/Enable translation')}
                         >
                             <LanguageIcon />
                         </IconButton>
@@ -153,7 +153,7 @@ const CustomModal = ({
                         variant="contained"
                         color="primary"
                     >
-                        {I18n.t(titleButtonApply || 'Ok')}
+                        {I18n.t(titleButtonApply || 'ra_Ok')}
                     </Button>
                 )}
                 <Button
@@ -163,7 +163,7 @@ const CustomModal = ({
                     variant="contained"
                     startIcon={<CloseIcon />}
                 >
-                    {I18n.t(titleButtonClose || 'Cancel')}
+                    {I18n.t(titleButtonClose || 'ra_Cancel')}
                 </Button>
             </DialogActions>
         </Dialog>
