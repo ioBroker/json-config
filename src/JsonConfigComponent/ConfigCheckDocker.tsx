@@ -17,8 +17,8 @@ interface ConfigCheckDockerProps extends ConfigGenericProps {
     schema: ConfigItemCheckDocker;
 }
 
-// Send to admin message to check if the docker available and if available, show checkbox, else show warning if specified in the schema
-class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerProps, ConfigCheckDockerState> {
+// Send to an admin message to check if the docker available and if available, show checkbox, else show warning if specified in the schema
+export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerProps, ConfigCheckDockerState> {
     async componentDidMount(): Promise<void> {
         super.componentDidMount();
         const id = await this.props.oContext.socket.getCurrentInstance();
@@ -39,7 +39,7 @@ class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerProps, ConfigChec
         });
     }
 
-    renderItem(error: unknown, disabled: boolean): JSX.Element {
+    renderItem(_error: unknown, disabled: boolean): JSX.Element {
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         if (this.state.requesting) {
@@ -99,5 +99,3 @@ class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerProps, ConfigChec
         );
     }
 }
-
-export default ConfigCheckDocker;
