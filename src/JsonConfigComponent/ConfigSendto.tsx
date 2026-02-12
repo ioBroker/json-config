@@ -223,9 +223,10 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                     onApply={() => {
                         // Copy to clipboard
                         copy(this.state._copyDialog.text);
-                        window.alert(I18n.t('ra_Copied to clipboard'));
+                        window.alert(I18n.t('ra_Copied'));
                         this.setState({ _copyDialog: null });
                     }}
+                    titleButtonApply={I18n.t('ra_Copy content')}
                 >
                     <div style={{ width: 'calc(100vw - 40px)', height: 'calc(100vh - 188px)' }}>
                         <Editor
