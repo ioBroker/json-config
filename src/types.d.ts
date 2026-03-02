@@ -226,7 +226,7 @@ interface ConfigItemIndexed extends ConfigItem {
     attr?: string;
 }
 
-interface ConfigItemTableIndexed extends ConfigItem {
+type ConfigItemTableIndexed = ConfigItemAny & {
     attr?: string;
     /** show filter options in the header of the table */
     filter?: boolean;
@@ -234,7 +234,7 @@ interface ConfigItemTableIndexed extends ConfigItem {
     sort?: boolean;
     /** tooltip in the header of the table */
     title?: string;
-}
+};
 
 export interface ConfigItemAlive extends ConfigItem {
     type: 'alive';
