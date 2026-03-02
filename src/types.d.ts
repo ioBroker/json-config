@@ -834,6 +834,8 @@ export interface ConfigItemState extends ConfigItem {
     setOnEnterKey?: boolean;
     /** Options for `select`. If not defiled, the `common.states` in the object must exist. */
     options?: (string | ConfigItemSelectOption)[];
+    /** Number of decimal places to display for numeric values in text/html mode */
+    digits?: number;
 }
 
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {

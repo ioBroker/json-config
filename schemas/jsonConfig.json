@@ -1109,6 +1109,11 @@
                     "description": "The value in this case will be sent only when the \"Enter\" button is pressed. It can be combined with `showEnterButton`",
                     "type": "boolean"
                 },
+                "digits": {
+                    "description": "Number of decimal places to display for numeric values in text/html mode",
+                    "type": "number",
+                    "minimum": 0
+                },
                 "options": {
                     "description": "Options for `select` in form `[\"value1\", \"value2\", ...]` or `[{\"value\": \"value\", \"label\": \"Value1\"}, \"value2\", ...]`. If not defiled, the `common.states` in the object must exist.",
                     "type": "array",

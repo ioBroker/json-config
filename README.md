@@ -1279,6 +1279,7 @@ Special input for ports. It checks automatically if the port is used by other in
 | `showEnterButton` | Show SET button. The value in this case will be sent only when the button is pressed. You can define the text of the button. Default text is "Set" (Only for "input", "number" or "slider")          |
 | `setOnEnterKey`   | The value in this case will be sent only when the "Enter" button is pressed. It can be combined with `showEnterButton`                                                                               |
 | `options`         | Options for `select` in form `["value1", "value2", ...]` or `[{"value": "value", "label": "Value1", "color": "red"}, "value2", ...]`. If not defiled, the `common.states` in the object must exist.  |
+| `digits`          | Number of decimal places to display for numeric values in `text`/`html` mode (e.g. `2` turns `230.2764537654374` into `230.28`)                                                                      |
 
 ### `staticInfo`
 
@@ -1710,6 +1711,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Added option `sendFirstByClick` to `imageSendTo`
 - (@GermanBluefox) Added new component: `qrCodeSendTo`
+- (@GermanBluefox) Added option `digits` to `state` component
 
 ### 8.1.11 (2026-02-12)
 - (@GermanBluefox) Added the copy-to-clipboard dialog for `sendTo`

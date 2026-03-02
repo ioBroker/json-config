@@ -622,9 +622,16 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                         step={step}
                         value={this.state.stateValue as number}
                         valueLabelDisplay="auto"
-                        valueLabelFormat={(value: number) =>
-                            `${value}${this.getText(this.props.schema.unit, this.props.schema.noTranslation) || this.state.obj.common.unit || ''}`
-                        }
+                        valueLabelFormat={(value: number) => {
+                            let displayValue: string =
+                                this.props.schema.digits !== undefined
+                                    ? value.toFixed(this.props.schema.digits)
+                                    : value.toString();
+                            if (this.props.oContext.isFloatComma) {
+                                displayValue = displayValue.replace('.', ',');
+                            }
+                            return `${displayValue}${this.getText(this.props.schema.unit, this.props.schema.noTranslation) || this.state.obj.common.unit || ''}`;
+                        }}
                         onChange={(_e: Event, value: number) => {
                             this.setState({ stateValue: value }, (): void => {
                                 if (this.controlTimeout) {
@@ -799,7 +806,14 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                     value = 'undefined';
                     key = value;
                 } else {
-                    value = mappedValue.toString();
+                    if (this.props.schema.digits !== undefined && typeof mappedValue === 'number') {
+                        value = mappedValue.toFixed(this.props.schema.digits);
+                        if (this.props.oContext.isFloatComma) {
+                            value = (value as string).replace('.', ',');
+                        }
+                    } else {
+                        value = mappedValue.toString();
+                    }
                     key = value;
                 }
 
