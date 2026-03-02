@@ -914,13 +914,14 @@ only Admin6.
 
 shows the image received from the backend as base64 string
 
-| Property   | Description                                                                                                                                                 |
-|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `width`    | width of QR code in px                                                                                                                                      |
-| `height`   | height of QR code in px                                                                                                                                     |
-| `command`  | sendTo command                                                                                                                                              |
-| `jsonData` | string - `{"subject1": "${data.subject}", "options1": {"host": "${data.host}"}}`. This data will be sent to backend                                         |
-| `data`     | object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to backend if jsonData is not defined. |
+| Property           | Description                                                                                                                                                 |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `width`            | width of QR code in px                                                                                                                                      |
+| `height`           | height of QR code in px                                                                                                                                     |
+| `command`          | sendTo command                                                                                                                                              |
+| `jsonData`         | string - `{"subject1": "${data.subject}", "options1": {"host": "${data.host}"}}`. This data will be sent to backend                                         |
+| `data`             | object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to backend if jsonData is not defined. |
+| `sendFirstByClick` | show image first when clicked. `true` - standard text (Click to show) or specific text                                                                      |
 
 #### Example of code in back-end for `imageSendTo`
 
@@ -1677,6 +1678,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added option `sendFirstByClick` to `imageSendTo`
+
 ### 8.1.11 (2026-02-12)
 - (@GermanBluefox) Added the copy-to-clipboard dialog for `sendTo`
 

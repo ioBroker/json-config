@@ -1,5 +1,8 @@
 import React, { type JSX } from 'react';
 
+import { CircularProgress } from '@mui/material';
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import type { ConfigItemImageSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
@@ -9,9 +12,10 @@ interface ConfigImageSendToProps extends ConfigGenericProps {
 
 interface ConfigImageSendToState extends ConfigGenericState {
     image?: string;
+    loading?: boolean;
 }
 
-class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToProps, ConfigImageSendToState> {
+export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToProps, ConfigImageSendToState> {
     private initialized = false;
 
     private localContext: string | undefined;
@@ -19,7 +23,9 @@ class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToProps, ConfigImag
     componentDidMount(): void {
         super.componentDidMount();
 
-        this.askInstance();
+        if (!this.props.schema.sendFirstByClick) {
+            this.askInstance();
+        }
     }
 
     askInstance(): void {
@@ -39,14 +45,15 @@ class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToProps, ConfigImag
             if (data === undefined) {
                 data = null;
             }
-
-            void this.props.oContext.socket
-                .sendTo(
-                    `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                    this.props.schema.command || 'send',
-                    data,
-                )
-                .then(image => this.setState({ image: image || '' }));
+            this.setState({ loading: true }, () =>
+                this.props.oContext.socket
+                    .sendTo(
+                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                        this.props.schema.command || 'send',
+                        data,
+                    )
+                    .then(image => this.setState({ image: image || '' })),
+            );
         }
     }
 
@@ -72,6 +79,29 @@ class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToProps, ConfigImag
             }
         }
 
+        if (!this.state.image && this.props.schema.sendFirstByClick) {
+            return (
+                <div
+                    style={{
+                        width: this.props.schema.width || '100%',
+                        height: this.props.schema.height,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                    onClick={() => !this.state.loading && this.askInstance()}
+                >
+                    {this.state.loading ? (
+                        <CircularProgress />
+                    ) : typeof this.props.schema.sendFirstByClick === 'boolean' ? (
+                        I18n.t('ra_Click to show')
+                    ) : (
+                        this.getText(this.props.schema.sendFirstByClick, this.props.schema.noTranslation)
+                    )}
+                </div>
+            );
+        }
+
         if (this.state.image === undefined) {
             return null;
         }
@@ -85,5 +115,3 @@ class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToProps, ConfigImag
         );
     }
 }
-
-export default ConfigImageSendTo;

@@ -1994,6 +1994,20 @@
                                     "description": "Data to be sent as JSON.",
                                     "type": "object"
                                 },
+                                "sendFirstByClick": {
+                                    "description": "If true or a string/multilingual object, the image will not be loaded on mount but only after a click. If a string or multilingual object is provided, it will be used as the button text.",
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "$ref": "#/definitions/multilingual"
+                                        }
+                                    ]
+                                },
                                 "noTranslation": true,
                                 "label": true,
                                 "type": true,
@@ -5484,6 +5498,20 @@
                                             "data": {
                                                 "description": "Data to be sent as JSON.",
                                                 "type": "object"
+                                            },
+                                            "sendFirstByClick": {
+                                                "description": "If true or a string/multilingual object, the image will not be loaded on mount but only after a click. If a string or multilingual object is provided, it will be used as the button text.",
+                                                "oneOf": [
+                                                    {
+                                                        "type": "boolean"
+                                                    },
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "$ref": "#/definitions/multilingual"
+                                                    }
+                                                ]
                                             },
                                             "label": true,
                                             "type": true,

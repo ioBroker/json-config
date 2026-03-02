@@ -12,7 +12,7 @@ interface ConfigQrCodeState extends ConfigGenericState {
     QRCode: typeof QRCode | null;
 }
 
-class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, ConfigQrCodeState> {
+export default class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, ConfigQrCodeState> {
     async componentDidMount(): Promise<void> {
         super.componentDidMount();
         // lazy load of qrcode
@@ -36,5 +36,3 @@ class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, ConfigQrCodeState> {
         );
     }
 }
-
-export default ConfigQrCode;

@@ -730,6 +730,7 @@ export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
     alsoDependsOn?: string[];
     height?: number | string;
     data?: Record<string, any>;
+    sendFirstByClick?: boolean | ioBroker.StringOrTranslated;
 }
 
 export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
