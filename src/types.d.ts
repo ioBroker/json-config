@@ -59,6 +59,7 @@ export type ConfigItemType =
     | 'pattern'
     | 'port'
     | 'qrCode'
+    | 'qrCodeSendTo'
     | 'room'
     | 'select'
     | 'selectSendTo'
@@ -363,6 +364,22 @@ export interface ConfigItemQrCode extends ConfigItem {
     type: 'qrCode';
     /** Data to show in the QR code */
     data: string;
+    /** Size of the QR code */
+    size?: number;
+    /** Foreground color */
+    fgColor?: string;
+    /** Background color */
+    bgColor?: string;
+    /** QR code level */
+    level?: 'L' | 'M' | 'Q' | 'H';
+}
+
+export interface ConfigItemQrCodeSendTo extends Omit<ConfigItem, 'data'> {
+    type: 'qrCodeSendTo';
+    command?: string;
+    alsoDependsOn?: string[];
+    data?: Record<string, any>;
+    sendFirstByClick?: boolean | ioBroker.StringOrTranslated;
     /** Size of the QR code */
     size?: number;
     /** Foreground color */
@@ -1139,7 +1156,8 @@ export type ConfigItemAny =
     | ConfigItemStaticText
     | ConfigItemTopic
     | ConfigItemObjectId
-    | ConfigItemQrCode;
+    | ConfigItemQrCode
+    | ConfigItemQrCodeSendTo;
 
 export type JsonConfigContext = {
     adapterName: string;

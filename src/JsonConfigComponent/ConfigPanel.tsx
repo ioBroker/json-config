@@ -66,6 +66,7 @@ import ConfigUUID from './ConfigUUID';
 import ConfigUser from './ConfigUser';
 import ConfigYamlEditor from './ConfigYamlEditor';
 import ConfigQrCode from './ConfigQrCode';
+import ConfigQrCodeSendTo from './ConfigQrCodeSendTo';
 
 const components: Record<string, typeof ConfigGeneric<any, any>> = {
     accordion: ConfigAccordion,
@@ -109,6 +110,7 @@ const components: Record<string, typeof ConfigGeneric<any, any>> = {
     pattern: ConfigPattern,
     port: ConfigPort,
     qrCode: ConfigQrCode,
+    qrCodeSendTo: ConfigQrCodeSendTo,
     room: ConfigRoom,
     select: ConfigSelect,
     selectSendTo: ConfigSelectSendTo,

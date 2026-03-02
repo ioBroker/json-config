@@ -24,6 +24,7 @@ export type {
     ConfigItemCheckbox,
     ConfigItemNumber,
     ConfigItemQrCode,
+    ConfigItemQrCodeSendTo,
     ConfigItemPassword,
     ConfigItemObjectId,
     ConfigItemSlider,

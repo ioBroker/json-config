@@ -167,6 +167,7 @@
                 "pattern",
                 "port",
                 "qrCode",
+                "qrCodeSendTo",
                 "room",
                 "select",
                 "selectSendTo",
@@ -665,6 +666,85 @@
                 },
                 "level": {
                     "description": "QR code level",
+                    "enum": ["L", "M", "Q", "H"]
+                },
+                "label": true,
+                "type": true,
+                "defaultSendTo": true,
+                "allowSaveWithError": true,
+                "xs": true,
+                "sm": true,
+                "md": true,
+                "lg": true,
+                "xl": true,
+                "newLine": true,
+                "hidden": true,
+                "hideOnlyControl": true,
+                "disabled": true,
+                "helpLink": true,
+                "help": true,
+                "style": true,
+                "darkStyle": true,
+                "validator": true,
+                "validatorNoSaveOnError": true,
+                "validatorErrorText": true,
+                "noMultiEdit": true,
+                "tooltip": true,
+                "expertMode": true,
+                "default": true,
+                "defaultFunc": true,
+                "onChange": true,
+                "noTranslation": true,
+                "confirm": true
+            }
+        },
+        "qrCodeSendToProps": {
+            "required": ["type", "command"],
+            "additionalProperties": false,
+            "properties": {
+                "command": {
+                    "description": "Command to be sent to the adapter instance. The response must be a string to be encoded in the QR code.",
+                    "type": "string"
+                },
+                "alsoDependsOn": {
+                    "$ref": "#/definitions/alsoDependsOnSendProp"
+                },
+                "jsonData": {
+                    "description": "Data to be sent as parsable string, can contain special placeholder. E. g. '{\"subject1\": \"${data.subject}\", \"options1\": {\"host\": \"${data.host}\"}}'",
+                    "type": "string"
+                },
+                "data": {
+                    "description": "Data to be sent as JSON.",
+                    "type": "object"
+                },
+                "sendFirstByClick": {
+                    "description": "If true or a string/multilingual object, the QR code will not be loaded on mount but only after a click. If a string or multilingual object is provided, it will be used as the button text.",
+                    "oneOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/definitions/multilingual"
+                        }
+                    ]
+                },
+                "size": {
+                    "description": "The size of the QR code",
+                    "type": "number"
+                },
+                "fgColor": {
+                    "description": "Foreground color",
+                    "type": "string"
+                },
+                "bgColor": {
+                    "description": "Background color",
+                    "type": "string"
+                },
+                "level": {
+                    "description": "QR code error correction level",
                     "enum": ["L", "M", "Q", "H"]
                 },
                 "label": true,
@@ -3759,6 +3839,97 @@
                         "if": {
                             "properties": {
                                 "type": {
+                                    "const": "qrCodeSendTo"
+                                }
+                            }
+                        },
+                        "then": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/tableItemBaseProps"
+                                },
+                                {
+                                    "properties": {
+                                        "command": {
+                                            "description": "Command to be sent to the adapter instance. The response must be a string to be encoded in the QR code.",
+                                            "type": "string"
+                                        },
+                                        "alsoDependsOn": {
+                                            "$ref": "#/definitions/alsoDependsOnSendProp"
+                                        },
+                                        "jsonData": {
+                                            "description": "Data to be sent as parsable string, can contain special placeholder. E. g. '{\"subject1\": \"${data.subject}\", \"options1\": {\"host\": \"${data.host}\"}}'",
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "description": "Data to be sent as JSON.",
+                                            "type": "object"
+                                        },
+                                        "sendFirstByClick": {
+                                            "description": "If true or a string/multilingual object, the QR code will not be loaded on mount but only after a click.",
+                                            "oneOf": [
+                                                { "type": "boolean" },
+                                                { "type": "string" },
+                                                { "$ref": "#/definitions/multilingual" }
+                                            ]
+                                        },
+                                        "size": {
+                                            "description": "The size of the QR code",
+                                            "type": "number"
+                                        },
+                                        "fgColor": {
+                                            "description": "Foreground color",
+                                            "type": "string"
+                                        },
+                                        "bgColor": {
+                                            "description": "Background color",
+                                            "type": "string"
+                                        },
+                                        "level": {
+                                            "description": "QR code error correction level",
+                                            "enum": ["L", "M", "Q", "H"]
+                                        },
+                                        "attr": true,
+                                        "label": true,
+                                        "type": true,
+                                        "defaultSendTo": true,
+                                        "allowSaveWithError": true,
+                                        "xs": true,
+                                        "sm": true,
+                                        "md": true,
+                                        "lg": true,
+                                        "xl": true,
+                                        "newLine": true,
+                                        "hidden": true,
+                                        "hideOnlyControl": true,
+                                        "disabled": true,
+                                        "helpLink": true,
+                                        "help": true,
+                                        "style": true,
+                                        "darkStyle": true,
+                                        "validator": true,
+                                        "validatorNoSaveOnError": true,
+                                        "validatorErrorText": true,
+                                        "noMultiEdit": true,
+                                        "tooltip": true,
+                                        "expertMode": true,
+                                        "default": true,
+                                        "defaultFunc": true,
+                                        "onChange": true,
+                                        "noTranslation": true,
+                                        "confirm": true,
+                                        "width": true
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["type", "command"]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
                                     "const": "func"
                                 }
                             }
@@ -6356,6 +6527,18 @@
                                     },
                                     "then": {
                                         "$ref": "#/definitions/qrCodeProps"
+                                    }
+                                },
+                                {
+                                    "if": {
+                                        "properties": {
+                                            "type": {
+                                                "const": "qrCodeSendTo"
+                                            }
+                                        }
+                                    },
+                                    "then": {
+                                        "$ref": "#/definitions/qrCodeSendToProps"
                                     }
                                 },
                                 {

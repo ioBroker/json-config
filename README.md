@@ -171,6 +171,7 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`pattern`:**](#pattern) Read-only field showing a pattern (e.g., URL)
 - [**`port`:**](#port) Special input for ports
 - [**`qrCode`:**](#qrcode) Displays data as a QR code (Admin 7.0.18 or newer)
+- [**`qrCodeSendTo`:**](#qrcodesendto) Displays a QR code with data received from the backend
 - [**`room`:**](#room) Selects a room from the `enum.room` list (Admin 6 only)
 - [**`select`:**](#select) Dropdown menu with predefined options
 - [**`selectSendTo`:**](#selectsendto) Dropdown menu with instance values for sending data
@@ -938,6 +939,34 @@ adapter.on("message", (obj) => {
 });
 ```
 
+### `qrCodeSendTo`
+
+Sends a command to the adapter instance and displays the response string as a QR code.
+The backend must return a plain string (the data to encode).
+
+| Property           | Description                                                                                                                                                 |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `command`          | sendTo command (default: `"send"`)                                                                                                                          |
+| `alsoDependsOn`    | array of attribute names — the QR code is refreshed whenever any of these attributes change                                                                 |
+| `jsonData`         | string - `{"subject1": "${data.subject}", "options1": {"host": "${data.host}"}}`. This data will be sent to backend                                         |
+| `data`             | object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to backend if jsonData is not defined. |
+| `sendFirstByClick` | load QR code only after a click. `true` — standard text ("Click to show") or a custom string/translation object used as the button label                    |
+| `size`             | size of the QR code in px                                                                                                                                   |
+| `fgColor`          | foreground color (default: `"#000000"`)                                                                                                                     |
+| `bgColor`          | background color (default: `"#ffffff"`)                                                                                                                     |
+| `level`            | error correction level: `L`, `M`, `Q`, or `H` (default: `L`)                                                                                               |
+
+#### Example of code in back-end for `qrCodeSendTo`
+
+```js
+adapter.on("message", (obj) => {
+    if (obj.command === "send") {
+        // return the string to be encoded in the QR code
+        obj.callback && adapter.sendTo(obj.from, obj.command, "https://example.com/pair?token=abc123", obj.callback);
+    }
+});
+```
+
 ### `iframe`
 
 Shows an iframe with the specified URL. (from Admin 7.7.28)
@@ -1680,6 +1709,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Added option `sendFirstByClick` to `imageSendTo`
+- (@GermanBluefox) Added new component: `qrCodeSendTo`
 
 ### 8.1.11 (2026-02-12)
 - (@GermanBluefox) Added the copy-to-clipboard dialog for `sendTo`
