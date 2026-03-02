@@ -809,7 +809,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                     if (this.props.schema.digits !== undefined && typeof mappedValue === 'number') {
                         value = mappedValue.toFixed(this.props.schema.digits);
                         if (this.props.oContext.isFloatComma) {
-                            value = (value as string).replace('.', ',');
+                            value = value.replace('.', ',');
                         }
                     } else {
                         value = mappedValue.toString();

@@ -1708,10 +1708,11 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.2.0 (2026-03-02)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added option `sendFirstByClick` to `imageSendTo`
 - (@GermanBluefox) Added new component: `qrCodeSendTo`
 - (@GermanBluefox) Added option `digits` to `state` component
+- (@GermanBluefox) Trying to fix indication of the problems in the table
 
 ### 8.1.11 (2026-02-12)
 - (@GermanBluefox) Added the copy-to-clipboard dialog for `sendTo`

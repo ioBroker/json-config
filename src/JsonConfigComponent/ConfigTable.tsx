@@ -1430,7 +1430,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             xl: schema.xl || undefined,
                         }}
                     >
-                        <Card>
+                        <Card sx={this.state.tableErrors[idx] ? { outline: '1px solid red' } : undefined}>
                             <Paper style={styles.paper}>
                                 {this.props.schema.titleAttribute ? (
                                     <Box sx={styles.cardHeader}>
@@ -1692,6 +1692,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 <TableRow
                                     hover
                                     key={`${idx}_${i}`}
+                                    sx={this.state.tableErrors[idx] ? { outline: '1px solid red' } : undefined}
                                 >
                                     {schema.items?.map((headCell: ConfigItemTableIndexed) => (
                                         <TableCell
