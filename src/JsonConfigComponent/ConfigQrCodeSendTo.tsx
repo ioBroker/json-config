@@ -77,7 +77,9 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
             const localContext = this.getContext();
             if (localContext !== this.localContext || !this.initialized) {
                 this.localContext = localContext;
-                setTimeout(() => this.askInstance(), this.initialized ? 300 : 50);
+                if (!this.props.schema.sendFirstByClick || this.state.qrData !== undefined) {
+                    setTimeout(() => this.askInstance(), this.initialized ? 300 : 50);
+                }
                 this.initialized = true;
             }
         }
