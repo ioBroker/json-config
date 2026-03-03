@@ -92,6 +92,7 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        cursor: this.state.loading ? 'default' : 'pointer',
                     }}
                     onClick={() => !this.state.loading && this.askInstance()}
                 >
