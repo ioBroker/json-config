@@ -27,6 +27,7 @@ export default class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, Confi
         }
         return (
             <QRCodeComponent
+                title={this.getText(this.props.schema.tooltip)}
                 value={this.props.schema.data}
                 size={this.props.schema.size}
                 fgColor={this.props.schema.fgColor}

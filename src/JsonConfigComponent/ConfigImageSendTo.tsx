@@ -110,6 +110,7 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
 
         return (
             <img
+                title={this.getText(this.props.schema.tooltip)}
                 alt="dynamic content"
                 src={this.state.image}
                 style={{ width: this.props.schema.width || '100%', height: this.props.schema.height }}

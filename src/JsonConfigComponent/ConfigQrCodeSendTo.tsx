@@ -113,6 +113,7 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
 
         return (
             <QRCodeComponent
+                title={this.getText(this.props.schema.tooltip)}
                 value={this.state.qrData}
                 size={this.props.schema.size}
                 fgColor={this.props.schema.fgColor}
