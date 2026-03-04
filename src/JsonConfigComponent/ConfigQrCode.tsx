@@ -25,15 +25,31 @@ export default class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, Confi
         if (!QRCodeComponent) {
             return null;
         }
+        // Quiet zone: QR spec (ISO 18004) requires min 4 modules.
+        // ~15% of size ensures sufficient quiet zone, minimum 32px
+        const padding = Math.max(32, Math.round((this.props.schema.size || 256) * 0.15));
+
         return (
-            <QRCodeComponent
-                title={this.getText(this.props.schema.tooltip)}
-                value={this.props.schema.data}
-                size={this.props.schema.size}
-                fgColor={this.props.schema.fgColor}
-                bgColor={this.props.schema.bgColor}
-                level={this.props.schema.level}
-            />
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: this.props.schema.bgColor || 'white',
+                    padding,
+                    width: '100%',
+                    height: '100%',
+                }}
+            >
+                <QRCodeComponent
+                    title={this.getText(this.props.schema.tooltip)}
+                    value={this.props.schema.data}
+                    size={this.props.schema.size}
+                    fgColor={this.props.schema.fgColor}
+                    bgColor={this.props.schema.bgColor}
+                    level={this.props.schema.level}
+                />
+            </div>
         );
     }
 }
