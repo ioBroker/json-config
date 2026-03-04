@@ -1732,6 +1732,19 @@
             "default": "start",
             "enum": ["bottom", "end", "start", "top"]
         },
+        "statesFilterProp": {
+            "description": "Filter states for panel or tabs. If true, only states of this adapter will be used. If string, it is a regex to filter states.",
+            "oneOf": [
+                {
+                    "type": "boolean",
+                    "const": true
+                },
+                {
+                    "type": "string",
+                    "description": "Regex to filter states (only for custom config), like \"^history\\\\.\\\\d\\\\..*$\" to filter history.X.*"
+                }
+            ]
+        },
         "allowAddByFilterProp": {
             "type": "boolean",
             "description": "If add allowed even if filter is set",
@@ -2497,6 +2510,9 @@
                                         },
                                         "iconPosition": {
                                             "$ref": "#/definitions/iconPositionProp"
+                                        },
+                                        "statesFilter": {
+                                            "$ref": "#/definitions/statesFilterProp"
                                         },
                                         "#include": {
                                             "description": "Include other JSON or JSON5 file. Here is the name of the file with extension. E.g. 'options.jsonConfig.json' for 'anyName.jsonConfig.json5'",
