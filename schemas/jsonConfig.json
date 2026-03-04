@@ -2236,7 +2236,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
