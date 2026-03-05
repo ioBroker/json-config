@@ -1600,6 +1600,30 @@ The following variables are available in JS function in custom settings:
 - `arrayIndex` - used only in table and represent current line in an array
 - `globalData` - used only in table for all settings and not only one table line
 
+```json5
+{
+   "general": {
+      // ....
+      "customSettingsValidator": "customObj.common.type === 'boolean' && data.options.myType == 2",
+      // ....
+   }
+}
+```
+
+You can limit the application of the custom settings only to specific states by defining the `statesFilter` on the root (`panel` or `tabs`) element of the custom settings:
+
+`jsonCustom.json`:
+```json5
+{
+   "i18n": true,
+   "type": "panel",
+   "statesFilter": true, // or "^hm-rpc\\.\\d\\..*\\.STATE$" - apply on "hm-rpc.X.*.STATE" states only
+   "items": {
+        // ...
+   }
+}
+```
+
 ## Custom component
 
 ```jsx

@@ -273,6 +273,8 @@ export interface ConfigItemPanel extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command with string contained in "command"
     command?: string;
+    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    statesFilter?: true | string;
 }
 
 export interface ConfigItemPattern extends ConfigItem {
@@ -301,6 +303,8 @@ export interface ConfigItemTabs extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command "tab" (string contained in "sendTo"). Used in jsonTab.json
     command?: string;
+    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    statesFilter?: true | string;
 }
 
 export interface ConfigItemText extends ConfigItem {
