@@ -1812,7 +1812,11 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "attr": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "system"]
@@ -2197,7 +2201,10 @@
                                         "expertMode": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "size", "text"]
@@ -2313,7 +2320,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2478,7 +2488,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2549,7 +2562,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"],
@@ -2648,7 +2664,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2729,7 +2748,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -2906,7 +2928,9 @@
                                         "defaultFunc": true,
                                         "onChange": true,
                                         "noTranslation": true,
-                                        "confirm": true
+                                        "confirm": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "command"]
@@ -3027,7 +3051,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "filename"]
@@ -3094,7 +3121,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -3693,7 +3723,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "pattern"]
@@ -3779,7 +3812,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "id", "val"]
@@ -3851,7 +3887,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "data"]
@@ -3942,7 +3981,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "command"]
@@ -3998,7 +4040,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -4054,7 +4099,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -4110,7 +4158,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -4177,7 +4228,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -4234,7 +4288,10 @@
                                         "onChange": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type", "certType"]
@@ -4645,7 +4702,10 @@
                                         "defaultFunc": true,
                                         "noTranslation": true,
                                         "confirm": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false,
                                     "required": ["type"]
@@ -4877,7 +4937,10 @@
                                         "darkStyle": true,
                                         "noMultiEdit": true,
                                         "noTranslation": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false
                                 }
@@ -4918,7 +4981,10 @@
                                         "disabled": true,
                                         "style": true,
                                         "darkStyle": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false
                                 }
@@ -4958,7 +5024,10 @@
                                         "darkStyle": true,
                                         "noMultiEdit": true,
                                         "noTranslation": true,
-                                        "width": true
+                                        "width": true,
+                                        "title": true,
+                                        "filter": true,
+                                        "sort": true
                                     },
                                     "additionalProperties": false
                                 }
@@ -5006,7 +5075,10 @@
                                 "expertMode": true,
                                 "noTranslation": true,
                                 "confirm": true,
-                                "width": true
+                                "width": true,
+                                "title": true,
+                                "filter": true,
+                                "sort": true
                             },
                             "additionalProperties": false,
                             "required": ["type"]
@@ -5093,7 +5165,10 @@
                                 "expertMode": true,
                                 "noTranslation": true,
                                 "confirm": true,
-                                "width": true
+                                "width": true,
+                                "title": true,
+                                "filter": true,
+                                "sort": true
                             },
                             "additionalProperties": false,
                             "required": ["type"]
@@ -5161,7 +5236,10 @@
                                 "expertMode": true,
                                 "noTranslation": true,
                                 "confirm": true,
-                                "width": true
+                                "width": true,
+                                "title": true,
+                                "filter": true,
+                                "sort": true
                             },
                             "additionalProperties": false,
                             "required": ["type"]
