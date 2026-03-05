@@ -604,6 +604,13 @@
                             "fgColor": "blue",
                             "size": 24,
                             "level": "L"
+                        },
+                        {
+                            "type": "objectId",
+                            "attr": "oid",
+                            "width": 100,
+                            "title": "Object",
+                            "filterFunc": "obj.common.type === 'number'"
                         }
                     ]
                 },
