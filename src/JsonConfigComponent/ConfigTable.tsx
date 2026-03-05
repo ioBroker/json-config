@@ -275,6 +275,7 @@ interface ConfigTableState extends ConfigGenericState {
     width: number;
     tableErrors: Record<number, Record<string, string>>;
     collapsed: number[];
+    filterLabelMap: Record<string, Record<string, string>>;
 }
 
 function encrypt(secret: string, value: string): string {
@@ -381,6 +382,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 width: 0,
                 tableErrors: {},
                 collapsed,
+                filterLabelMap: {},
             },
             () => this.validateUniqueProps(),
         );
@@ -441,6 +443,15 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 schema={schemaItem as ConfigItemPanel}
                 table
                 themeName={this.props.themeName}
+                onFilterLabelUpdate={(attr: string, valueToLabel: Record<string, string>) => {
+                    const current = this.state.filterLabelMap[attr];
+                    const merged = { ...current, ...valueToLabel };
+                    if (JSON.stringify(current) !== JSON.stringify(merged)) {
+                        this.setState(prevState => ({
+                            filterLabelMap: { ...prevState.filterLabelMap, [attr]: merged },
+                        }));
+                    }
+                }}
                 onHiddenChanged={
                     asCard
                         ? (attr: string, hidden: boolean): void => {
@@ -1006,9 +1017,24 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             let valueInputRef = ConfigTable.getFilterValue(this.filterRefs[attr]);
             if (!clear && valueInputRef) {
                 valueInputRef = valueInputRef.toLowerCase();
-                visibleValue = visibleValue.filter(
-                    idx => value[idx] && value[idx][attr] && value[idx][attr].toLowerCase().includes(valueInputRef),
-                );
+                const labelMap = this.state.filterLabelMap?.[attr];
+                visibleValue = visibleValue.filter(idx => {
+                    if (!value[idx] || value[idx][attr] == null) {
+                        return false;
+                    }
+                    const rawVal = value[idx][attr].toString().toLowerCase();
+                    if (rawVal.includes(valueInputRef)) {
+                        return true;
+                    }
+                    // Also check against the display label
+                    if (labelMap) {
+                        const label = labelMap[value[idx][attr]];
+                        if (label && label.toLowerCase().includes(valueInputRef)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
             } else if (this.filterRefs[attr].current) {
                 ConfigTable.setFilterValue(this.filterRefs[attr], '');
             }

@@ -25,6 +25,17 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
         );
 
+        // Report value-to-label mapping to parent table for filtering
+        if (this.props.onFilterLabelUpdate && this.props.table) {
+            const valueToLabel: Record<string, string> = {};
+            for (const opt of selectOptions) {
+                if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
+                    valueToLabel[opt.value] = opt.label;
+                }
+            }
+            this.props.onFilterLabelUpdate(this.props.attr, valueToLabel);
+        }
+
         // if __different
         if (Array.isArray(value)) {
             selectOptions.unshift({

@@ -103,7 +103,10 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
                         this.props.schema.command || 'send',
                         data,
                     )
-                    .then(list => this.setState({ list, running: false }))
+                    .then(list => {
+                        this.reportFilterLabels(list);
+                        this.setState({ list, running: false });
+                    })
                     .catch(e => {
                         console.error(`Cannot send command: ${e}`);
                     });
@@ -112,6 +115,19 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
             const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
             this.setState({ value, running: false });
+        }
+    }
+
+    /** Report value-to-label mapping to parent table for filtering */
+    reportFilterLabels(list: { label: string; value: string }[] | undefined): void {
+        if (this.props.onFilterLabelUpdate && this.props.table && Array.isArray(list)) {
+            const valueToLabel: Record<string, string> = {};
+            for (const opt of list) {
+                if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
+                    valueToLabel[opt.value] = opt.label;
+                }
+            }
+            this.props.onFilterLabelUpdate(this.props.attr, valueToLabel);
         }
     }
 

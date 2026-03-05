@@ -96,6 +96,8 @@ export interface ConfigGenericProps {
     onChange: (attrOrData: string | Record<string, any>, val?: any, cb?: () => void, saveConfig?: boolean) => void;
     onError: (attr: string, error?: string) => void;
     onHiddenChanged?: (attr: string, hidden?: boolean) => void;
+    /** Filled only by table: components with value/label options report their label mappings for table filtering */
+    onFilterLabelUpdate?: (attr: string, valueToLabel: Record<string, string>) => void;
     originalData: Record<string, any>;
     /** This indicates that the component is the very firsts one - root */
     root?: boolean;
