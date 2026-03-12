@@ -69,7 +69,7 @@ interface ConfigStaticTextProps extends ConfigGenericProps {
     schema: ConfigItemStaticText;
 }
 
-class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProps, ConfigGenericState> {
+export default class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProps, ConfigGenericState> {
     renderItem(_error: string, disabled: boolean /* , defaultValue */): JSX.Element {
         if (this.props.schema.button) {
             const icon = this.getIcon();
@@ -115,7 +115,24 @@ class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProps, ConfigGeneri
             this.props.schema.text || this.props.schema.label,
             this.props.schema.noTranslation,
         );
-        if (text && (text.includes('<a ') || text.includes('<br') || text.includes('<b>') || text.includes('<i>'))) {
+        if (this.props.schema.format === 'html') {
+            text = <div dangerouslySetInnerHTML={{ __html: text }} />;
+        } else if (this.props.schema.format === 'json') {
+            try {
+                const obj = typeof text === 'string' ? JSON.parse(text) : text;
+                text = (
+                    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}>
+                        {JSON.stringify(obj, null, 2)}
+                    </pre>
+                );
+            } catch (e) {
+                // invalid JSON — just render as text
+                // fallthrough to next block
+            }
+        } else if (
+            text &&
+            (text.includes('<a ') || text.includes('<br') || text.includes('<b>') || text.includes('<i>'))
+        ) {
             text = Utils.renderTextWithA(text);
         }
 
@@ -154,5 +171,3 @@ class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProps, ConfigGeneri
         );
     }
 }
-
-export default ConfigStaticText;

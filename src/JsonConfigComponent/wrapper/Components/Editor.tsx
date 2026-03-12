@@ -32,7 +32,7 @@ interface EditorProps {
     error?: boolean;
 }
 
-function Editor(props: EditorProps): JSX.Element {
+export default function Editor(props: EditorProps): JSX.Element {
     return (
         <AceEditor
             style={props.error === true ? styles.jsonError : props.error === false ? styles.jsonNoError : undefined}
@@ -61,5 +61,3 @@ function Editor(props: EditorProps): JSX.Element {
         />
     );
 }
-
-export default Editor;

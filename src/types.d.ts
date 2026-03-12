@@ -518,6 +518,8 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     icon?: ConfigIconType;
     /** styles for the button */
     controlStyle?: CustomCSSProperties;
+    /** Show text as HTML, text or pretty-printed JSON */
+    format?: 'text' | 'html' | 'json';
 }
 
 export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {

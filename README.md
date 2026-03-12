@@ -693,12 +693,13 @@ button that sets instance's state
 
 ### `staticText`
 
-static text like description
+Static text like description
 
-| Property | Description         |
-|----------|---------------------|
-| `label`  | multi-language text |
-| `text`   | same as label       |
+| Property | Description                                         |
+|----------|-----------------------------------------------------|
+| `label`  | multi-language text                                 |
+| `text`   | same as label                                       |
+| `format` | `text` (default), `html` (from admin version 7.8.4) |
 
 exactly one of `label` or `text` must be specified - not both
 
@@ -1732,12 +1733,15 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Extended the staticText component with HTML and JSON visualization
+
 ### 8.2.3 (2026-03-04)
 - (@GermanBluefox) Increased the QR code padding
 
 ### 8.2.2 (2026-03-03)
 - (@GermanBluefox) Added option `sendFirstByClick` to `imageSendTo`
-- (@GermanBluefox) Added new component: `qrCodeSendTo`
+- (@GermanBluefox) Added a new component: `qrCodeSendTo`
 - (@GermanBluefox) Added option `digits` to `state` component
 - (@GermanBluefox) Trying to fix indication of the problems in the table
 

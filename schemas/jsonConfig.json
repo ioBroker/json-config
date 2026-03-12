@@ -4410,6 +4410,12 @@
                                         }
                                     ]
                                 },
+                                "format": {
+                                    "description": "How the static text should be interpreted. Use `text` for plain text, `html` to render HTML, or `json` for displaying JSON (optionally with syntax highlighting).",
+                                    "type": "string",
+                                    "enum": ["text", "html", "json"],
+                                    "default": "text"
+                                },
                                 "label": true,
                                 "type": true,
                                 "defaultSendTo": true,
@@ -7266,8 +7272,8 @@
                                         }
                                     },
                                     "then": {
-                                        "properties": {
-                                            "text": {
+                                                    "properties": {
+                                                        "text": {
                                                 "description": "Static text like description",
                                                 "oneOf": [
                                                     {
@@ -7278,6 +7284,12 @@
                                                     }
                                                 ]
                                             },
+                                                        "format": {
+                                                            "description": "How the static text should be interpreted. Use `text` for plain text, `html` to render HTML, or `json` for displaying JSON (optionally with syntax highlighting).",
+                                                            "type": "string",
+                                                            "enum": ["text", "html", "json"],
+                                                            "default": "text"
+                                                        },
                                             "label": true,
                                             "type": true,
                                             "defaultSendTo": true,
