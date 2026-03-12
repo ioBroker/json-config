@@ -125,9 +125,9 @@ export default class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProp
                         {JSON.stringify(obj, null, 2)}
                     </pre>
                 );
-            } catch (e) {
+            } catch {
                 // invalid JSON — just render as text
-                // fallthrough to next block
+                // fallthrough to the next block
             }
         } else if (
             text &&

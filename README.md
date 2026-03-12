@@ -1733,7 +1733,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.2.4 (2026-03-12)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Extended the staticText component with HTML and JSON visualization
 
 ### 8.2.3 (2026-03-04)
