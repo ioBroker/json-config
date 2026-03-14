@@ -1745,7 +1745,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.2.6 (2026-03-14)
 - (@GermanBluefox) Added description for options in 'select' or 'selectSendTo' component
 
 ### 8.2.5 (2026-03-12)
