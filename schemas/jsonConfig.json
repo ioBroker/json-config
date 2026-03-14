@@ -3627,6 +3627,9 @@
                                             },
                                             "color": {
                                                 "type": "string"
+                                            },
+                                            "description": {
+                                                "description": "Description for the value, shown below the label"
                                             }
                                         }
                                     }
@@ -6725,6 +6728,9 @@
                                                         },
                                                         "color": {
                                                             "type": "string"
+                                                        },
+                                                        "description": {
+                                                            "description": "Description for the value, shown below the label"
                                                         }
                                                     }
                                                 }

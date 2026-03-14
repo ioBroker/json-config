@@ -255,6 +255,8 @@ export interface ConfigItemSelectOption {
     color?: string;
     /** Formula or boolean value to show or hide the option */
     hidden?: string | boolean;
+    /** Description for the value */
+    description?: ioBroker.StringOrTranslated;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
@@ -598,6 +600,7 @@ export interface ConfigItemSelect extends ConfigItem {
               value?: number | string;
               color?: string;
               hidden?: string | boolean;
+              description?: ioBroker.StringOrTranslated;
           }
     )[];
     attr?: string;

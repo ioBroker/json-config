@@ -72,7 +72,7 @@ interface ConfigSelectSendToProps extends ConfigGenericProps {
 }
 
 interface ConfigSelectSendToState extends ConfigGenericState {
-    list?: { label: string; value: string; hidden?: boolean; group?: boolean }[];
+    list?: { label: string; value: string; hidden?: boolean; group?: boolean; description?: string }[];
     running?: boolean;
 }
 
@@ -293,7 +293,12 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
                         if (it.group) {
                             return (
                                 <ListSubheader key={i}>
-                                    {this.getText(it.label, this.props.schema.noTranslation)}
+                                    <div>{this.getText(it.label, this.props.schema.noTranslation)}</div>
+                                    {it.description ? (
+                                        <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
+                                            {this.getText(it.description)}
+                                        </div>
+                                    ) : null}
                                 </ListSubheader>
                             );
                         }
@@ -320,7 +325,10 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
                                         }}
                                     />
                                 ) : null}
-                                <ListItemText primary={it.label} />
+                                <ListItemText
+                                    primary={this.getText(it.label)}
+                                    secondary={this.getText(it.description)}
+                                />
                             </MenuItem>
                         );
                     })}

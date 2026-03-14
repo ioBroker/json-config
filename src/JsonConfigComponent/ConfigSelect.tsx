@@ -39,10 +39,11 @@ interface ConfigInstanceSelectState extends ConfigGenericState {
         group?: boolean;
         hidden?: string | boolean;
         color?: string;
+        description?: string;
     }[];
 }
 
-class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstanceSelectState> {
+export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstanceSelectState> {
     private initialValue: string | string[] = '';
 
     componentDidMount(): void {
@@ -63,6 +64,7 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
             group?: boolean;
             hidden?: string | boolean;
             color?: string;
+            description?: string;
         }[] = [];
 
         (this.props.schema.options || []).forEach(item => {
@@ -72,11 +74,13 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                 label: ioBroker.StringOrTranslated;
                 value?: number | string;
                 hidden?: string | boolean;
+                description?: string;
             } = item as {
                 items: ConfigItemSelectOption[];
                 label: ioBroker.StringOrTranslated;
                 value?: number | string;
                 hidden?: string | boolean;
+                description?: string;
             };
             if (Array.isArray(groupItem.items)) {
                 selectOptions.push({
@@ -84,6 +88,7 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                     value: item.value,
                     group: true,
                     color: item.color,
+                    description: this.getText(item.description),
                 });
                 groupItem.items.forEach(it =>
                     selectOptions.push({
@@ -91,6 +96,7 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                         value: it.value,
                         hidden: it.hidden,
                         color: item.color,
+                        description: this.getText(item.description),
                     }),
                 );
             } else {
@@ -99,6 +105,7 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                     value: item.value,
                     hidden: item.hidden,
                     color: item.color,
+                    description: this.getText(item.description),
                 });
             }
         });
@@ -210,11 +217,25 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                                 })}
                             </div>
                         ) : item?.color ? (
-                            <div style={{ color: item.color }}>{item?.label === undefined ? val : item.label}</div>
+                            <>
+                                <div style={{ color: item.color }}>{item.label === undefined ? val : item.label}</div>
+                                {item.description ? (
+                                    <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
+                                        {item.description}
+                                    </div>
+                                ) : null}
+                            </>
                         ) : item?.label === undefined ? (
                             val
                         ) : (
-                            item.label
+                            <>
+                                <div>{item.label}</div>
+                                {item.description ? (
+                                    <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
+                                        {item.description}
+                                    </div>
+                                ) : null}
+                            </>
                         )
                     }
                     onChange={e => {
@@ -238,7 +259,12 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                                     key={i}
                                     style={{ color: it.color }}
                                 >
-                                    {it.label}
+                                    <div>{it.label}</div>
+                                    {item.description ? (
+                                        <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
+                                            {item.description}
+                                        </div>
+                                    ) : null}
                                 </ListSubheader>
                             );
                         }
@@ -268,6 +294,7 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
                                 ) : null}
                                 <ListItemText
                                     primary={it.label}
+                                    secondary={it.description}
                                     style={{ color: it.color }}
                                 />
                             </MenuItem>
@@ -287,5 +314,3 @@ class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstan
         );
     }
 }
-
-export default ConfigSelect;

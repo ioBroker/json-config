@@ -442,11 +442,21 @@ Select function from `enum.func` (With color and icon) - (only Admin6)
 
 ### `select`
 
-| Property        | Description                                                               |
-|-----------------|---------------------------------------------------------------------------|
-| `options`       | object with labels, optional translations, optional grouping and values   |
-| `multiple`      | Multiple choice select (From 7.6.5)                                       |
-| `showAllValues` | show item even if no label was found for it (by multiple), default=`true` |
+| Property        | Description                                                                                                    |
+|-----------------|----------------------------------------------------------------------------------------------------------------|
+| `options`       | object with labels, optional translations, optional grouping and values                                        |
+| `multiple`      | Multiple choice select (From 7.6.5)                                                                            |
+| `showAllValues` | show item even if no label was found for it (by multiple), default=`true`                                      |
+
+Each option in `options` can have:
+
+| Property      | Description                                                        |
+|---------------|--------------------------------------------------------------------|
+| `label`       | Label of the option (can be a string or translatable object)       |
+| `value`       | Value of the option                                                |
+| `color`       | Color of the option text                                           |
+| `hidden`      | Formula or boolean value to show or hide the option                |
+| `description` | Description shown below the option label (can be translatable)     |
 
 #### Example for `select options`
 
@@ -1042,6 +1052,8 @@ Shows the drop-down menu with the given from the instance values.
 | `showAllValues` | show item even if no label was found for it (by multiple), default=`true`                                                                                                               |
 | `noTranslation` | do not translate label of selects. To use this option, your adapter must implement message handler.The result of command must be an array in form `[{"value": 1, "label": "one"}, ...]` |
 | `alsoDependsOn` | by change of which attributes, the command must be resent                                                                                                                               |
+
+The backend handler can return items with an optional `description` field: `[{"value": 1, "label": "one", "description": "Some hint"}, ...]`. The description is shown below the label in the dropdown.
 
 #### Example of code in back-end for `selectSendTo`
 
@@ -1733,6 +1745,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added description for options in 'select' or 'selectSendTo' component
+
 ### 8.2.5 (2026-03-12)
 - (@GermanBluefox) Extended the staticText component with HTML and JSON visualization
 
