@@ -1745,7 +1745,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.2.7 (2026-03-14)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Made the secondary text in 'select' and 'selectSendTo' smaller, italic and semi-transparent
 
 ### 8.2.6 (2026-03-14)
