@@ -295,6 +295,11 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                                 <ListItemText
                                     primary={it.label}
                                     secondary={it.description}
+                                    slotProps={{
+                                        secondary: {
+                                            style: { fontSize: 'smaller', fontStyle: 'italic', opacity: 0.7 },
+                                        },
+                                    }}
                                     style={{ color: it.color }}
                                 />
                             </MenuItem>

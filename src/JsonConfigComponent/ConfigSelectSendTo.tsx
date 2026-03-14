@@ -328,6 +328,11 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
                                 <ListItemText
                                     primary={this.getText(it.label)}
                                     secondary={this.getText(it.description)}
+                                    slotProps={{
+                                        secondary: {
+                                            style: { fontSize: 'smaller', fontStyle: 'italic', opacity: 0.7 },
+                                        },
+                                    }}
                                 />
                             </MenuItem>
                         );
