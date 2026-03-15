@@ -3642,6 +3642,11 @@
                                     "description": "Show item even if no label was found for it (by multiple), default=`true`",
                                     "type": "boolean"
                                 },
+                                "format": {
+                                    "description": "How to render the select: 'dropdown' (default) or 'radio' (radio buttons)",
+                                    "type": "string",
+                                    "enum": ["dropdown", "radio"]
+                                },
                                 "label": true,
                                 "type": true,
                                 "defaultSendTo": true,
@@ -6742,6 +6747,11 @@
                                             "showAllValues": {
                                                 "description": "Show item even if no label was found for it (by multiple), default=`true`",
                                                 "type": "boolean"
+                                            },
+                                            "format": {
+                                                "description": "How to render the select: 'dropdown' (default) or 'radio' (radio buttons)",
+                                                "type": "string",
+                                                "enum": ["dropdown", "radio"]
                                             },
                                             "label": true,
                                             "type": true,

@@ -447,6 +447,7 @@ Select function from `enum.func` (With color and icon) - (only Admin6)
 | `options`       | object with labels, optional translations, optional grouping and values                                        |
 | `multiple`      | Multiple choice select (From 7.6.5)                                                                            |
 | `showAllValues` | show item even if no label was found for it (by multiple), default=`true`                                      |
+| `format`        | Render format: `"dropdown"` (default) or `"radio"` to display options as radio buttons instead of a dropdown   |
 
 Each option in `options` can have:
 
@@ -1745,6 +1746,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added radio button control for state component ('select')
+
 ### 8.2.7 (2026-03-14)
 - (@GermanBluefox) Made the secondary text in 'select' and 'selectSendTo' smaller, italic and semi-transparent
 

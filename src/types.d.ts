@@ -603,6 +603,7 @@ export interface ConfigItemSelect extends ConfigItem {
               description?: ioBroker.StringOrTranslated;
           }
     )[];
+    format: 'dropdown' | 'radio';
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;
