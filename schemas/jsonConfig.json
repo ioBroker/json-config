@@ -3093,6 +3093,17 @@
                                             "type": "number",
                                             "default": 1
                                         },
+                                        "unit": {
+                                            "description": "Unit (could be multi-language)",
+                                            "oneOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "$ref": "#/definitions/multilingual"
+                                                }
+                                            ]
+                                        },
                                         "attr": true,
                                         "label": true,
                                         "type": true,

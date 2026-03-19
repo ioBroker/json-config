@@ -1746,8 +1746,11 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Correcting unit in schema
+
 ### 8.2.8 (2026-03-15)
-- (@GermanBluefox) Added radio button control for state component ('select')
+- (@GermanBluefox) Added radio button control for the state component ('select')
 
 ### 8.2.7 (2026-03-14)
 - (@GermanBluefox) Made the secondary text in 'select' and 'selectSendTo' smaller, italic and semi-transparent
