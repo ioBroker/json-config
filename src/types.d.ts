@@ -443,6 +443,8 @@ export interface ConfigItemObjectId extends ConfigItem {
     };
     /** Cannot be used together with `type` settings. It is a function that will be called for every object and must return true or false. Example: `obj.common.type === 'number'` */
     filterFunc?: (obj: ioBroker.Object) => boolean;
+    /** Special case to fill other field, when the ID is selected. Example "common.name=>name,common.color=>color(X)" - fills the field name and color with object name and colors. The color will be overwritten with the new value event when it is not empty */
+    fillOnSelect?: string;
 }
 
 export interface ConfigItemSlider extends ConfigItem {
