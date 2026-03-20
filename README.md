@@ -1747,7 +1747,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.2.11 (2026-03-20)
 - (@GermanBluefox) Correcting unit in schema
 - (@GermanBluefox) Fill other config fields when an object ID is selected
 
