@@ -65,7 +65,12 @@ class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdSt
                     const obj = await this.props.oContext.socket.getObject(value);
                     for (const item of this.fillOnSelect) {
                         if (item.overwrite || !ConfigGeneric.getValue(this.props.data, item.attr)) {
-                            await this.onChange(item.attr, ConfigGeneric.getValue(obj, item.pathInObject));
+                            let objVal = ConfigGeneric.getValue(obj, item.pathInObject);
+                            // Special case for translated name
+                            if (typeof objVal === 'object') {
+                                objVal = this.getText(objVal, true);
+                            }
+                            await this.onChange(item.attr, objVal);
                         }
                     }
                 } catch (e) {
@@ -134,8 +139,7 @@ class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdSt
                         onClose={() => this.setState({ showSelectId: false })}
                         onOk={value_ => {
                             const val = Array.isArray(value_) ? value_[0] : value_;
-                            this.setState({ showSelectId: false, value: val }, () =>
-                                this.onObjectChanged(attr, val));
+                            this.setState({ showSelectId: false, value: val }, () => this.onObjectChanged(attr, val));
                         }}
                     />
                 ) : null}
