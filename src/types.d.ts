@@ -500,6 +500,12 @@ export interface ConfigItemStaticImage extends ConfigItem {
     src: string;
     /** optional HTTP link */
     href?: string;
+    /** It will be shown small image 100px, and by click on it the dialog will be opened with bigger image */
+    showInDialog?: boolean;
+    /** If showInDialog, the label for the button */
+    showInDialogButtonLabel?: ioBroker.StringOrTranslated;
+    /** If showInDialog, the size of small image (default 100px) */
+    showInDialogSmallSize?: number;
 }
 
 export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {

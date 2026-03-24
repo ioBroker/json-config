@@ -1,14 +1,22 @@
 import React, { type JSX } from 'react';
 
+import { Button, Dialog, DialogActions, DialogContent, Tooltip } from '@mui/material';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import type { ConfigItemStaticImage } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
-interface ConfigInstanceSelectProps extends ConfigGenericProps {
+interface ConfigStaticImageProps extends ConfigGenericProps {
     schema: ConfigItemStaticImage;
 }
 
-class ConfigStaticImage extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGenericState> {
-    renderItem(/* error: string, disabled: boolean, defaultValue */): JSX.Element {
+interface ConfigStaticImageState extends ConfigGenericState {
+    showDialog?: boolean;
+}
+
+class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStaticImageState> {
+    private getSrc(): string {
         let src = this.props.schema.src;
         if (
             src &&
@@ -19,16 +27,74 @@ class ConfigStaticImage extends ConfigGeneric<ConfigInstanceSelectProps, ConfigG
         ) {
             src = `adapter/${this.props.oContext.adapterName}/${src}`;
         }
+        return src;
+    }
+
+    renderItem(/* error: string, disabled: boolean, defaultValue */): JSX.Element {
+        const { schema } = this.props;
+        const src = this.getSrc();
+
+        if (schema.showInDialog) {
+            const smallSize = schema.showInDialogSmallSize || 100;
+            const buttonLabel = schema.showInDialogButtonLabel ? this.getText(schema.showInDialogButtonLabel) : '';
+
+            return (
+                <>
+                    <Tooltip title={I18n.t('ra_Click to see in full size')}>
+                        <img
+                            src={src}
+                            style={{
+                                cursor: 'pointer',
+                                width: 'auto',
+                                height: smallSize,
+                                objectFit: 'contain',
+                            }}
+                            onClick={() => this.setState({ showDialog: true })}
+                            alt=""
+                        />
+                    </Tooltip>{' '}
+                    {buttonLabel ? (
+                        <Button
+                            variant="outlined"
+                            color="grey"
+                            onClick={() => this.setState({ showDialog: true })}
+                        >
+                            {buttonLabel}
+                        </Button>
+                    ) : null}
+                    {this.state.showDialog ? (
+                        <Dialog
+                            open={!0}
+                            onClose={() => this.setState({ showDialog: false })}
+                            maxWidth="lg"
+                        >
+                            <DialogContent>
+                                <img
+                                    src={src}
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                    alt=""
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => this.setState({ showDialog: false })}
+                                    color="primary"
+                                >
+                                    {I18n.t('ra_Close')}
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    ) : null}
+                </>
+            );
+        }
 
         return (
             <img
                 src={src}
-                style={{ cursor: this.props.schema.href ? 'pointer' : undefined, width: '100%', height: '100%' }}
-                onClick={
-                    this.props.schema.href
-                        ? () => this.props.schema.href && window.open(this.props.schema.href, '_blank')
-                        : null
-                }
+                style={{ cursor: schema.href ? 'pointer' : undefined, width: '100%', height: '100%' }}
+                onClick={schema.href ? () => schema.href && window.open(schema.href, '_blank') : null}
                 alt=""
             />
         );
