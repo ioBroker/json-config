@@ -27,6 +27,7 @@ export interface AccessTokens {
     token_type: 'Bearer';
     scope: string;
     refresh_token: string;
+    clientId?: string;
 }
 
 interface ConfigOAuth2State extends ConfigGenericState {
@@ -135,6 +136,12 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                 accessTokensParsed.access_token_expires_on ||= new Date(
                     Date.now() + accessTokensParsed.expires_in * 1000,
                 ).toISOString();
+                if (this.props.schema.ownClientId) {
+                    accessTokensParsed.clientId = ConfigGeneric.getValue(
+                        this.props.data,
+                        this.props.schema.ownClientSecret,
+                    );
+                }
 
                 this.props.oContext.socket
                     .setState(this.oid, JSON.stringify(accessTokensParsed), true)
