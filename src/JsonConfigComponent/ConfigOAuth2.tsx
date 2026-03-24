@@ -139,7 +139,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                 if (this.props.schema.ownClientId) {
                     accessTokensParsed.client_id = ConfigGeneric.getValue(
                         this.props.data,
-                        this.props.schema.ownClientSecret,
+                        this.props.schema.ownClientId,
                     );
                 }
 
@@ -231,6 +231,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                                 this.onChange(this.props.schema.ownClientId, value),
                             );
                         }}
+                        style={{ marginBottom: 8 }}
                         variant="standard"
                         fullWidth
                         error={!this.state.clientId}
@@ -265,6 +266,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                                 this.onChange(this.props.schema.ownClientSecret, value),
                             );
                         }}
+                        style={{ marginBottom: 8 }}
                         variant="standard"
                         fullWidth
                         error={!this.state.clientSecret}
