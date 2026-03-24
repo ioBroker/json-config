@@ -1749,7 +1749,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.2.14 (2026-03-24)
 - (@GermanBluefox) Added the possibility to use own Client ID for oauth authentication
 
 ### 8.2.11 (2026-03-20)
