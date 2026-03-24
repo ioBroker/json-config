@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button, TextField } from '@mui/material';
-import { CloudUpload } from '@mui/icons-material';
+import { Button, IconButton, TextField } from '@mui/material';
+import { Close as CloseIcon, CloudUpload } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
@@ -35,6 +35,8 @@ interface ConfigOAuth2State extends ConfigGenericState {
     blocked: boolean;
     running: boolean;
     pressed: boolean;
+    clientId: string;
+    clientSecret: string;
 }
 
 export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, ConfigOAuth2State> {
@@ -52,6 +54,8 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
             blocked: false,
             running: false,
             pressed: false,
+            clientId: '',
+            clientSecret: '',
         };
 
         this.url = `https://oauth2.iobroker.in/${props.schema.identifier}?redirect=true`;
@@ -72,13 +76,26 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
 
         await this.props.oContext.socket.subscribeState(this.oid, this.onTokensUpdated);
 
+        let state: Partial<ConfigOAuth2State> | undefined;
+        if (this.props.schema.ownClientId) {
+            state = { clientId: ConfigGeneric.getValue(this.props.data, this.props.schema.ownClientId) };
+        }
+        if (this.props.schema.ownClientId) {
+            state ||= {};
+            state.clientSecret = ConfigGeneric.getValue(this.props.data, this.props.schema.ownClientSecret);
+        }
+
         // read tokens
         const tokens = await this.props.oContext.socket.getState(this.oid);
         if (tokens) {
             const accessTokens: AccessTokens = JSON.parse(tokens.val as string);
             if (new Date(accessTokens.access_token_expires_on).getTime() > Date.now()) {
-                this.setState({ accessTokens: tokens.val as string });
+                state ||= {};
+                state.accessTokens = tokens.val as string;
             }
+        }
+        if (state) {
+            this.setState(state as ConfigOAuth2State);
         }
     }
 
@@ -155,7 +172,10 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
     };
 
     onOpenUrl(): void {
-        this.authWindow = window.open(this.url, this.props.schema.identifier);
+        this.authWindow = window.open(
+            this.url + (this.props.schema.ownClientId ? `&clientId=${encodeURIComponent(this.state.clientId)}` : ''),
+            this.props.schema.identifier,
+        );
         if (!this.authWindow || this.authWindow.closed || typeof this.authWindow.closed === 'undefined') {
             this.setState({ blocked: true });
         } else {
@@ -163,7 +183,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
         }
     }
 
-    renderItem(): React.JSX.Element {
+    renderItem(_error?: boolean, disabled?: boolean): React.JSX.Element {
         let validTill = '';
         if (this.state.accessTokens) {
             try {
@@ -194,8 +214,80 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
 
         return (
             <div style={{ width: '100%', margin: '0 0 1rem 0' }}>
+                {this.props.schema.ownClientId ? (
+                    <TextField
+                        value={this.state.clientId}
+                        onChange={e => {
+                            const value = e.target.value;
+
+                            this.setState({ clientId: value }, () =>
+                                this.onChange(this.props.schema.ownClientId, value),
+                            );
+                        }}
+                        variant="standard"
+                        fullWidth
+                        error={!this.state.clientId}
+                        disabled={!!disabled}
+                        label={I18n.t('ra_OAuth Client ID')}
+                        slotProps={{
+                            input: {
+                                endAdornment: this.state.clientId ? (
+                                    <IconButton
+                                        size="small"
+                                        tabIndex={-1}
+                                        onClick={() =>
+                                            this.setState({ clientId: '' }, () =>
+                                                this.onChange(this.props.schema.ownClientId, ''),
+                                            )
+                                        }
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>
+                                ) : null,
+                            },
+                        }}
+                    />
+                ) : null}
+                {this.props.schema.ownClientSecret ? (
+                    <TextField
+                        value={this.state.clientSecret}
+                        onChange={e => {
+                            const value = e.target.value;
+
+                            this.setState({ clientSecret: value }, () =>
+                                this.onChange(this.props.schema.ownClientSecret, value),
+                            );
+                        }}
+                        variant="standard"
+                        fullWidth
+                        error={!this.state.clientSecret}
+                        disabled={!!disabled}
+                        label={I18n.t('ra_OAuth Client secret')}
+                        slotProps={{
+                            input: {
+                                endAdornment: this.state.clientSecret ? (
+                                    <IconButton
+                                        size="small"
+                                        tabIndex={-1}
+                                        onClick={() =>
+                                            this.setState({ clientSecret: '' }, () =>
+                                                this.onChange(this.props.schema.ownClientSecret, ''),
+                                            )
+                                        }
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>
+                                ) : null,
+                            },
+                        }}
+                    />
+                ) : null}
                 <Button
-                    disabled={this.state.running}
+                    disabled={
+                        this.state.running ||
+                        (this.props.schema.ownClientSecret && !this.state.clientSecret) ||
+                        (this.props.schema.ownClientId && !this.state.clientId)
+                    }
                     endIcon={icon || <CloudUpload />}
                     variant="contained"
                     onClick={() => this.onOpenUrl()}

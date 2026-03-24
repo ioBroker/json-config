@@ -363,6 +363,8 @@ export interface ConfigItemOAuth2 extends ConfigItem {
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     identifier: 'spotify' | 'google' | 'dropbox' | 'microsoft' | string;
     scope?: string; // optional scopes divided by space, e.g. `user-read-private user-read-email`
+    ownClientId?: string; // Optional. User can provide own Client ID and this is a attribut name where the client ID must be stored
+    ownClientSecret?: string; // Optional. User can provide own Client secret and this is a attribut name where the client secret must be stored
     refreshLabel?: ioBroker.StringOrTranslated; // label for the refresh button
 }
 
