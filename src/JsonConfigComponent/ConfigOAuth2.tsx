@@ -180,7 +180,10 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
 
     onOpenUrl(): void {
         this.authWindow = window.open(
-            this.url + (this.props.schema.ownClientId ? `&clientId=${encodeURIComponent(this.state.clientId)}` : ''),
+            this.url +
+                (this.props.schema.ownClientId
+                    ? `&client_id=${encodeURIComponent(this.state.clientId)}&client_secret=${encodeURIComponent(this.state.clientSecret)}`
+                    : ''),
             this.props.schema.identifier,
         );
         if (!this.authWindow || this.authWindow.closed || typeof this.authWindow.closed === 'undefined') {
