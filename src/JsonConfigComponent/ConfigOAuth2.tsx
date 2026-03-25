@@ -38,6 +38,7 @@ interface ConfigOAuth2State extends ConfigGenericState {
     pressed: boolean;
     clientId: string;
     clientSecret: string;
+    accessTokenError: string;
 }
 
 export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, ConfigOAuth2State> {
@@ -57,6 +58,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
             pressed: false,
             clientId: '',
             clientSecret: '',
+            accessTokenError: '',
         };
 
         this.url = `https://oauth2.iobroker.in/${props.schema.identifier}?redirect=true`;
@@ -344,24 +346,45 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                             value={this.state.accessTokens}
                             label={I18n.t('ra_Enter the code from that page here')}
                             variant="standard"
+                            error={!!this.state.accessTokenError}
+                            helperText={this.state.accessTokenError || ''}
                             onChange={e => {
                                 let accessTokens = e.target.value;
-                                if (accessTokens && !accessTokens.startsWith('{')) {
-                                    // convert base64 to string
-                                    accessTokens = atob(accessTokens);
-                                }
                                 try {
-                                    const accessTokensParsed: AccessTokens = JSON.parse(accessTokens);
-                                    if (accessTokensParsed.access_token) {
-                                        accessTokensParsed.access_token_expires_on = new Date(
-                                            Date.now() + (accessTokensParsed.expires_in - 10) * 1000,
-                                        ).toISOString();
-                                        this.setState({ accessTokens: JSON.stringify(accessTokensParsed) }, () =>
-                                            this.saveToken(this.state.accessTokens),
-                                        );
+                                    if (accessTokens?.trim() && !accessTokens.trim().startsWith('{')) {
+                                        // convert base64 to string
+                                        accessTokens = atob(accessTokens.trim());
                                     }
                                 } catch {
-                                    // ignore
+                                    this.setState({
+                                        accessTokenError: 'Invalid access token. Cannot decode from base64',
+                                    });
+                                }
+                                if (accessTokens?.startsWith('{')) {
+                                    try {
+                                        const accessTokensParsed: AccessTokens = JSON.parse(accessTokens);
+                                        if (accessTokensParsed.access_token) {
+                                            accessTokensParsed.access_token_expires_on = new Date(
+                                                Date.now() + (accessTokensParsed.expires_in - 10) * 1000,
+                                            ).toISOString();
+                                            this.setState(
+                                                {
+                                                    accessTokens: JSON.stringify(accessTokensParsed),
+                                                    accessTokenError: '',
+                                                },
+                                                () => this.saveToken(this.state.accessTokens),
+                                            );
+                                        }
+                                    } catch {
+                                        this.setState({
+                                            accessTokenError: 'Invalid access token. Cannot parse',
+                                        });
+                                    }
+                                } else if (accessTokens) {
+                                    this.setState({
+                                        accessTokens,
+                                        accessTokenError: 'Invalid access token. Not JSON',
+                                    });
                                 }
                             }}
                             fullWidth
