@@ -377,7 +377,8 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                                         }
                                     } catch {
                                         this.setState({
-                                            accessTokenError: 'Invalid access token. Cannot parse',
+                                            accessTokens,
+                                            accessTokenError: 'Invalid access token. Cannot parse JSON',
                                         });
                                     }
                                 } else if (accessTokens) {
