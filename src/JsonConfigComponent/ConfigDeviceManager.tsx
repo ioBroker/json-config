@@ -28,6 +28,7 @@ export default class ConfigDeviceManager extends ConfigGeneric<ConfigDeviceManag
                     themeType={this.props.oContext.themeType}
                     isFloatComma={this.props.oContext.isFloatComma}
                     dateFormat={this.props.oContext.dateFormat}
+                    smallCards={this.props.schema.smallCards}
                 />
             );
         }

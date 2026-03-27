@@ -724,6 +724,7 @@ export interface ConfigItemDatePicker extends ConfigItem {
 
 export interface ConfigItemDeviceManager extends ConfigItem {
     type: 'deviceManager';
+    smallCards?: boolean;
 }
 
 export interface ConfigItemLanguage extends ConfigItem {
