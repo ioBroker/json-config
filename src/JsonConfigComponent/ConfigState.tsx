@@ -788,7 +788,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                     (this.props.schema.options || this.state.obj.common.states)
                 ) {
                     const states = this.getNormalizedStates();
-                    const state = states.find(s => s.value === mappedValue);
+                    const state = states.find(s => s.value.toString() === mappedValue.toString());
                     if (state) {
                         mappedValue = state.label;
                     }
