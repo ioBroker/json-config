@@ -1,7 +1,7 @@
 {
   "name": "@iobroker/json-config",
   "description": "This package contains the ioBroker JSON config UI components",
-  "version": "8.2.20",
+  "version": "8.2.21",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
