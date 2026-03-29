@@ -258,7 +258,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
 
             content = (
                 <FormControl fullWidth>
-                    <InputLabel>${this.getText(this.props.schema.label)}</InputLabel>
+                    <InputLabel>{this.getText(this.props.schema.label)}</InputLabel>
                     <Select
                         value={this.state.stateValue}
                         disabled={!!this.props.schema.readOnly || disabled}
