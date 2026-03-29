@@ -814,11 +814,11 @@ export interface ConfigItemState extends ConfigItem {
     /** Add a unit to the value */
     unit?: string;
     /** this text will be shown if the value is true */
-    trueText?: string;
+    trueText?: ioBroker.StringOrTranslated;
     /** Style of the text if the value is true */
     trueTextStyle?: CustomCSSProperties;
     /** this text will be shown if the value is false or if the control is a "button" */
-    falseText?: string;
+    falseText?: ioBroker.StringOrTranslated;
     /** Style of the text if the value is false or if the control is a "button" */
     falseTextStyle?: CustomCSSProperties;
     /** This image will be shown if the value is true */
