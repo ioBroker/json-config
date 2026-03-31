@@ -5,7 +5,7 @@ import { Grid2, Accordion, AccordionSummary, AccordionDetails, Typography, Box }
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 
 import { type AdminConnection, type IobTheme, Utils } from '@iobroker/adapter-react-v5';
-import type { ConfigItemPanel } from '../types';
+import type { ConfigItemComponent, ConfigItemPanel } from '../types';
 
 import ConfigGeneric, { type ConfigGenericState, type ConfigGenericProps } from './ConfigGeneric';
 import ConfigAccordion from './ConfigAccordion';
@@ -208,8 +208,16 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                           ItemComponent = ConfigGeneric;
                       }
                       socket = this.props.oContext.socket;
-                  } else if (this.props.customComponents?.[type]) {
-                      ItemComponent = this.props.customComponents[type];
+                  } else if (type === 'component') {
+                      if (this.props.customComponents[(items[attr] as ConfigItemComponent).subType]) {
+                          ItemComponent = this.props.customComponents[(items[attr] as ConfigItemComponent).subType];
+                      } else {
+                          return (
+                              <div
+                                  key={`${attr}_${this.props.index === undefined ? '' : this.props.index}`}
+                              >{`Component ${(items[attr] as ConfigItemComponent).subType} not provided`}</div>
+                          );
+                      }
                   } else if (type === 'panel') {
                       ItemComponent = ConfigPanel;
                   } else {
