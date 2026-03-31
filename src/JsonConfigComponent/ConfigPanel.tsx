@@ -208,6 +208,8 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                           ItemComponent = ConfigGeneric;
                       }
                       socket = this.props.oContext.socket;
+                  } else if (this.props.customComponents?.[type]) {
+                      ItemComponent = this.props.customComponents[type];
                   } else if (type === 'panel') {
                       ItemComponent = ConfigPanel;
                   } else {
@@ -242,6 +244,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                           schema={items[attr]}
                           attr={attr}
                           table={this.props.table}
+                          customComponents={this.props.customComponents}
                       />
                   );
               })

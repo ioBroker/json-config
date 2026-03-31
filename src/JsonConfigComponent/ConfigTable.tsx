@@ -452,6 +452,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         }));
                     }
                 }}
+                customComponents={this.props.customComponents}
                 onHiddenChanged={
                     asCard
                         ? (attr: string, hidden: boolean): void => {

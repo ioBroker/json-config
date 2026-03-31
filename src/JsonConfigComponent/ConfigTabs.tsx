@@ -386,6 +386,7 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
                     schema={items[this.state.tab]}
                     table={this.props.table}
                     withIcons={withIcons}
+                    customComponents={this.props.customComponents}
                 />
             </div>
         );

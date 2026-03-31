@@ -19,7 +19,10 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemAny, ConfigItemPanel, ConfigItemTabs } from './types';
-import ConfigGeneric, { type DeviceManagerPropsProps } from './JsonConfigComponent/ConfigGeneric';
+import ConfigGeneric, {
+    type ConfigGenericProps,
+    type DeviceManagerPropsProps,
+} from './JsonConfigComponent/ConfigGeneric';
 import JsonConfigComponent from './JsonConfigComponent';
 
 const styles: Record<string, React.CSSProperties> = {
@@ -76,7 +79,7 @@ function encryptLegacy(key: string, value: string): string {
 }
 
 /**
- * Decrypt the password/value with given key
+ * Decrypt the password/value with the given key
  *  Usage:
  *  ```js
  *     function load(settings, onChange) {
@@ -142,7 +145,7 @@ function encrypt(key: string, value: string, _iv?: string): string {
     }
 
     if (!/^[0-9a-f]{48}$/.test(key)) {
-        // key length is not matching for AES-192-CBC or key is no valid hex - fallback to old encryption
+        // key length is not matching for AES-192-CBC, or key is no valid hex - fallback to old encryption
         return encryptLegacy(key, value);
     }
 
@@ -193,6 +196,7 @@ interface JsonConfigProps {
     configStored: (notChanged: boolean) => void;
     width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     DeviceManager?: React.FC<DeviceManagerPropsProps>;
+    customComponents?: { [componentType: string]: typeof ConfigGeneric<ConfigGenericProps, any> };
 }
 
 interface JsonConfigState {
@@ -746,6 +750,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     }}
                     DeviceManager={this.props.DeviceManager}
                     theme={this.state.theme}
+                    customComponents={this.props.customComponents}
                 />
                 <SaveCloseButtons
                     isIFrame={false}

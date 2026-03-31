@@ -68,7 +68,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
 
     constructor(props: ConfigAccordionProps) {
         super(props);
-        this.props.schema.items = this.props.schema.items || [];
+        this.props.schema.items ||= [];
     }
 
     componentDidMount(): void {
@@ -167,6 +167,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                 onError={this.onAccordionError(idx)}
                 onHiddenChanged={this.props.onHiddenChanged}
                 table={this.props.table}
+                customComponents={this.props.customComponents}
             />
         );
     }
@@ -233,9 +234,8 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
     onAdd = (): void => {
         const { schema } = this.props;
         const newValue = JSON.parse(JSON.stringify(this.state.value));
-        const newItem: Record<string, any> =
-            schema.items &&
-            schema.items.reduce((accumulator: Record<string, any>, currentValue: ConfigItemIndexed) => {
+        const newItem: Record<string, any> = schema.items?.reduce(
+            (accumulator: Record<string, any>, currentValue: ConfigItemIndexed) => {
                 let defaultValue;
                 if (currentValue.defaultFunc) {
                     if (this.props.custom) {
@@ -266,7 +266,9 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
 
                 accumulator[currentValue.attr] = defaultValue;
                 return accumulator;
-            }, {});
+            },
+            {},
+        );
 
         newValue.push(newItem);
 

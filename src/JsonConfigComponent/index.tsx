@@ -6,7 +6,7 @@ import { type AdminConnection, I18n, type ThemeName, type ThemeType, type IobThe
 
 import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext } from '../types';
 import type ConfigGeneric from './ConfigGeneric';
-import { type DeviceManagerPropsProps } from './ConfigGeneric';
+import { type DeviceManagerPropsProps, type ConfigGenericProps } from './ConfigGeneric';
 import ConfigTabs from './ConfigTabs';
 import ConfigPanel from './ConfigPanel';
 
@@ -46,6 +46,8 @@ interface JsonConfigComponentProps {
     theme: IobTheme;
     expertMode?: boolean;
     withoutSaveButtons?: boolean;
+    /** User can provide their own components for specific input fields */
+    customComponents?: { [componentType: string]: typeof ConfigGeneric<ConfigGenericProps, any> };
 }
 
 interface JsonConfigComponentState {
@@ -409,6 +411,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
                     schema={item}
                     expertMode={this.props.expertMode}
                     themeName={this.props.themeName}
+                    customComponents={this.props.customComponents}
                 />
             );
         }
@@ -437,6 +440,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
                     root
                     schema={item}
                     themeName={this.props.themeName}
+                    customComponents={this.props.customComponents}
                 />
             );
         }

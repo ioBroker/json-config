@@ -107,6 +107,8 @@ export interface ConfigGenericProps {
     /** This item is in the table. Maybe some layouts must be changed */
     table?: boolean;
     themeName: ThemeName;
+    /** User can provide their own components for specific input fields */
+    customComponents?: { [componentType: string]: typeof ConfigGeneric<ConfigGenericProps, any> };
 }
 
 export interface ConfigGenericState {
