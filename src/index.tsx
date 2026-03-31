@@ -18,6 +18,7 @@ export type {
     ConfigItemPanel,
     ConfigItemPattern,
     ConfigItemChip,
+    ConfigItemComponent,
     ConfigItemTabs,
     ConfigItemText,
     ConfigItemColor,
