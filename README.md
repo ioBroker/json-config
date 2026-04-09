@@ -1758,7 +1758,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.3.3 (2026-04-09)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added `horizontal` option for `select` component with `format: "radio"` to display radio buttons in a row
 - (@GermanBluefox) Added `icon` option for `select` component options to display icons next to labels
 
