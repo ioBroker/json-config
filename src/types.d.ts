@@ -258,6 +258,8 @@ export interface ConfigItemSelectOption {
     hidden?: string | boolean;
     /** Description for the value */
     description?: ioBroker.StringOrTranslated;
+    /** Icon URL or base64 to display next to the option */
+    icon?: string;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
@@ -618,9 +620,12 @@ export interface ConfigItemSelect extends ConfigItem {
               color?: string;
               hidden?: string | boolean;
               description?: ioBroker.StringOrTranslated;
+              icon?: string;
           }
     )[];
-    format: 'dropdown' | 'radio';
+    format?: 'dropdown' | 'radio';
+    /** If radio buttons shown horizontally */
+    horizontal?: boolean;
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;

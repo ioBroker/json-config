@@ -1157,6 +1157,10 @@
                                     "color": {
                                         "type": "string",
                                         "description": "Color of the option"
+                                    },
+                                    "icon": {
+                                        "description": "Icon URL to display next to the option",
+                                        "type": "string"
                                     }
                                 },
                                 "required": ["label", "value"]
@@ -3396,6 +3400,10 @@
                                                             "color": {
                                                                 "description": "Color of the option",
                                                                 "type": "string"
+                                                            },
+                                                            "icon": {
+                                                                "description": "Icon URL to display next to the option",
+                                                                "type": "string"
                                                             }
                                                         },
                                                         "required": ["label", "value"]
@@ -3657,6 +3665,10 @@
                                             },
                                             "description": {
                                                 "description": "Description for the value, shown below the label"
+                                            },
+                                            "icon": {
+                                                "description": "Icon URL to display next to the option",
+                                                "type": "string"
                                             }
                                         }
                                     }
@@ -3673,6 +3685,10 @@
                                     "description": "How to render the select: 'dropdown' (default) or 'radio' (radio buttons)",
                                     "type": "string",
                                     "enum": ["dropdown", "radio"]
+                                },
+                                "horizontal": {
+                                    "description": "If true, radio buttons are shown horizontally (only applies when format is 'radio')",
+                                    "type": "boolean"
                                 },
                                 "label": true,
                                 "type": true,
@@ -6645,6 +6661,10 @@
                                                                 },
                                                                 "color": {
                                                                     "type": "string"
+                                                                },
+                                                                "icon": {
+                                                                    "description": "Icon URL to display next to the option",
+                                                                    "type": "string"
                                                                 }
                                                             },
                                                             "required": ["label", "value"]
@@ -6782,6 +6802,10 @@
                                                         },
                                                         "description": {
                                                             "description": "Description for the value, shown below the label"
+                                                        },
+                                                        "icon": {
+                                                            "description": "Icon URL to display next to the option",
+                                                            "type": "string"
                                                         }
                                                     }
                                                 }
@@ -6798,6 +6822,10 @@
                                                 "description": "How to render the select: 'dropdown' (default) or 'radio' (radio buttons)",
                                                 "type": "string",
                                                 "enum": ["dropdown", "radio"]
+                                            },
+                                            "horizontal": {
+                                                "description": "If true, radio buttons are shown horizontally (only applies when format is 'radio')",
+                                                "type": "boolean"
                                             },
                                             "label": true,
                                             "type": true,

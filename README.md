@@ -448,16 +448,18 @@ Select function from `enum.func` (With color and icon) - (only Admin6)
 | `multiple`      | Multiple choice select (From 7.6.5)                                                                            |
 | `showAllValues` | show item even if no label was found for it (by multiple), default=`true`                                      |
 | `format`        | Render format: `"dropdown"` (default) or `"radio"` to display options as radio buttons instead of a dropdown   |
+| `horizontal`    | If `true`, radio buttons are shown horizontally (only applies when `format` is `"radio"`) (from v8.3.3)        |
 
 Each option in `options` can have:
 
-| Property      | Description                                                        |
-|---------------|--------------------------------------------------------------------|
-| `label`       | Label of the option (can be a string or translatable object)       |
-| `value`       | Value of the option                                                |
-| `color`       | Color of the option text                                           |
-| `hidden`      | Formula or boolean value to show or hide the option                |
-| `description` | Description shown below the option label (can be translatable)     |
+| Property      | Description                                                           |
+|---------------|-----------------------------------------------------------------------|
+| `label`       | Label of the option (can be a string or translatable object)          |
+| `value`       | Value of the option                                                   |
+| `color`       | Color of the option text                                              |
+| `hidden`      | Formula or boolean value to show or hide the option                   |
+| `description` | Description shown below the option label (can be translatable)        |
+| `icon`        | Icon URL or base64 string to display next to the option (from v8.3.3) |
 
 #### Example for `select options`
 
@@ -1756,6 +1758,10 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added `horizontal` option for `select` component with `format: "radio"` to display radio buttons in a row
+- (@GermanBluefox) Added `icon` option for `select` component options to display icons next to labels
+
 ### 8.3.2 (2026-03-31)
 - (@GermanBluefox) Added possibility to provide custom components
 

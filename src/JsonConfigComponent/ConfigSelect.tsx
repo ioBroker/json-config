@@ -17,7 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemSelect, ConfigItemSelectOption } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -30,6 +30,11 @@ const styles: Record<string, any> = {
         '&>div': {
             marginTop: 0,
         },
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        marginRight: 4,
     },
 };
 
@@ -45,6 +50,7 @@ interface ConfigInstanceSelectState extends ConfigGenericState {
         hidden?: string | boolean;
         color?: string;
         description?: string;
+        icon?: string;
     }[];
 }
 
@@ -70,6 +76,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             hidden?: string | boolean;
             color?: string;
             description?: string;
+            icon?: string;
         }[] = [];
 
         (this.props.schema.options || []).forEach(item => {
@@ -102,6 +109,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         hidden: it.hidden,
                         color: item.color,
                         description: this.getText(item.description),
+                        icon: it.icon,
                     }),
                 );
             } else {
@@ -111,6 +119,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     hidden: item.hidden,
                     color: item.color,
                     description: this.getText(item.description),
+                    icon: item.icon,
                 });
             }
         });
@@ -198,6 +207,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             >
                 {this.props.schema.label ? <FormLabel>{this.getText(this.props.schema.label)}</FormLabel> : null}
                 <RadioGroup
+                    row={!!this.props.schema.horizontal}
                     value={value === undefined || value === null ? '' : value.toString()}
                     onChange={e => {
                         // find the original option value to preserve its type (number vs string)
@@ -218,12 +228,20 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                             control={<Radio />}
                             title={it.description || ''}
                             label={
-                                <Typography
-                                    component="span"
-                                    style={{ color: it.color }}
-                                >
-                                    {it.label}
-                                </Typography>
+                                <span style={{ display: 'flex', alignItems: 'center' }}>
+                                    {it.icon ? (
+                                        <Icon
+                                            src={it.icon}
+                                            style={styles.icon}
+                                        />
+                                    ) : null}
+                                    <Typography
+                                        component="span"
+                                        style={{ color: it.color }}
+                                    >
+                                        {it.label}
+                                    </Typography>
+                                </span>
                             }
                             style={it.value === ConfigGeneric.DIFFERENT_VALUE ? { opacity: 0.5 } : {}}
                         />
@@ -289,25 +307,53 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                                 })}
                             </div>
                         ) : item?.color ? (
-                            <>
-                                <div style={{ color: item.color }}>{item.label === undefined ? val : item.label}</div>
-                                {item.description ? (
-                                    <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
-                                        {item.description}
-                                    </div>
+                            <span style={{ display: 'flex', alignItems: 'center' }}>
+                                {item.icon ? (
+                                    <Icon
+                                        src={item.icon}
+                                        style={styles.icon}
+                                    />
                                 ) : null}
-                            </>
+                                <span>
+                                    <div style={{ color: item.color }}>
+                                        {item.label === undefined ? val : item.label}
+                                    </div>
+                                    {item.description ? (
+                                        <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
+                                            {item.description}
+                                        </div>
+                                    ) : null}
+                                </span>
+                            </span>
                         ) : item?.label === undefined ? (
-                            val
+                            item?.icon ? (
+                                <span style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Icon
+                                        src={item.icon}
+                                        style={styles.icon}
+                                    />
+                                    {val}
+                                </span>
+                            ) : (
+                                val
+                            )
                         ) : (
-                            <>
-                                <div>{item.label}</div>
-                                {item.description ? (
-                                    <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
-                                        {item.description}
-                                    </div>
+                            <span style={{ display: 'flex', alignItems: 'center' }}>
+                                {item.icon ? (
+                                    <Icon
+                                        src={item.icon}
+                                        style={styles.icon}
+                                    />
                                 ) : null}
-                            </>
+                                <span>
+                                    <div>{item.label}</div>
+                                    {item.description ? (
+                                        <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
+                                            {item.description}
+                                        </div>
+                                    ) : null}
+                                </span>
+                            </span>
                         )
                     }
                     onChange={e => {
@@ -362,6 +408,12 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                                                 this.onChange(this.props.attr, _value),
                                             );
                                         }}
+                                    />
+                                ) : null}
+                                {it.icon ? (
+                                    <Icon
+                                        src={it.icon}
+                                        style={styles.icon}
                                     />
                                 ) : null}
                                 <ListItemText
