@@ -350,6 +350,37 @@
                         "en": "label is also ok instead of text"
                     }
                 },
+                "_textButton": {
+                    "type": "staticText",
+                    "text": "Click me",
+                    "href": "https://example.com",
+                    "target": "_blank",
+                    "button": true,
+                    "variant": "contained",
+                    "color": "primary",
+                    "icon": "web",
+                    "controlStyle": { "marginTop": 8 }
+                },
+                "_textLink": {
+                    "type": "staticText",
+                    "text": "Open page",
+                    "href": "#tab-objects",
+                    "target": "_self",
+                    "close": true
+                },
+                "_textHtml": {
+                    "type": "staticText",
+                    "text": "<b>Bold</b> text",
+                    "format": "html"
+                },
+                "_linkWithTarget": {
+                    "type": "staticLink",
+                    "text": "Go to docs",
+                    "href": "https://example.com/docs",
+                    "target": "_blank",
+                    "close": false,
+                    "format": "html"
+                },
                 "defaultSendToText": {
                     "type": "text",
                     "defaultSendTo": "fill",

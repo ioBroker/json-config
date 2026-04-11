@@ -711,26 +711,36 @@ button that sets instance's state
 
 Static text like description
 
-| Property | Description                                         |
-|----------|-----------------------------------------------------|
-| `label`  | multi-language text                                 |
-| `text`   | same as label                                       |
-| `format` | `text` (default), `html` (from admin version 7.8.4) |
+| Property       | Description                                                                                                                                                                                                                                                                     |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `label`        | multi-language text                                                                                                                                                                                                                                                             |
+| `text`         | same as label                                                                                                                                                                                                                                                                   |
+| `format`       | `text` (default), `html`, `json` (from admin version 7.8.4)                                                                                                                                                                                                                    |
+| `href`         | link. Link could be dynamic like `#tab-objects/customs/${data.parentId}`                                                                                                                                                                                                        |
+| `target`       | `_blank` or `_self` or window name. For relative links the default is `_self` and for absolute - `_blank`                                                                                                                                                                       |
+| `close`        | if true, the GUI will be closed (used not for JsonConfig in admin, but for dynamic GUI, only if the target is `_self`)                                                                                                                                                          |
+| `button`       | show a link as a button                                                                                                                                                                                                                                                         |
+| `variant`      | type of button (`outlined`, `contained`, `text`)                                                                                                                                                                                                                                |
+| `color`        | color of button (e.g. `primary`)                                                                                                                                                                                                                                                |
+| `icon`         | if icon should be shown: `auth`, `send`, `web`, `warning`, `error`, `info`, `search`, `book`, `help`, `upload`. You can use `base64` icons (it starts with `data:image/svg+xml;base64,...`) or `jpg/png` images (ends with `.png`) . (Request via issue if you need more icons) |
+| `controlStyle` | CSS Styles in React format for the button or control itself                                                                                                                                                                                                                     |
 
 exactly one of `label` or `text` must be specified - not both
 
 ### `staticLink`
 
-| Property  | Description                                                                                                                                                                                                                                                                     |
-|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `label`   | multi-language text                                                                                                                                                                                                                                                             |
-| `href`    | link. Link could be dynamic like `#tab-objects/customs/${data.parentId}`                                                                                                                                                                                                        |
-| `target`  | `_blank` or `_self` or window name                                                                                                                                                                                                                                              |
-| `close`   | if true, the GUI will be closed (used not for JsonConfig in admin, but for dynamic GUI)                                                                                                                                                                                         |
-| `button`  | show a link as button                                                                                                                                                                                                                                                           |
-| `variant` | type of button (`outlined`, `contained`, `text`)                                                                                                                                                                                                                                |
-| `color`   | color of button (e.g. `primary`)                                                                                                                                                                                                                                                |
-| `icon`    | if icon should be shown: `auth`, `send`, `web`, `warning`, `error`, `info`, `search`, `book`, `help`, `upload`. You can use `base64` icons (it starts with `data:image/svg+xml;base64,...`) or `jpg/png` images (ends with `.png`) . (Request via issue if you need more icons) |
+| Property       | Description                                                                                                                                                                                                                                                                     |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `label`        | multi-language text                                                                                                                                                                                                                                                             |
+| `href`         | link. Link could be dynamic like `#tab-objects/customs/${data.parentId}`                                                                                                                                                                                                        |
+| `target`       | `_blank` or `_self` or window name. For relative links the default is `_self` and for absolute - `_blank`                                                                                                                                                                       |
+| `close`        | if true, the GUI will be closed (used not for JsonConfig in admin, but for dynamic GUI, only if the target is `_self`)                                                                                                                                                          |
+| `button`       | show a link as button                                                                                                                                                                                                                                                           |
+| `variant`      | type of button (`outlined`, `contained`, `text`)                                                                                                                                                                                                                                |
+| `color`        | color of button (e.g. `primary`)                                                                                                                                                                                                                                                |
+| `icon`         | if icon should be shown: `auth`, `send`, `web`, `warning`, `error`, `info`, `search`, `book`, `help`, `upload`. You can use `base64` icons (it starts with `data:image/svg+xml;base64,...`) or `jpg/png` images (ends with `.png`) . (Request via issue if you need more icons) |
+| `controlStyle` | CSS Styles in React format for the button or control itself                                                                                                                                                                                                                     |
+| `format`       | `text` (default), `html`, `json`                                                                                                                                                                                                                                                |
 
 ### `staticImage`
 
@@ -1758,6 +1768,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Extend schema for staticLink and staticImage components
+
 ### 8.3.4 (2026-04-09)
 - (@GermanBluefox) Added `horizontal` option for `select` component with `format: "radio"` to display radio buttons in a row
 - (@GermanBluefox) Added `icon` option for `select` component options to display icons next to labels
