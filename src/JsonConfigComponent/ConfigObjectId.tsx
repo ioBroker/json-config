@@ -122,9 +122,7 @@ class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdSt
                 </div>
                 {showSelectId ? (
                     <DialogSelectID
-                        imagePrefix={
-                            this.props.oContext.imagePrefix === undefined ? '../..' : this.props.oContext.imagePrefix
-                        }
+                        imagePrefix={this.props.oContext.imagePrefix ?? '../..'}
                         dialogName={`admin.${this.props.oContext.adapterName}`}
                         filterFunc={schema.filterFunc}
                         themeType={this.props.oContext.themeType}

@@ -238,10 +238,7 @@ function arrayToObject(
     const object: Record<string, any> = {};
 
     array.forEach((row: Record<string, any>) => {
-        let key = row[nameOfFirstAttr];
-        if (key === null || key === undefined) {
-            key = '';
-        }
+        const key = row[nameOfFirstAttr] ?? '';
         delete row[nameOfFirstAttr];
 
         if (nameOfSecondAttr) {
@@ -800,7 +797,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 if (row[it.attr] && typeof row[it.attr] === 'string' && row[it.attr].includes(';')) {
                     line.push(`"${row[it.attr]}"`);
                 } else {
-                    line.push(row[it.attr] === undefined || row[it.attr] === null ? '' : row[it.attr]);
+                    line.push(row[it.attr] ?? '');
                 }
             });
             lines.push(line.join(';'));
@@ -993,7 +990,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             : this.props.schema.default;
                     }
                 } else {
-                    defaultValue = currentValue.default === undefined ? null : currentValue.default;
+                    defaultValue = currentValue.default ?? null;
                 }
 
                 accumulator[currentValue.attr] = defaultValue;

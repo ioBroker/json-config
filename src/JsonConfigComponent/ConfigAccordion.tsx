@@ -261,7 +261,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                             : this.props.schema.default;
                     }
                 } else {
-                    defaultValue = currentValue.default === undefined ? null : currentValue.default;
+                    defaultValue = currentValue.default ?? null;
                 }
 
                 accumulator[currentValue.attr] = defaultValue;

@@ -139,7 +139,7 @@ You can install it via GitHub icon in admin by entering `iobroker.jsonconfig-dem
 - [**`certificateCollection`:**](#certificatecollection) Selects a collection for Let's Encrypt certificates
 - [**`certificates`:**](#certificates) Universal type for managing different certificate types (from Admin 6.4.0)
 - [**`checkbox`:**](#checkbox) Checkbox for boolean values
-- [**`checkDocker`:**](#checkdocker) Special component to check if the docker available and if yes, you can activate a checkbox (from Admin 7.8.0)
+- [**`checkDocker`:**](#checkdocker) Special component to check if the docker is available and if yes, you can activate a checkbox (from Admin 7.8.0)
 - [**`checkLicense`:**](#checklicense) Very special component to check the license online
 - [**`chips`:**](#chips) User can enter words that are added to an array
 - [**`color`:**](#color) Color picker
@@ -1768,6 +1768,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Adjust a path to images
+
 ### 8.3.5 (2026-04-11)
 - (@GermanBluefox) Extend schema for staticLink and staticImage components
 
@@ -1786,7 +1789,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 
 ### 8.2.18 (2026-03-25)
 - (@GermanBluefox) Added the possibility to use own Client ID for oauth authentication
-- (@GermanBluefox) Added the possibility show small image and open it in full size by click on it
+- (@GermanBluefox) Added the possibility to show a small image and open it in full size by clicking on it
 
 ### 8.2.11 (2026-03-20)
 - (@GermanBluefox) Correcting unit in schema

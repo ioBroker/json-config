@@ -55,7 +55,7 @@ class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
     componentDidMount(): void {
         super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
-        this.imagePrefix = this.props.oContext.imagePrefix === undefined ? './files' : this.props.oContext.imagePrefix;
+        this.imagePrefix = this.props.oContext.imagePrefix ?? './files';
         this.setState({ value: value ?? '' });
     }
 
@@ -174,7 +174,7 @@ class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
                 <TextField
                     variant="standard"
                     style={icon ? styles.fullWidthIcon : styles.fullWidthOneButton}
-                    value={this.state.value === null || this.state.value === undefined ? '' : this.state.value}
+                    value={this.state.value ?? ''}
                     error={!!error}
                     disabled={!!disabled}
                     slotProps={{

@@ -268,7 +268,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                         }}
                         minRows={this.props.schema.minRows}
                         maxRows={this.props.schema.maxRows}
-                        value={this.state.value === null || this.state.value === undefined ? '' : this.state.value}
+                        value={this.state.value ?? ''}
                         disabled={!!disabled}
                         readOnly={this.props.schema.readOnly || false}
                         onChange={e => {
@@ -293,7 +293,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
             <TextField
                 variant="standard"
                 fullWidth
-                value={this.state.value === null || this.state.value === undefined ? '' : this.state.value}
+                value={this.state.value ?? ''}
                 error={!!error || !!this.state.jsonError}
                 disabled={!!disabled}
                 slotProps={{

@@ -165,7 +165,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 <TextField
                     variant="standard"
                     fullWidth
-                    value={this.state.value === null || this.state.value === undefined ? '' : this.state.value}
+                    value={this.state.value ?? ''}
                     error={!!error}
                     disabled={disabled}
                     slotProps={{

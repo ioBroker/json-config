@@ -113,7 +113,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
             return null;
         }
 
-        const min = this.props.schema.min === undefined ? 20 : this.props.schema.min;
+        const min = this.props.schema.min ?? 20;
         const max = this.props.schema.max || 0xffff;
 
         value = value.toString().trim();
@@ -154,7 +154,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
             this.updateTimeout = undefined;
         }
 
-        const min = this.props.schema.min === undefined ? 20 : this.props.schema.min;
+        const min = this.props.schema.min ?? 20;
         const max = this.props.schema.max || 0xffff;
 
         let warning;
@@ -252,7 +252,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
                         readOnly: this.props.schema.readOnly || false,
                     },
                 }}
-                value={this.state._value === null || this.state._value === undefined ? '' : this.state._value}
+                value={this.state._value ?? ''}
                 error={!!error}
                 disabled={!!disabled}
                 sx={warning ? styles.warning : undefined}

@@ -751,6 +751,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     DeviceManager={this.props.DeviceManager}
                     theme={this.state.theme}
                     customComponents={this.props.customComponents}
+                    imagePrefix={'.'}
                 />
                 <SaveCloseButtons
                     isIFrame={false}

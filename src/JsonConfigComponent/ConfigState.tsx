@@ -602,16 +602,9 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                     iconTrue = getIconByName(this.props.schema.trueImage, textTrue ? { marginRight: 8 } : undefined);
                 }
 
-                const min =
-                    this.props.schema.min === undefined ? this.state.obj.common.min || 0 : this.props.schema.min;
-                const max =
-                    this.props.schema.max === undefined
-                        ? this.state.obj.common.max === undefined
-                            ? 100
-                            : this.state.obj.common.max
-                        : this.props.schema.max;
-                const step =
-                    this.props.schema.step === undefined ? this.state.obj.common.step || 1 : this.props.schema.step;
+                const min = this.props.schema.min ?? (this.state.obj.common.min || 0);
+                const max = this.props.schema.max ?? this.state.obj.common.max ?? 100;
+                const step = this.props.schema.step ?? (this.state.obj.common.step || 1);
 
                 content = (
                     <Slider
@@ -687,24 +680,9 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 !this.state.controlType
             ) {
                 // Auto-detection of the type
-                const min =
-                    this.props.schema.min === undefined
-                        ? this.state.obj.common.min === undefined
-                            ? undefined
-                            : this.state.obj.common.min
-                        : this.props.schema.min;
-                const max =
-                    this.props.schema.max === undefined
-                        ? this.state.obj.common.max === undefined
-                            ? undefined
-                            : this.state.obj.common.max
-                        : this.props.schema.max;
-                const step =
-                    this.props.schema.step === undefined
-                        ? this.state.obj.common.step === undefined
-                            ? undefined
-                            : this.state.obj.common.step
-                        : this.props.schema.step;
+                const min = this.props.schema.min ?? this.state.obj.common.min ?? undefined;
+                const max = this.props.schema.max ?? this.state.obj.common.max ?? undefined;
+                const step = this.props.schema.step ?? this.state.obj.common.step ?? undefined;
 
                 content = (
                     <TextField

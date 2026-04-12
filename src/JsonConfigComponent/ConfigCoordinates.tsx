@@ -208,7 +208,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                     <TextField
                         variant="standard"
                         style={styles.width}
-                        value={this.state.value === null || this.state.value === undefined ? '' : this.state.value}
+                        value={this.state.value ?? ''}
                         error={!!error}
                         disabled={!!disabled}
                         slotProps={{

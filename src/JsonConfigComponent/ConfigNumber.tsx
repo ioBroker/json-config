@@ -226,7 +226,7 @@ class ConfigNumber extends ConfigGeneric<ConfigNumberProps, ConfigNumberState> {
                                 : null,
                         },
                     }}
-                    value={this.state._value === null || this.state._value === undefined ? '' : this.state._value}
+                    value={this.state._value ?? ''}
                     error={!!error}
                     disabled={!!disabled}
                     onChange={e => {

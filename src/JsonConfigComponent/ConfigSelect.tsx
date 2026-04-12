@@ -210,7 +210,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     row={!!this.props.schema.horizontal}
                     value={value === undefined || value === null ? '' : value.toString()}
                     onChange={e => {
-                        // find the original option value to preserve its type (number vs string)
+                        // find the original option value to preserve its type (number vs. string)
                         const opt = selectOptions.find(it => it.value.toString() === e.target.value);
                         const newValue = opt ? opt.value : e.target.value;
                         this.setState({ value: newValue }, () => {
@@ -315,9 +315,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                                     />
                                 ) : null}
                                 <span>
-                                    <div style={{ color: item.color }}>
-                                        {item.label === undefined ? val : item.label}
-                                    </div>
+                                    <div style={{ color: item.color }}>{item.label ?? val}</div>
                                     {item.description ? (
                                         <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
                                             {item.description}

@@ -214,7 +214,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                       } else {
                           return (
                               <div
-                                  key={`${attr}_${this.props.index === undefined ? '' : this.props.index}`}
+                                  key={`${attr}_${this.props.index ?? ''}`}
                               >{`Component ${(items[attr] as ConfigItemComponent).subType} not provided`}</div>
                           );
                       }
@@ -230,7 +230,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                           socket={socket}
                           globalData={this.props.globalData}
                           oContext={this.props.oContext}
-                          key={`${attr}_${this.props.index === undefined ? '' : this.props.index}`}
+                          key={`${attr}_${this.props.index ?? ''}`}
                           index={this.props.index}
                           changed={this.props.changed}
                           arrayIndex={this.props.arrayIndex}

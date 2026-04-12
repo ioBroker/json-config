@@ -49,9 +49,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
                 }
             }
 
-            if (data === undefined) {
-                data = null;
-            }
+            data ??= null;
 
             void this.props.oContext.socket
                 .sendTo(
