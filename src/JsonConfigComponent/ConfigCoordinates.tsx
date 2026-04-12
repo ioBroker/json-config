@@ -58,22 +58,32 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
     }
 
     async getSystemCoordinates(): Promise<void> {
-        const obj = await this.props.oContext.socket.getCompactSystemConfig();
-        if (obj?.common && (obj.common.longitude || obj.common.latitude)) {
+        let systemConfig: ioBroker.SystemConfigObject | undefined;
+        try {
+            if (this.props.oContext.socket.getCompactSystemConfig) {
+                systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
+            } else {
+                systemConfig = await this.props.oContext.socket.getObject('system.config');
+            }
+        } catch (e) {
+            console.error(`Cannot get system configuration: ${e}`);
+        }
+        if (systemConfig?.common && (systemConfig.common.longitude || systemConfig.common.latitude)) {
             window.alert(I18n.t('ra_Used system settings'));
             if (this.props.schema.longitudeName && this.props.schema.latitudeName) {
                 this.setState(
                     {
-                        longitude: obj.common.longitude,
-                        latitude: obj.common.latitude,
+                        longitude: systemConfig.common.longitude,
+                        latitude: systemConfig.common.latitude,
                     },
                     async () => {
-                        await this.onChange(this.props.schema.longitudeName, obj.common.longitude);
-                        await this.onChange(this.props.schema.latitudeName, obj.common.latitude);
+                        await this.onChange(this.props.schema.longitudeName, systemConfig.common.longitude);
+                        await this.onChange(this.props.schema.latitudeName, systemConfig.common.latitude);
                     },
                 );
             } else {
-                const value = obj.common.latitude + (this.props.schema.divider || ',') + obj.common.longitude;
+                const value =
+                    systemConfig.common.latitude + (this.props.schema.divider || ',') + systemConfig.common.longitude;
                 this.setState(
                     {
                         value,

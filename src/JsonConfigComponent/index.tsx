@@ -167,25 +167,29 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
 
     onCommandRunning = (commandRunning: boolean): void => this.setState({ commandRunning });
 
-    readData(): void {
-        void this.props.socket
-            .getCompactSystemConfig()
-            .then(systemConfig =>
-                this.props.socket
-                    .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-                    .then(state =>
-                        this.setState({ systemConfig: systemConfig.common, alive: !!(state && state.val) }, () => {
-                            this.updateContext(true);
-                            if (!this.props.custom) {
-                                void this.props.socket.subscribeState(
-                                    `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
-                                    this.onAlive,
-                                );
-                            }
-                        }),
-                    ),
-            )
-            .catch(e => console.error(`Cannot read system config: ${e}`));
+    async readData(): Promise<void> {
+        let systemConfig: ioBroker.SystemConfigObject | undefined;
+        try {
+            if (this.props.socket.getCompactSystemConfig) {
+                systemConfig = await this.props.socket.getCompactSystemConfig();
+            } else {
+                systemConfig = await this.props.socket.getObject('system.config');
+            }
+            const state = await this.props.socket.getState(
+                `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
+            );
+            this.setState({ systemConfig: systemConfig.common, alive: !!(state && state.val) }, () => {
+                this.updateContext(true);
+                if (!this.props.custom) {
+                    void this.props.socket.subscribeState(
+                        `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
+                        this.onAlive,
+                    );
+                }
+            });
+        } catch (error) {
+            console.error(`Cannot read system config: ${error}`);
+        }
     }
 
     onAlive = (_id: string, state?: ioBroker.State | null): void => {

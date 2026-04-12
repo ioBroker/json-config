@@ -344,8 +344,17 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         }
 
         if (this.props.schema.encryptedAttributes) {
-            const systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
-            this.secret = systemConfig?.native.secret || this.secret;
+            let systemConfig: ioBroker.SystemConfigObject | undefined;
+            try {
+                if (this.props.oContext.socket.getCompactSystemConfig) {
+                    systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
+                } else {
+                    systemConfig = await this.props.oContext.socket.getObject('system.config');
+                }
+            } catch (e) {
+                console.error(`Cannot get system configuration: ${e}`);
+            }
+            this.secret = systemConfig?.native?.secret || this.secret;
 
             _value.forEach((el: Record<string, any>) => {
                 this.props.schema.encryptedAttributes.forEach((attr: string) => {
