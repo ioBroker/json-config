@@ -485,7 +485,7 @@ export default class ConfigGeneric<
             if (iconSettings.endsWith('.png') || iconSettings.endsWith('.svg') || iconSettings.endsWith('.jpg')) {
                 // this path is relative to ./adapter/NAME
                 if (!iconSettings.startsWith('http://') && !iconSettings.startsWith('https://')) {
-                    iconSettings = `./adapter/${this.props.oContext.adapterName}/${iconSettings}`;
+                    iconSettings = `${this.props.oContext.imagePrefix}/adapter/${this.props.oContext.adapterName}/${iconSettings}`;
                 }
             }
 

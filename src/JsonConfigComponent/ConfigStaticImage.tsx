@@ -25,7 +25,7 @@ class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStat
             !src.startsWith(`adapter/${this.props.oContext.adapterName}/`) &&
             !src.startsWith(`./adapter/${this.props.oContext.adapterName}/`)
         ) {
-            src = `adapter/${this.props.oContext.adapterName}/${src}`;
+            src = `${this.props.oContext.imagePrefix}/adapter/${this.props.oContext.adapterName}/${src}`;
         }
         return src;
     }

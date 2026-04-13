@@ -59,7 +59,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                           ? instance._id.split('.').pop()
                           : instance._id.replace(/^system\.adapter\./, ''),
                     label: `${instance.common.name} [${instance._id.replace(/^system\.adapter\./, '')}]`,
-                    icon: `adapter/${instance.common.name}/${instance.common.icon}`,
+                    icon: `${this.props.oContext.imagePrefix}/adapter/${instance.common.name}/${instance.common.icon}`,
                 }));
 
                 selectOptions.sort((a, b) => {
@@ -140,7 +140,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                           ? obj._id.split('.').pop()
                           : obj._id.replace(/^system\.adapter\./, ''),
                     label: `${name} [${obj._id.replace(/^system\.adapter\./, '')}]`,
-                    icon: `adapter/${name}/${obj.common.icon}`,
+                    icon: `${this.props.oContext.imagePrefix}/adapter/${name}/${obj.common.icon}`,
                 });
                 selectOptions.sort((a, b) => (a.label > b.label ? 1 : a.label < b.label ? -1 : 0));
                 this.setState({ selectOptions });
