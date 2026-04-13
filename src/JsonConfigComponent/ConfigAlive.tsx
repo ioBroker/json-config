@@ -76,7 +76,7 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
             return null;
         }
 
-        const instance = this.state.instance.replace(/^system.adapter./, '');
+        const instance = this.state.instance.replace(/^system\.adapter\./, '');
         return (
             <div style={{ ...styles.root, ...(!this.state.alive ? styles.notAlive : undefined) }}>
                 {this.state.alive
