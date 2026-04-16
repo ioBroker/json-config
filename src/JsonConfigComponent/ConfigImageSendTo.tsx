@@ -1,7 +1,7 @@
 import React, { type JSX } from 'react';
 
 import { CircularProgress } from '@mui/material';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemImageSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -110,9 +110,8 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
         }
 
         return (
-            <img
+            <Icon
                 title={this.getText(this.props.schema.tooltip)}
-                alt="dynamic content"
                 src={this.state.image}
                 style={{ width: this.props.schema.width || '100%', height: this.props.schema.height }}
             />

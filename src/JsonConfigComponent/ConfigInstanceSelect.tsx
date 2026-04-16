@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { InputLabel, MenuItem, FormHelperText, FormControl, Select } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 import type { ConfigItemInstanceSelect } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
@@ -173,9 +173,8 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                     renderValue={() => (
                         <span style={{ display: 'flex' }}>
                             {item?.icon ? (
-                                <img
+                                <Icon
                                     src={`./${item.icon}`}
-                                    alt={item.value}
                                     style={styles.icon}
                                 />
                             ) : null}
@@ -193,9 +192,8 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                             style={it.value === ConfigGeneric.NONE_VALUE ? { opacity: 0.5 } : {}}
                         >
                             {it.icon ? (
-                                <img
+                                <Icon
                                     src={`./${it.icon}`}
-                                    alt={it.value}
                                     style={styles.icon}
                                 />
                             ) : null}

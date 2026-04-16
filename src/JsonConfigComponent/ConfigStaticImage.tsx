@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Button, Dialog, DialogActions, DialogContent, Tooltip } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import type { ConfigItemStaticImage } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -49,8 +49,8 @@ class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStat
                                 height: smallSize,
                                 objectFit: 'contain',
                             }}
-                            onClick={() => this.setState({ showDialog: true })}
                             alt=""
+                            onClick={() => this.setState({ showDialog: true })}
                         />
                     </Tooltip>{' '}
                     {buttonLabel ? (
@@ -69,10 +69,9 @@ class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStat
                             maxWidth="lg"
                         >
                             <DialogContent>
-                                <img
+                                <Icon
                                     src={src}
                                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                    alt=""
                                 />
                             </DialogContent>
                             <DialogActions>
