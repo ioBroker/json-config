@@ -1768,6 +1768,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Updated packages
+
 ### 8.3.8 (2026-04-13)
 - (@GermanBluefox) Adjust a path to images
 
