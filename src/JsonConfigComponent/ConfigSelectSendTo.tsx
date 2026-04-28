@@ -99,7 +99,8 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
             this.setState({ running: true }, () => {
                 void this.props.oContext.socket
                     .sendTo(
-                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                        this.props.schema.instance ||
+                            `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
                         this.props.schema.command || 'send',
                         data,
                     )

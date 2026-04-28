@@ -53,7 +53,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
 
             void this.props.oContext.socket
                 .sendTo(
-                    `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                    this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
                     this.props.schema.command || 'send',
                     data,
                 )
