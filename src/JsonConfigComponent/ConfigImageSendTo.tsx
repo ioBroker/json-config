@@ -48,7 +48,8 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
             this.setState({ loading: true }, () =>
                 this.props.oContext.socket
                     .sendTo(
-                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                        this.props.schema.instance ||
+                            `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
                         this.props.schema.command || 'send',
                         data,
                     )

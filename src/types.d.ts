@@ -405,6 +405,8 @@ export interface ConfigItemQrCodeSendTo extends Omit<ConfigItem, 'data'> {
     bgColor?: string;
     /** QR code level */
     level?: 'L' | 'M' | 'Q' | 'H';
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemPassword extends ConfigItem {
@@ -667,6 +669,8 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     /** @deprecated use maxLength */
     max?: string;
     alsoDependsOn?: string[];
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemAccordion extends ConfigItem {
@@ -772,6 +776,8 @@ export interface ConfigItemIFrameSendTo extends Omit<ConfigItemIFrame, 'data' | 
     command?: string;
     alsoDependsOn?: string[];
     data?: Record<string, any>;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
@@ -781,6 +787,8 @@ export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
     height?: number | string;
     data?: Record<string, any>;
     sendFirstByClick?: boolean | ioBroker.StringOrTranslated;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
@@ -809,6 +817,8 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     copyToClipboard?: boolean;
     /** Styles for the button itself */
     controlStyle?: CustomCSSProperties;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemState extends ConfigItem {
@@ -884,6 +894,8 @@ export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
     jsonData?: string;
     /** object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to the backend if jsonData is not defined. */
     data?: Record<string, any>;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
@@ -904,6 +916,8 @@ export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
     data?: Record<string, any>;
     /** by change of which attributes, the command must be resent */
     alsoDependsOn?: string[];
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemTable extends ConfigItem {

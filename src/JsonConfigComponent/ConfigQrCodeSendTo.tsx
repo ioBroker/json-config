@@ -51,7 +51,8 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
             this.setState({ loading: true }, () =>
                 this.props.oContext.socket
                     .sendTo(
-                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                        this.props.schema.instance ||
+                            `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
                         this.props.schema.command || 'send',
                         data,
                     )

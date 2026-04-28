@@ -64,7 +64,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
 
             void this.props.oContext.socket
                 .sendTo(
-                    `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                    this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
                     this.props.schema.command || 'send',
                     data,
                 )

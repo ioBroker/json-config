@@ -88,7 +88,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
 
         this.buildDependencies(this.state.schema);
 
-        this.readData();
+        void this.readData().catch(error => console.error(`Cannot read data: ${error}`));
     }
 
     static getDerivedStateFromProps(
