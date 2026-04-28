@@ -1775,7 +1775,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.3.10 (2026-04-28)
 - (@GermanBluefox) Added `instance` option for all `sendTo` components to override the target adapter instance
 
 ### 8.3.9 (2026-04-17)
