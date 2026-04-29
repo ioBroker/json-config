@@ -97,13 +97,12 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
                 data = null;
             }
             this.setState({ running: true }, () => {
+                const instance = this.getPattern(
+                    this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                );
+
                 void this.props.oContext.socket
-                    .sendTo(
-                        this.props.schema.instance ||
-                            `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                        this.props.schema.command || 'send',
-                        data,
-                    )
+                    .sendTo(instance, this.props.schema.command || 'send', data)
                     .then(list => {
                         this.reportFilterLabels(list);
                         this.setState({ list, running: false });

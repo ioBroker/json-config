@@ -51,13 +51,11 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
             // Set loading state during sendTo request
             this.setState({ loading: true });
-
+            const instance = this.getPattern(
+                this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+            );
             void this.props.oContext.socket
-                .sendTo(
-                    this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                    this.props.schema.command || 'send',
-                    data,
-                )
+                .sendTo(instance, this.props.schema.command || 'send', data)
                 .then((list: unknown) => {
                     if (list && Array.isArray(list)) {
                         list.forEach(item =>

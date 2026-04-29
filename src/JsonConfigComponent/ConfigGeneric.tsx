@@ -977,7 +977,7 @@ export default class ConfigGeneric<
     }
 
     getPattern(pattern: string | { func: string }, data?: Record<string, any>, noTranslation?: boolean): string {
-        data = data || this.props.data;
+        data ||= this.props.data;
         if (!pattern) {
             return '';
         }

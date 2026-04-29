@@ -48,14 +48,12 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
             if (data === undefined) {
                 data = null;
             }
+            const instance = this.getPattern(
+                this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+            );
             this.setState({ loading: true }, () =>
                 this.props.oContext.socket
-                    .sendTo(
-                        this.props.schema.instance ||
-                            `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                        this.props.schema.command || 'send',
-                        data,
-                    )
+                    .sendTo(instance, this.props.schema.command || 'send', data)
                     .then(qrData => this.setState({ qrData: qrData || '', loading: false })),
             );
         }

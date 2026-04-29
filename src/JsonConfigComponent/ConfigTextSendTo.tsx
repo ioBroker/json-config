@@ -50,13 +50,11 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
             }
 
             data ??= null;
-
+            const instance = this.getPattern(
+                this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+            );
             void this.props.oContext.socket
-                .sendTo(
-                    this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                    this.props.schema.command || 'send',
-                    data,
-                )
+                .sendTo(instance, this.props.schema.command || 'send', data)
                 .then(result => {
                     if (typeof result === 'object') {
                         const _data: Response = result;

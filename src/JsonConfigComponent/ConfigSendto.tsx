@@ -286,13 +286,11 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 parseInt(this.props.schema.timeout as any as string, 10) || 10000,
             );
         }
-
+        const instance = this.getPattern(
+            this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+        );
         void this.props.oContext.socket
-            .sendTo(
-                this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                this.props.schema.command || 'send',
-                data,
-            )
+            .sendTo(instance, this.props.schema.command || 'send', data)
             .then(
                 async (response: {
                     error?: string;
