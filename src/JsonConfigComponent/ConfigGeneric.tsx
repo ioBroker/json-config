@@ -1030,6 +1030,7 @@ export default class ConfigGeneric<
                 '_common',
                 '_socket',
                 '_changed',
+                '_href',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = f(
@@ -1042,6 +1043,7 @@ export default class ConfigGeneric<
                 this.props.common,
                 this.props.oContext.socket,
                 this.props.changed,
+                window.location.href,
             );
             if (noTranslation) {
                 return text;
