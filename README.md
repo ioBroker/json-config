@@ -1776,7 +1776,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.3.12 (2026-05-13)
 - (@GermanBluefox) Added `_href` to `jsonData`
 
 ### 8.3.11 (2026-04-29)
