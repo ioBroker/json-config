@@ -958,7 +958,7 @@ export default class ConfigGeneric<
             return '';
         }
         str = str.replace(/`/g, '\\`');
-        // extract all tokes with ${data.token}
+        // extract all tokens with ${data.token}
         str = str.replace(/\${([^}]+)}/g, (_match: string, p1: any) => {
             if (p1 && typeof p1 === 'string' && p1.startsWith('data.')) {
                 const value = ConfigGeneric.getValue(data, p1.replace(/^data\./, ''));
@@ -1005,6 +1005,7 @@ export default class ConfigGeneric<
                     'customObj',
                     '_socket',
                     '_changed',
+                    '_href',
                     `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
                 );
                 return f(
@@ -1017,6 +1018,7 @@ export default class ConfigGeneric<
                     this.props.customObj,
                     this.props.oContext.socket,
                     this.props.changed,
+                    window.location.href,
                 );
             }
 
