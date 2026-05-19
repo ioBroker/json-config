@@ -285,7 +285,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             <FormControl
                 variant="standard"
                 fullWidth
-                sx={this.props.table !== undefined && styles.noMargin}
+                sx={this.props.table !== undefined ? styles.noMargin : undefined}
                 id={`jsonSelect_${this.props.attr}_${this.props.index || this.props.index === 0 ? this.props.index : ''}`}
             >
                 {this.props.schema.label ? <InputLabel>{this.getText(this.props.schema.label)}</InputLabel> : null}
