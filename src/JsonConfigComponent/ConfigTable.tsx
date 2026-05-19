@@ -349,7 +349,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 if (this.props.oContext.socket.getCompactSystemConfig) {
                     systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
                 } else {
-                    systemConfig = await this.props.oContext.getCachedObject('system.config');
+                    systemConfig = (await this.props.oContext.getCachedObject('system.config')) as
+                        | ioBroker.SystemConfigObject
+                        | undefined;
                 }
             } catch (e) {
                 console.error(`Cannot get system configuration: ${e}`);
