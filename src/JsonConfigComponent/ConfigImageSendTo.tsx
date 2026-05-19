@@ -48,6 +48,14 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
             const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
+            // Check that instance is alive
+            if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
+                const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
+                if (!alive?.val) {
+                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    return;
+                }
+            }
             this.setState({ loading: true }, () =>
                 this.props.oContext.socket
                     .sendTo(instance, this.props.schema.command || 'send', data)

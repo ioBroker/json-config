@@ -2,6 +2,7 @@ import React, { type JSX } from 'react';
 
 import type { ConfigItemIFrameSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 interface ConfigIFrameSendToProps extends ConfigGenericProps {
     schema: ConfigItemIFrameSendTo;
@@ -64,6 +65,14 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
             const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
+            // Check that instance is alive
+            if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
+                const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
+                if (!alive?.val) {
+                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    return;
+                }
+            }
             void this.props.oContext.socket
                 .sendTo(instance, this.props.schema.command || 'send', data)
                 .then(url => this.setState({ url: url || '' }));

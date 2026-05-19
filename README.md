@@ -1777,7 +1777,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.4.0 (2026-05-19)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Allowed to use `await getObject(data.oid)?.common?.type === 'boolean'` in hidden, pattern or disabled
 
 ### 8.3.13 (2026-05-16)

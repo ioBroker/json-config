@@ -144,9 +144,11 @@ export default class ConfigGeneric<
     private noPlaceRequired: any;
     private reportedHidden: boolean = false;
     private calculateTimeout: ReturnType<typeof setTimeout> | null = null;
+    private readonly AsyncFunction: FunctionConstructor;
 
     constructor(props: Props) {
         super(props);
+        this.AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
         // @ts-expect-error of course, as we just
         this.state = {
@@ -244,13 +246,20 @@ export default class ConfigGeneric<
             if (data === undefined) {
                 data = null;
             }
-
-            void this.props.oContext.socket
-                .sendTo(
+            const instance = await this.getPatternAsync(
+                (this.props.schema as any).instance ||
                     `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                    this.props.schema.defaultSendTo,
-                    data,
-                )
+            );
+            // Check that instance is alive
+            if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
+                const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
+                if (!alive?.val) {
+                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    return;
+                }
+            }
+            void this.props.oContext.socket
+                .sendTo(instance, this.props.schema.defaultSendTo, data)
                 .then((value: any) => {
                     if (value !== null && value !== undefined) {
                         if (this.props.custom) {
@@ -745,7 +754,7 @@ export default class ConfigGeneric<
             fun = ConfigGeneric.ensureAwaitGetObject(fun);
         }
         try {
-            const f = new Function(
+            const f = new this.AsyncFunction(
                 'data',
                 'originalData',
                 '_system',
@@ -806,7 +815,7 @@ export default class ConfigGeneric<
             fun = ConfigGeneric.ensureAwaitGetObject(fun);
         }
         try {
-            const f = new Function(
+            const f = new this.AsyncFunction(
                 'data',
                 'originalData',
                 '_system',
@@ -1065,7 +1074,7 @@ export default class ConfigGeneric<
 
         try {
             if (this.props.custom) {
-                const f = new Function(
+                const f = new this.AsyncFunction(
                     'data',
                     'originalData',
                     'arrayIndex',
@@ -1098,7 +1107,7 @@ export default class ConfigGeneric<
                 return I18n.t(text);
             }
 
-            const f = new Function(
+            const f = new this.AsyncFunction(
                 'data',
                 'originalData',
                 'arrayIndex',
@@ -1159,7 +1168,7 @@ export default class ConfigGeneric<
 
         try {
             if (this.props.custom) {
-                const f = new Function(
+                const f = new this.AsyncFunction(
                     'data',
                     'originalData',
                     'arrayIndex',
@@ -1192,7 +1201,7 @@ export default class ConfigGeneric<
                 return I18n.t(text);
             }
 
-            const f = new Function(
+            const f = new this.AsyncFunction(
                 'data',
                 'originalData',
                 'arrayIndex',

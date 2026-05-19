@@ -51,6 +51,14 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
             const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
+            // Check that instance is alive
+            if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
+                const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
+                if (!alive?.val) {
+                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    return;
+                }
+            }
             this.setState({ loading: true }, () =>
                 this.props.oContext.socket
                     .sendTo(instance, this.props.schema.command || 'send', data)
@@ -84,6 +92,22 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
         }
 
         if (!this.state.qrData && this.props.schema.sendFirstByClick) {
+            if (!this.props.alive) {
+                return (
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: this.state.loading ? 'default' : 'pointer',
+                        }}
+                        onClick={() => !this.state.loading && this.askInstance()}
+                    >
+                        {I18n.t('ra_Instance %s is not alive', this.props.oContext.instance.toString())}
+                    </div>
+                );
+            }
             return (
                 <div
                     style={{
