@@ -24,11 +24,12 @@ interface ConfigAliveState extends ConfigGenericState {
 
 export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigAliveState> {
     private aliveId: string | null = null;
+    private checkTimeout: ReturnType<typeof setTimeout> | null = null;
 
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
 
-        const instance = this.getInstance();
+        const instance = await this.getInstance();
         this.aliveId = `${instance}.alive`;
         const state = await this.props.oContext.socket.getState(this.aliveId);
         this.setState({ alive: !!(state && state.val), instance }, async (): Promise<void> => {
@@ -37,6 +38,10 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
     }
 
     componentWillUnmount(): void {
+        if (this.checkTimeout) {
+            clearTimeout(this.checkTimeout);
+            this.checkTimeout = null;
+        }
         this.props.oContext.socket.unsubscribeState(this.aliveId, this.onAliveChanged);
     }
 
@@ -46,11 +51,11 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
         }
     };
 
-    getInstance(): string {
+    async getInstance(): Promise<string> {
         let instance =
             this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`;
         if (instance.includes('${')) {
-            instance = this.getPattern(instance, null, true);
+            instance = await this.getPatternAsync(instance, null, true);
         }
         if (instance && !instance.startsWith('system.adapter.')) {
             instance = `system.adapter.${instance}`;
@@ -58,10 +63,14 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
         return instance;
     }
 
-    renderItem(): JSX.Element | null {
-        if (this.getInstance() !== this.state.instance) {
-            setTimeout(() => {
-                const instance = this.getInstance();
+    checkIfInstanceChanged(): void {
+        if (this.checkTimeout) {
+            clearTimeout(this.checkTimeout);
+        }
+        this.checkTimeout = setTimeout(async () => {
+            this.checkTimeout = null;
+            const instance = await this.getInstance();
+            if (instance !== this.state.instance) {
                 if (instance) {
                     void this.props.oContext.socket
                         .getState(`${instance}.alive`)
@@ -69,8 +78,12 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
                 } else {
                     this.setState({ alive: null, instance });
                 }
-            }, 200);
-        }
+            }
+        }, 200);
+    }
+
+    renderItem(): JSX.Element | null {
+        this.checkIfInstanceChanged();
 
         if (this.state.alive !== false && this.state.alive !== true) {
             return null;

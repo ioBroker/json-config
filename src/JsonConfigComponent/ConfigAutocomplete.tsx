@@ -16,8 +16,8 @@ export interface ConfigAutocompleteState extends ConfigGenericState {
 }
 
 class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAutocompleteState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         const selectOptions: { label: string; value: string }[] = this.props.schema.options.map(

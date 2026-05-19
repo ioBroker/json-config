@@ -71,8 +71,8 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         this.props.schema.items ||= [];
     }
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
         let value = ConfigGeneric.getValue(this.props.data, this.props.attr) || [];
 
@@ -231,16 +231,18 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         );
     };
 
-    onAdd = (): void => {
+    onAdd = async (): Promise<void> => {
         const { schema } = this.props;
         const newValue = JSON.parse(JSON.stringify(this.state.value));
-        const newItem: Record<string, any> = schema.items?.reduce(
-            (accumulator: Record<string, any>, currentValue: ConfigItemIndexed) => {
+        const newItem: Record<string, any> = {};
+
+        if (schema.items) {
+            for (const currentValue of schema.items) {
                 let defaultValue;
                 if (currentValue.defaultFunc) {
                     if (this.props.custom) {
                         defaultValue = currentValue.defaultFunc
-                            ? this.executeCustom(
+                            ? await this.executeCustom(
                                   currentValue.defaultFunc,
                                   this.props.data,
                                   this.props.customObj,
@@ -251,7 +253,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                             : this.props.schema.default;
                     } else {
                         defaultValue = currentValue.defaultFunc
-                            ? this.execute(
+                            ? await this.execute(
                                   currentValue.defaultFunc,
                                   this.props.schema.default,
                                   this.props.data,
@@ -264,11 +266,9 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                     defaultValue = currentValue.default ?? null;
                 }
 
-                accumulator[currentValue.attr] = defaultValue;
-                return accumulator;
-            },
-            {},
-        );
+                newItem[currentValue.attr] = defaultValue;
+            }
+        }
 
         newValue.push(newItem);
 

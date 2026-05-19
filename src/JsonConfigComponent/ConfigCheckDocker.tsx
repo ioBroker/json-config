@@ -20,7 +20,7 @@ interface ConfigCheckDockerProps extends ConfigGenericProps {
 // Send to an admin message to check if the docker available and if available, show checkbox, else show warning if specified in the schema
 export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerProps, ConfigCheckDockerState> {
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         const id = await this.props.oContext.socket.getCurrentInstance();
         this.setState({ requesting: true }, async () => {
             const result: {

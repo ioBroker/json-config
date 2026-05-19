@@ -19,7 +19,7 @@ export default class ConfigCertificateSelect extends ConfigGeneric<
     ConfigCertificateSelectState
 > {
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         // Important: getCertificates is only available in AdminConnection
         const certificates = await this.props.oContext.socket.getCertificates();

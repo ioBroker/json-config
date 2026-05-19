@@ -174,8 +174,8 @@ interface ConfigPanelState extends ConfigGenericState {
 }
 
 export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigPanelState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         if (this.props.schema?.collapsable) {
             this.setState({
                 expanded:
@@ -266,12 +266,16 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
             return null;
         }
 
-        const { disabled, hidden } = this.calculate(schema);
+        this.updateCalculatedValues();
+
+        if (!this.state.calculatedValues) {
+            return null;
+        }
 
         const items = this.props.schema.items;
         const schemaStyle = this.props.schema.style || {};
 
-        if (hidden) {
+        if (this.state.calculatedValues.hidden) {
             if (schema.hideOnlyControl) {
                 const item = (
                     <Grid2
@@ -305,7 +309,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
         }
 
         if (this.props.table) {
-            return this.renderItems(items, disabled) as any as JSX.Element;
+            return this.renderItems(items, this.state.calculatedValues.disabled) as any as JSX.Element;
         }
 
         if (this.props.custom) {
@@ -318,7 +322,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                     rowSpacing={1}
                     sx={schemaStyle}
                 >
-                    {this.renderItems(items, disabled)}
+                    {this.renderItems(items, this.state.calculatedValues.disabled)}
                 </Grid2>
             );
         }
@@ -359,7 +363,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                             rowSpacing={1}
                             sx={{ ...schemaStyle, width: '100%', padding: '10px' }}
                         >
-                            {this.renderItems(items, disabled)}
+                            {this.renderItems(items, this.state.calculatedValues.disabled)}
                         </Grid2>
                     </AccordionDetails>
                 </Accordion>
@@ -399,7 +403,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                             this.props.schema.innerStyle,
                         )}
                     >
-                        {this.renderItems(items, disabled)}
+                        {this.renderItems(items, this.state.calculatedValues.disabled)}
                     </Grid2>
                 </Box>
             );

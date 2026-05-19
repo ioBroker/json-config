@@ -19,9 +19,9 @@ interface ConfigUUIDState extends ConfigGenericState {
 
 export default class ConfigUUID extends ConfigGeneric<ConfigUUIDProps, ConfigUUIDState> {
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
 
-        const uuidObj = await this.props.oContext.socket.getObject('system.meta.uuid');
+        const uuidObj = await this.props.oContext.getCachedObject('system.meta.uuid');
         this.setState({ uuid: uuidObj?.native?.uuid || 'unknown' });
     }
 

@@ -10,8 +10,8 @@ interface ConfigDatePickerProps extends ConfigGenericProps {
 }
 
 export default class ConfigDatePicker extends ConfigGeneric<ConfigDatePickerProps> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const str = ConfigGeneric.getValue(this.props.data, this.props.attr);
         // Date picker expects a Date object
         if (str) {

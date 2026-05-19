@@ -37,8 +37,8 @@ interface ConfigYamlEditorState extends ConfigGenericState {
 }
 
 export default class ConfigYamlEditor extends ConfigGeneric<ConfigYamlEditorProps, ConfigYamlEditorState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const { data, attr } = this.props;
         const value: string = ConfigGeneric.getValue(data, attr) || '';
         this.setState({ value, initialized: true, yamlError: this.validateYaml(value) });

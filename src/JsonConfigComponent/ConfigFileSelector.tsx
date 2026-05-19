@@ -140,8 +140,8 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
         this.imagePrefix = this.props.oContext.imagePrefix ?? './files';
     }
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
         this.objectID = (this.props.schema.objectID || '0_userdata.0').replace(
             '%INSTANCE%',

@@ -20,10 +20,10 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
     private iframeRef = React.createRef<HTMLIFrameElement>();
     private observer: IntersectionObserver | null = null;
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
-        this.askInstance();
+        this.askInstance().catch((err: Error) => console.error(err));
 
         if (this.props.schema.reloadOnShow) {
             this.observer = new IntersectionObserver(([entry]) => {
@@ -44,11 +44,11 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
         }
     }
 
-    askInstance(): void {
+    async askInstance(): Promise<void> {
         if (this.props.alive) {
             let data = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
-                const dataStr: string = this.getPattern(this.props.schema.jsonData, null, true);
+                const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 if (dataStr) {
                     try {
                         data = JSON.parse(dataStr);
@@ -61,7 +61,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
             if (data === undefined) {
                 data = null;
             }
-            const instance = this.getPattern(
+            const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
             void this.props.oContext.socket

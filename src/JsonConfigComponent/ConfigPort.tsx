@@ -37,7 +37,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
     private updateTimeout?: ReturnType<typeof setTimeout>;
 
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         let _value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         if (_value === null || _value === undefined) {
             _value = '';
@@ -48,7 +48,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
         const instances: ioBroker.InstanceObject[] = await this.props.oContext.socket.getAdapterInstances();
 
         const ownId = `system.adapter.${this.props.oContext.adapterName}.${this.props.oContext.instance}`;
-        const instanceObj: ioBroker.InstanceObject = (await this.props.oContext.socket.getObject(
+        const instanceObj: ioBroker.InstanceObject = (await this.props.oContext.getCachedObject(
             ownId,
         )) as ioBroker.InstanceObject;
         const ownHostname = instanceObj?.common.host;

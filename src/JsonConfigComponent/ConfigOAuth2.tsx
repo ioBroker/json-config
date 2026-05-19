@@ -70,7 +70,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
     }
 
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         if (window.addEventListener) {
             window.addEventListener('message', this.onMessage as any, false);
         } else {

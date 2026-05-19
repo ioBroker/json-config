@@ -20,19 +20,19 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
 
     private localContext: string | undefined;
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
         if (!this.props.schema.sendFirstByClick) {
-            this.askInstance();
+            this.askInstance().catch((err: Error) => console.error(err));
         }
     }
 
-    askInstance(): void {
+    async askInstance(): Promise<void> {
         if (this.props.alive) {
             let data = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
-                const dataStr: string = this.getPattern(this.props.schema.jsonData, null, true);
+                const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 if (dataStr) {
                     try {
                         data = JSON.parse(dataStr);
@@ -45,7 +45,7 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
             if (data === undefined) {
                 data = null;
             }
-            const instance = this.getPattern(
+            const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
             this.setState({ loading: true }, () =>

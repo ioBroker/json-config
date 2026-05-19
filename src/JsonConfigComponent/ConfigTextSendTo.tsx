@@ -37,11 +37,11 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
 
     private localContext: string | undefined;
 
-    askInstance(): void {
+    async askInstance(): Promise<void> {
         if (this.props.alive) {
             let data: Record<string, any> | undefined = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
-                const dataStr: string = this.getPattern(this.props.schema.jsonData, null, true);
+                const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 try {
                     data = JSON.parse(dataStr);
                 } catch {
@@ -50,7 +50,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
             }
 
             data ??= null;
-            const instance = this.getPattern(
+            const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
             void this.props.oContext.socket

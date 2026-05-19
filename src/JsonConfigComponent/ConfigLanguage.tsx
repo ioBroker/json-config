@@ -70,8 +70,8 @@ interface ConfigLanguageState extends ConfigGenericState {
 }
 
 class ConfigLanguage extends ConfigGeneric<ConfigLanguageProps, ConfigLanguageState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         const languages: LanguageSelectOption[] = [...LANGUAGES];
         if (this.props.schema.system) {

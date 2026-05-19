@@ -39,11 +39,11 @@ interface ConfigInterfaceState extends ConfigGenericState {
 }
 
 class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfaceState> {
-    componentDidMount(): void {
-        super.componentDidMount();
-        this.props.oContext.socket
-            .getObject(`system.host.${this.props.common.host}`)
-            .then(obj => {
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
+        this.props.oContext
+            .getCachedObject(`system.host.${this.props.common.host}`)
+            .then((obj: ioBroker.HostObject) => {
                 const interfaces: { value: string; address: string }[] = [];
                 if (obj?.native?.hardware?.networkInterfaces) {
                     const list = obj.native.hardware.networkInterfaces;

@@ -323,7 +323,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
      * React lifecycle hook, called once as component is mounted
      */
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         const _value: Record<string, any>[] | Record<string, any> =
             ConfigGeneric.getValue(this.props.data, this.props.attr) || [];
         let value: Record<string, any>[];
@@ -349,7 +349,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 if (this.props.oContext.socket.getCompactSystemConfig) {
                     systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
                 } else {
-                    systemConfig = await this.props.oContext.socket.getObject('system.config');
+                    systemConfig = await this.props.oContext.getCachedObject('system.config');
                 }
             } catch (e) {
                 console.error(`Cannot get system configuration: ${e}`);
@@ -969,16 +969,18 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         );
     };
 
-    onAdd = (): void => {
+    onAdd = async (): Promise<void> => {
         const { schema } = this.props;
         const newValue: Record<string, any>[] = JSON.parse(JSON.stringify(this.state.value));
-        const newItem = schema.items?.reduce(
-            (accumulator: Record<string, any>, currentValue: ConfigItemTableIndexed) => {
+
+        const newItem: Record<string, any> = {};
+        if (schema.items) {
+            for (const currentValue of schema.items) {
                 let defaultValue;
                 if (currentValue.defaultFunc) {
                     if (this.props.custom) {
                         defaultValue = currentValue.defaultFunc
-                            ? this.executeCustom(
+                            ? await this.executeCustom(
                                   currentValue.defaultFunc,
                                   this.props.data,
                                   this.props.customObj,
@@ -989,7 +991,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             : this.props.schema.default;
                     } else {
                         defaultValue = currentValue.defaultFunc
-                            ? this.execute(
+                            ? await this.execute(
                                   currentValue.defaultFunc,
                                   this.props.schema.default,
                                   this.props.data,
@@ -1002,11 +1004,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     defaultValue = currentValue.default ?? null;
                 }
 
-                accumulator[currentValue.attr] = defaultValue;
-                return accumulator;
-            },
-            {},
-        );
+                newItem[currentValue.attr] = defaultValue;
+            }
+        }
 
         newValue.push(newItem);
 

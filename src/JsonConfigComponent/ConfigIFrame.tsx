@@ -15,8 +15,8 @@ export default class ConfigIFrame extends ConfigGeneric<ConfigIFrameProps, Confi
     private iframeRef = React.createRef<HTMLIFrameElement>();
     private observer: IntersectionObserver | null = null;
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
         if (this.props.schema.reloadOnShow) {
             this.observer = new IntersectionObserver(([entry]) => {

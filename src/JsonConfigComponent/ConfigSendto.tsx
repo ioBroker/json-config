@@ -152,18 +152,18 @@ interface ConfigSendToState extends ConfigGenericState {
 
 export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
 
         let hostname = window.location.hostname;
         if (this.props.schema.openUrl) {
             // read admin host
             const adminInstance = await this.props.oContext.socket.getCurrentInstance();
-            const instanceObj = await this.props.oContext.socket.getObject(
+            const instanceObj = await this.props.oContext.getCachedObject(
                 `system.adapter.${adminInstance}` as ioBroker.ObjectIDs.Instance,
             );
 
             if (instanceObj) {
-                const hostObj = await this.props.oContext.socket.getObject(`system.host.${instanceObj?.common?.host}`);
+                const hostObj = await this.props.oContext.getCachedObject(`system.host.${instanceObj?.common?.host}`);
                 if (hostObj) {
                     const ip = findNetworkAddressOfHost(hostObj, window.location.hostname);
                     if (ip) {
@@ -183,7 +183,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         });
 
         if (this.props.schema.onLoaded) {
-            this._onClick();
+            this._onClick().catch((err: Error) => console.error(err));
         }
     }
 
@@ -242,7 +242,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         return null;
     }
 
-    _onClick(): void {
+    async _onClick(): Promise<void> {
         this.props.oContext.onCommandRunning(true);
         this.setState({ running: true });
 
@@ -251,7 +251,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
 
         let data: Record<string, any> = this.props.schema.data;
         if (data === undefined && this.props.schema.jsonData) {
-            const dataStr = this.getPattern(
+            const dataStr = await this.getPatternAsync(
                 this.props.schema.jsonData,
                 {
                     _origin,
@@ -286,7 +286,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 parseInt(this.props.schema.timeout as any as string, 10) || 10000,
             );
         }
-        const instance = this.getPattern(
+        const instance = await this.getPatternAsync(
             this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
         );
         void this.props.oContext.socket
@@ -427,7 +427,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                         if (this.props.schema.confirm) {
                             this.setState({ confirmDialog: true });
                         } else {
-                            this._onClick();
+                            this._onClick().catch((err: Error) => console.error(err));
                         }
                     }}
                 >

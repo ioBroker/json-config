@@ -42,23 +42,26 @@ interface ConfigInstanceSelectProps extends ConfigGenericProps {
     schema: ConfigItemSelect;
 }
 
+interface SelectItem {
+    label: string;
+    value: number | string;
+    group?: boolean;
+    hidden?: string | boolean;
+    color?: string;
+    description?: string;
+    icon?: string;
+    hiddenValue?: boolean;
+}
+
 interface ConfigInstanceSelectState extends ConfigGenericState {
-    selectOptions?: {
-        label: string;
-        value: number | string;
-        group?: boolean;
-        hidden?: string | boolean;
-        color?: string;
-        description?: string;
-        icon?: string;
-    }[];
+    selectOptions?: SelectItem[];
 }
 
 export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstanceSelectState> {
     private initialValue: string | string[] = '';
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         let value: string | string[] = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         if (this.props.schema.multiple) {
@@ -77,9 +80,10 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             color?: string;
             description?: string;
             icon?: string;
+            hiddenValue?: boolean;
         }[] = [];
 
-        (this.props.schema.options || []).forEach(item => {
+        for (const item of this.props.schema.options || []) {
             // if optgroup
             const groupItem: {
                 items: ConfigItemSelectOption[];
@@ -95,34 +99,40 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 description?: string;
             };
             if (Array.isArray(groupItem.items)) {
-                selectOptions.push({
+                const selectItem: SelectItem = {
                     label: this.getText(item.label, this.props.schema.noTranslation),
                     value: item.value,
                     group: true,
                     color: item.color,
                     description: this.getText(item.description),
-                });
-                groupItem.items.forEach(it =>
-                    selectOptions.push({
+                };
+                selectItem.hiddenValue = await this.isVisible(selectItem);
+                selectOptions.push(selectItem);
+                for (const it of groupItem.items) {
+                    const selectSubItem: SelectItem = {
                         label: this.getText(it.label, this.props.schema.noTranslation),
                         value: it.value,
                         hidden: it.hidden,
                         color: item.color,
                         description: this.getText(item.description),
                         icon: it.icon,
-                    }),
-                );
+                    };
+                    selectSubItem.hiddenValue = await this.isVisible(selectSubItem);
+                    selectOptions.push(selectSubItem);
+                }
             } else {
-                selectOptions.push({
+                const selectItem: SelectItem = {
                     label: this.getText(item.label, this.props.schema.noTranslation),
                     value: item.value,
                     hidden: item.hidden,
                     color: item.color,
                     description: this.getText(item.description),
                     icon: item.icon,
-                });
+                };
+                selectItem.hiddenValue = await this.isVisible(selectItem);
+                selectOptions.push(selectItem);
             }
-        });
+        }
 
         // Report value-to-label mapping to parent table for filtering
         if (this.props.onFilterLabelUpdate && this.props.table) {
@@ -165,37 +175,33 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
         return value;
     }
 
-    _filterOptions(
-        selectOptions: ConfigInstanceSelectState['selectOptions'],
-    ): ConfigInstanceSelectState['selectOptions'] {
-        return (selectOptions || []).filter(item => {
-            // if optgroup or no hidden function
-            if (!item.hidden) {
-                return true;
-            }
+    private async isVisible(item: SelectItem): Promise<boolean> {
+        // if optgroup or no hidden function
+        if (!item.hidden) {
+            return true;
+        }
 
-            if (this.props.custom) {
-                return !this.executeCustom(
-                    item.hidden,
-                    this.props.data,
-                    this.props.customObj,
-                    this.props.oContext.instanceObj,
-                    this.props.arrayIndex,
-                    this.props.globalData,
-                );
-            }
-            return !this.execute(
+        if (this.props.custom) {
+            return !(await this.executeCustom(
                 item.hidden,
-                this.props.schema.default,
                 this.props.data,
+                this.props.customObj,
+                this.props.oContext.instanceObj,
                 this.props.arrayIndex,
                 this.props.globalData,
-            );
-        });
+            ));
+        }
+        return !(await this.execute(
+            item.hidden,
+            this.props.schema.default,
+            this.props.data,
+            this.props.arrayIndex,
+            this.props.globalData,
+        ));
     }
 
     renderRadio(error: string, disabled: boolean): JSX.Element {
-        const selectOptions = this._filterOptions(this.state.selectOptions).filter(it => !it.group);
+        const selectOptions = this.state.selectOptions.filter(it => !it.hiddenValue && !it.group);
         const value = this._getValue();
 
         return (
@@ -269,7 +275,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             return this.renderRadio(error, disabled);
         }
 
-        const selectOptions = this._filterOptions(this.state.selectOptions);
+        const selectOptions = this.state.selectOptions;
 
         const value = this._getValue();
 

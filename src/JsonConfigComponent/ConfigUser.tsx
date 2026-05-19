@@ -24,8 +24,8 @@ interface ConfigUserState extends ConfigGenericState {
 }
 
 class ConfigUser extends ConfigGeneric<ConfigUserProps, ConfigUserState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         this.props.oContext.socket
             .getUsers()
             .then(users => {

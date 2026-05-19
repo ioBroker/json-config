@@ -63,12 +63,10 @@ interface JsonConfigComponentState {
 
 export class JsonConfigComponent extends Component<JsonConfigComponentProps, JsonConfigComponentState> {
     private readonly forceUpdateHandlers: Record<string, (data: any) => void>;
-
     private errorTimeout: ReturnType<typeof setTimeout> | null = null;
-
     private errorCached: Record<string, string> | null = null;
-
     private oContext: JsonConfigContext;
+    private cachedObjects: Record<string, ioBroker.Object | null> = {};
 
     constructor(props: JsonConfigComponentProps) {
         super(props);
@@ -173,7 +171,9 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             if (this.props.socket.getCompactSystemConfig) {
                 systemConfig = await this.props.socket.getCompactSystemConfig();
             } else {
-                systemConfig = await this.props.socket.getObject('system.config');
+                systemConfig = ((await this.getCachedObject('system.config')) || undefined) as
+                    | ioBroker.SystemConfigObject
+                    | undefined;
             }
             const state = await this.props.socket.getState(
                 `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
@@ -362,6 +362,19 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
         });
     }
 
+    getCachedObject = async (id: string): Promise<ioBroker.Object | null> => {
+        if (this.cachedObjects[id] !== undefined) {
+            return this.cachedObjects[id];
+        }
+        try {
+            this.cachedObjects[id] = (await this.props.socket.getObject(id)) ?? null;
+        } catch (e) {
+            console.error(e);
+            this.cachedObjects[id] = null;
+        }
+        return this.cachedObjects[id];
+    };
+
     updateContext(forceUpdate?: boolean): void {
         this.oContext = {
             DeviceManager: this.props.DeviceManager,
@@ -388,6 +401,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             themeType: this.props.themeType,
             _themeName: this.props.themeName,
             updateData: this.state.updateData,
+            getCachedObject: this.getCachedObject,
         } as JsonConfigContext;
 
         if (forceUpdate) {

@@ -24,8 +24,8 @@ class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImag
         this.index = Date.now();
     }
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
         if (this.props.schema.base64) {
             const value = ConfigGeneric.getValue(this.props.data, this.props.attr);

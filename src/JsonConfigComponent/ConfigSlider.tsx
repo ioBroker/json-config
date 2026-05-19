@@ -25,8 +25,8 @@ interface ConfigSliderState extends ConfigGenericState {
 }
 
 class ConfigSlider extends ConfigGeneric<ConfigSliderProps, ConfigSliderState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const _value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         this.setState({ _value });
     }

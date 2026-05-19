@@ -41,8 +41,8 @@ interface ConfigTextState extends ConfigGenericState {
 class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
     private updateTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         let value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         if (Array.isArray(value) && this.props.oContext.multiEdit) {

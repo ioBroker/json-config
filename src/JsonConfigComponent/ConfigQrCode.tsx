@@ -14,7 +14,7 @@ interface ConfigQrCodeState extends ConfigGenericState {
 
 export default class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, ConfigQrCodeState> {
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         // lazy load of qrcode
         const module = await import('react-qr-code');
         this.setState({ QRCode: module.default });

@@ -71,21 +71,32 @@ interface ConfigSelectSendToProps extends ConfigGenericProps {
     schema: ConfigItemSelectSendTo;
 }
 
+interface SelectItem {
+    label: string;
+    value: number | string;
+    group?: boolean;
+    hidden?: string | boolean;
+    color?: string;
+    description?: string;
+    icon?: string;
+    hiddenValue?: boolean;
+}
+
 interface ConfigSelectSendToState extends ConfigGenericState {
-    list?: { label: string; value: string; hidden?: boolean; group?: boolean; description?: string }[];
+    list?: SelectItem[];
     running?: boolean;
 }
 
-class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSelectSendToState> {
+export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSelectSendToState> {
     private initialized = false;
 
     private localContext: string | undefined;
 
-    askInstance(): void {
+    async askInstance(): Promise<void> {
         if (this.props.alive) {
             let data: Record<string, any> | undefined = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
-                const dataStr: string = this.getPattern(this.props.schema.jsonData, null, true);
+                const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 try {
                     data = JSON.parse(dataStr);
                 } catch {
@@ -96,20 +107,26 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
             if (data === undefined) {
                 data = null;
             }
-            this.setState({ running: true }, () => {
-                const instance = this.getPattern(
+            this.setState({ running: true }, async () => {
+                const instance = await this.getPatternAsync(
                     this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
                 );
 
-                void this.props.oContext.socket
-                    .sendTo(instance, this.props.schema.command || 'send', data)
-                    .then(list => {
-                        this.reportFilterLabels(list);
-                        this.setState({ list, running: false });
-                    })
-                    .catch(e => {
-                        console.error(`Cannot send command: ${e}`);
-                    });
+                try {
+                    const list: SelectItem[] = await this.props.oContext.socket.sendTo(
+                        instance,
+                        this.props.schema.command || 'send',
+                        data,
+                    );
+                    this.reportFilterLabels(list);
+                    for (const item of list) {
+                        item.hiddenValue = await this.filterOptions(item);
+                    }
+
+                    this.setState({ list, running: false });
+                } catch (e) {
+                    console.error(`Cannot send command: ${e}`);
+                }
             });
         } else {
             const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
@@ -119,7 +136,7 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
     }
 
     /** Report value-to-label mapping to parent table for filtering */
-    reportFilterLabels(list: { label: string; value: string }[] | undefined): void {
+    reportFilterLabels(list: { label: string; value: string | number }[] | undefined): void {
         if (this.props.onFilterLabelUpdate && this.props.table && Array.isArray(list)) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of list) {
@@ -158,6 +175,31 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
         }
 
         return value;
+    }
+
+    private async filterOptions(item: SelectItem): Promise<boolean> {
+        // if optgroup or no hidden function
+        if (!item.hidden) {
+            return true;
+        }
+
+        if (this.props.custom) {
+            return !(await this.executeCustom(
+                item.hidden,
+                this.props.data,
+                this.props.customObj,
+                this.props.oContext.instanceObj,
+                this.props.arrayIndex,
+                this.props.globalData,
+            ));
+        }
+        return !(await this.execute(
+            item.hidden,
+            this.props.schema.default,
+            this.props.data,
+            this.props.arrayIndex,
+            this.props.globalData,
+        ));
     }
 
     renderItem(error: unknown, disabled: boolean /* , defaultValue */): JSX.Element | string {
@@ -220,28 +262,7 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
             return <CircularProgress size="24" />;
         }
 
-        const selectOptions = this.state.list.filter(item => {
-            if (!item.hidden) {
-                return true;
-            }
-            if (this.props.custom) {
-                return !this.executeCustom(
-                    item.hidden,
-                    this.props.data,
-                    this.props.customObj,
-                    this.props.oContext.instanceObj,
-                    this.props.arrayIndex,
-                    this.props.globalData,
-                );
-            }
-            return !this.execute(
-                item.hidden,
-                this.props.schema.default,
-                this.props.data,
-                this.props.arrayIndex,
-                this.props.globalData,
-            );
-        });
+        const selectOptions = this.state.list.filter(item => !item.hiddenValue);
 
         const item = selectOptions.find(it => it.value === value);
 
@@ -309,10 +330,10 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
                             >
                                 {this.props.schema.multiple ? (
                                     <Checkbox
-                                        checked={value.includes(it.value)}
+                                        checked={value.includes(it.value.toString())}
                                         onClick={() => {
                                             const _value = JSON.parse(JSON.stringify(this._getValue()));
-                                            const pos = value.indexOf(it.value);
+                                            const pos = value.indexOf(it.value.toString());
                                             if (pos !== -1) {
                                                 _value.splice(pos, 1);
                                             } else {
@@ -351,5 +372,3 @@ class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendToProps, ConfigSe
         );
     }
 }
-
-export default ConfigSelectSendTo;

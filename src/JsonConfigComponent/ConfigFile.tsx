@@ -52,8 +52,8 @@ interface ConfigFileState extends ConfigGenericState {
 class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
     private imagePrefix = '../..';
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         this.imagePrefix = this.props.oContext.imagePrefix ?? './files';
         this.setState({ value: value ?? '' });

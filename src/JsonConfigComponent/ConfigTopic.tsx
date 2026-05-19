@@ -21,8 +21,8 @@ interface ConfigTopicProps extends ConfigGenericProps {
 }
 
 class ConfigTopic extends ConfigGeneric<ConfigTopicProps, ConfigGenericState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         if (!value && this.props.customObj?._id) {
             const topic = convertID2Topic(

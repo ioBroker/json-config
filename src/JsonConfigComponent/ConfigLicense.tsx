@@ -49,8 +49,8 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
         );
     }
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         if (!ConfigGeneric.getValue(this.props.data, this.props.attr)) {
             if (this.props.schema.licenseUrl) {
                 this.setState({ showLicenseDialog: true, loading: true, scrolledDown: false });

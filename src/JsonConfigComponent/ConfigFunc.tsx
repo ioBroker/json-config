@@ -16,8 +16,8 @@ interface ConfigFuncState extends ConfigGenericState {
 }
 
 class ConfigFunc extends ConfigGeneric<ConfigFuncProps, ConfigFuncState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         void this.props.oContext.socket.getEnums('functions').then(enums => {

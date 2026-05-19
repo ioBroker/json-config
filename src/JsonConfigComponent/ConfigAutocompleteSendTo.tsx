@@ -24,7 +24,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
     private localContext: string | undefined;
 
-    askInstance(): void {
+    async askInstance(): Promise<void> {
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         const selectOptions = this.props.schema.options
             ? this.props.schema.options.map((item: any) =>
@@ -35,7 +35,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
         if (this.props.alive) {
             let data = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
-                const dataStr: string = this.getPattern(this.props.schema.jsonData, null, true);
+                const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 try {
                     if (typeof dataStr === 'string') {
                         data = JSON.parse(dataStr);
@@ -51,7 +51,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
             // Set loading state during sendTo request
             this.setState({ loading: true });
-            const instance = this.getPattern(
+            const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
             void this.props.oContext.socket

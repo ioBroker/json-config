@@ -29,8 +29,8 @@ interface ConfigNumberState extends ConfigGenericState {
 class ConfigNumber extends ConfigGeneric<ConfigNumberProps, ConfigNumberState> {
     private updateTimeout?: ReturnType<typeof setTimeout>;
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         let _value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         if (_value === null || _value === undefined) {

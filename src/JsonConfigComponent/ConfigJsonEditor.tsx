@@ -38,8 +38,8 @@ interface ConfigJsonEditorState extends ConfigGenericState {
 }
 
 export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProps, ConfigJsonEditorState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const { data, attr } = this.props;
         const value: string = ConfigGeneric.getValue(data, attr) || '{}';
         this.setState({ value, initialized: true, jsonError: this.validateJson(value) });

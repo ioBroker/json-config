@@ -38,8 +38,8 @@ interface ConfigPasswordState extends ConfigGenericState {
 }
 
 class ConfigPassword extends ConfigGeneric<ConfigPasswordProps, ConfigPasswordState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         this.setState({
             _repeat: value ? PASSWORD_PLACEHOLDER : '',

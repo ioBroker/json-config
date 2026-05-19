@@ -30,8 +30,8 @@ interface ConfigCRONState extends ConfigGenericState {
 }
 
 class ConfigCRON extends ConfigGeneric<ConfigCRONProps, ConfigCRONState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const { data, attr } = this.props;
         const value = ConfigGeneric.getValue(data, attr) || '';
         this.setState({ value, showDialog: false });

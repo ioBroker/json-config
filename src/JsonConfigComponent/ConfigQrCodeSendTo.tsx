@@ -23,19 +23,19 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
     private localContext: string | undefined;
 
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         const module = await import('react-qr-code');
         this.setState({ QRCode: module.default });
         if (!this.props.schema.sendFirstByClick) {
-            this.askInstance();
+            await this.askInstance();
         }
     }
 
-    askInstance(): void {
+    async askInstance(): Promise<void> {
         if (this.props.alive) {
             let data = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
-                const dataStr: string = this.getPattern(this.props.schema.jsonData, null, true);
+                const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 if (dataStr) {
                     try {
                         data = JSON.parse(dataStr);
@@ -48,7 +48,7 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
             if (data === undefined) {
                 data = null;
             }
-            const instance = this.getPattern(
+            const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
             this.setState({ loading: true }, () =>

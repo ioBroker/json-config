@@ -23,8 +23,8 @@ interface ConfigInstanceSelectState extends ConfigGenericState {
 }
 
 class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, ConfigInstanceSelectState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         let adapter = this.props.schema.adapter;

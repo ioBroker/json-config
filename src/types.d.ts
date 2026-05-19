@@ -1234,6 +1234,7 @@ export type JsonConfigContext = {
     onCommandRunning: (commandRunning: boolean) => void;
     onValueChange?: (attr: string, value: any, saveConfig: boolean) => void;
     registerOnForceUpdate?: (attr: string, cb?: (data: any) => void) => void;
+    getCachedObject: (id: string) => Promise<ioBroker.Object | null>;
 };
 
 // Notification GUI

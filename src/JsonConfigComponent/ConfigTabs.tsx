@@ -36,10 +36,12 @@ interface ConfigTabsState extends ConfigGenericState {
     openMenu: HTMLButtonElement | null;
     initialBreakpoint?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     tabErrors: Record<string, Record<string, string>>; // tab -> attr -> error
+    calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> | null;
 }
 
 class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
     private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+    private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
 
     private readonly refDiv: React.RefObject<HTMLDivElement>;
 
@@ -119,6 +121,10 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
         if (this.resizeTimeout) {
             clearTimeout(this.resizeTimeout);
             this.resizeTimeout = null;
+        }
+        if (this.calculateTimeoutTable) {
+            clearTimeout(this.calculateTimeoutTable);
+            this.calculateTimeoutTable = null;
         }
         window.removeEventListener('hashchange', this.onHashTabsChanged, false);
         super.componentWillUnmount();
@@ -207,60 +213,94 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
         });
     }
 
+    updateCalculatedValuesForTable(): void {
+        if (this.calculateTimeoutTable) {
+            clearTimeout(this.calculateTimeoutTable);
+        }
+        this.calculateTimeoutTable = setTimeout(async (): Promise<void> => {
+            this.calculateTimeoutTable = null;
+            const items = this.props.schema.items;
+            const calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> = {};
+            for (const name in items) {
+                let disabled: boolean;
+                if (items[name].expertMode && !this.props.expertMode) {
+                    calculatedValuesTable[name] = { hidden: true, disabled: false };
+                    continue;
+                }
+
+                if (this.props.custom) {
+                    const hidden = !!(await this.executeCustom(
+                        items[name].hidden,
+                        this.props.data,
+                        this.props.customObj,
+                        this.props.oContext.instanceObj,
+                        this.props.index,
+                        this.props.globalData,
+                    ));
+                    if (hidden) {
+                        calculatedValuesTable[name] = { hidden: true, disabled: false };
+                        continue;
+                    }
+                    disabled = !!(await this.executeCustom(
+                        items[name].disabled,
+                        this.props.data,
+                        this.props.customObj,
+                        this.props.oContext.instanceObj,
+                        this.props.index,
+                        this.props.globalData,
+                    ));
+                    calculatedValuesTable[name] = { hidden, disabled };
+                } else {
+                    const hidden = !!(await this.execute(
+                        items[name].hidden,
+                        false,
+                        this.props.data,
+                        this.props.index,
+                        this.props.globalData,
+                    ));
+                    if (hidden) {
+                        calculatedValuesTable[name] = { hidden: true, disabled: false };
+                        continue;
+                    }
+                    disabled = !!(await this.execute(
+                        items[name].disabled,
+                        false,
+                        this.props.data,
+                        this.props.index,
+                        this.props.globalData,
+                    ));
+                    calculatedValuesTable[name] = { hidden: true, disabled: false };
+                }
+            }
+
+            if (JSON.stringify(calculatedValuesTable) !== JSON.stringify(this.state.calculatedValuesTable)) {
+                this.setState({ calculatedValuesTable });
+            }
+        }, 50);
+    }
+
     render(): JSX.Element {
         const items = this.props.schema.items;
         let withIcons = false;
+
+        this.updateCalculatedValuesForTable();
+        if (!this.state.calculatedValuesTable) {
+            return null;
+        }
         const elements: { icon: React.JSX.Element | null; label: string; name: string; disabled: boolean }[] = [];
 
-        Object.keys(items).map(name => {
-            let disabled: boolean;
-            if (items[name].expertMode && !this.props.expertMode) {
-                return;
-            }
-
-            if (this.props.custom) {
-                const hidden = this.executeCustom(
-                    items[name].hidden,
-                    this.props.data,
-                    this.props.customObj,
-                    this.props.oContext.instanceObj,
-                    this.props.index,
-                    this.props.globalData,
-                );
-                if (hidden) {
-                    return;
-                }
-                disabled = this.executeCustom(
-                    items[name].disabled,
-                    this.props.data,
-                    this.props.customObj,
-                    this.props.oContext.instanceObj,
-                    this.props.index,
-                    this.props.globalData,
-                ) as boolean;
-            } else {
-                const hidden: boolean = this.execute(
-                    items[name].hidden,
-                    false,
-                    this.props.data,
-                    this.props.index,
-                    this.props.globalData,
-                ) as boolean;
-                if (hidden) {
-                    return;
-                }
-                disabled = this.execute(
-                    items[name].disabled,
-                    false,
-                    this.props.data,
-                    this.props.index,
-                    this.props.globalData,
-                ) as boolean;
-            }
-            const icon = this.getIcon(items[name].icon);
-            withIcons = withIcons || !!icon;
-            elements.push({ icon, disabled, label: this.getText(items[name].label), name });
-        });
+        Object.keys(items)
+            .filter(name => !this.state.calculatedValuesTable[name]?.hidden)
+            .map(name => {
+                const icon = this.getIcon(items[name].icon);
+                withIcons ||= !!icon;
+                elements.push({
+                    icon,
+                    disabled: this.state.calculatedValuesTable[name]?.disabled,
+                    label: this.getText(items[name].label),
+                    name,
+                });
+            });
 
         if (!elements.find(item => item.name === this.state.tab)) {
             // Select the first tab if the current tab is not available

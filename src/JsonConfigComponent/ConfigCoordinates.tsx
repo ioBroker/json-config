@@ -30,8 +30,8 @@ interface ConfigCoordinatesState extends ConfigGenericState {
 }
 
 class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoordinatesState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
 
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         this.setState({ value });
@@ -63,7 +63,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
             if (this.props.oContext.socket.getCompactSystemConfig) {
                 systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
             } else {
-                systemConfig = await this.props.oContext.socket.getObject('system.config');
+                systemConfig = await this.props.oContext.getCachedObject('system.config');
             }
         } catch (e) {
             console.error(`Cannot get system configuration: ${e}`);

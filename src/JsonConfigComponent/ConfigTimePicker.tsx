@@ -11,8 +11,8 @@ interface ConfigTimePickerProps extends ConfigGenericProps {
 }
 
 export default class ConfigTimePicker extends ConfigGeneric<ConfigTimePickerProps> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         this.setState({ value });
     }

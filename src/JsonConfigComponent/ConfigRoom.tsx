@@ -16,8 +16,8 @@ interface ConfigRoomState extends ConfigGenericState {
 }
 
 class ConfigRoom extends ConfigGeneric<ConfigRoomProps, ConfigRoomState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         void this.props.oContext.socket

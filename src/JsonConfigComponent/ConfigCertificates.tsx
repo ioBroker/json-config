@@ -33,7 +33,7 @@ interface ConfigCertificatesState extends ConfigGenericState {
 
 export default class ConfigCertificates extends ConfigGeneric<ConfigCertificatesProps, ConfigCertificatesState> {
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
         // Important: getCertificates is only available in AdminConnection
         const certificates = await this.props.oContext.socket.getCertificates();
         const certsPublicOptions: { label: string; value: string }[] = [];
@@ -41,7 +41,7 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
         const certsChainOptions: { label: string; value: string }[] = [];
 
         let collectionsOptions: string[] | null = [];
-        const collectionsOptionsObj = await this.props.oContext.socket.getObject('system.certificates');
+        const collectionsOptionsObj = await this.props.oContext.getCachedObject('system.certificates');
         if (collectionsOptionsObj?.native?.collections) {
             collectionsOptions = Object.keys(collectionsOptionsObj.native.collections);
         } else {

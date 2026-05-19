@@ -12,8 +12,8 @@ interface ConfigChipProps extends ConfigGenericProps {
 }
 
 class ConfigChip extends ConfigGeneric<ConfigChipProps, ConfigGenericState> {
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const { data, attr } = this.props;
         const value = ConfigGeneric.getValue(data, attr);
         if (this.props.schema.delimiter && typeof value === 'string') {

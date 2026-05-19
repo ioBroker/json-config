@@ -30,8 +30,8 @@ interface ConfigObjectIdState extends ConfigGenericState {
 class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdState> {
     private fillOnSelect: { attr: string; pathInObject: string; overwrite?: boolean }[] = [];
 
-    componentDidMount(): void {
-        super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
         const { data, attr } = this.props;
         const value = ConfigGeneric.getValue(data, attr) || '';
         if (this.props.schema.fillOnSelect) {
@@ -62,7 +62,7 @@ class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdSt
         await this.onChange(attr, value);
         if (this.fillOnSelect.length) {
             try {
-                const obj = await this.props.oContext.socket.getObject(value);
+                const obj = await this.props.oContext.getCachedObject(value);
                 for (const item of this.fillOnSelect) {
                     if (item.overwrite || !ConfigGeneric.getValue(this.props.data, item.attr)) {
                         let objVal = ConfigGeneric.getValue(obj, item.pathInObject);

@@ -22,8 +22,8 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
     async _onClick(): Promise<void> {
         let val = this.props.schema.val;
         if (typeof val === 'string' && val.includes('${')) {
-            val = this.getPattern(val, null, true);
-            const obj = await this.props.oContext.socket.getObject(this.props.schema.id);
+            val = await this.getPatternAsync(val, null, true);
+            const obj = await this.props.oContext.getCachedObject(this.props.schema.id);
             if (obj?.common?.type === 'number') {
                 val = parseFloat(val);
             } else if (obj?.common?.type === 'boolean') {
