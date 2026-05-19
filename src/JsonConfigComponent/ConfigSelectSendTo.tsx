@@ -120,7 +120,7 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                     );
                     this.reportFilterLabels(list);
                     for (const item of list) {
-                        item.hiddenValue = await this.filterOptions(item);
+                        item.hiddenValue = await this.isHidden(item);
                     }
 
                     this.setState({ list, running: false });
@@ -177,14 +177,14 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
         return value;
     }
 
-    private async filterOptions(item: SelectItem): Promise<boolean> {
+    private async isHidden(item: SelectItem): Promise<boolean> {
         // if optgroup or no hidden function
         if (!item.hidden) {
-            return true;
+            return false;
         }
 
         if (this.props.custom) {
-            return !(await this.executeCustom(
+            return !!(await this.executeCustom(
                 item.hidden,
                 this.props.data,
                 this.props.customObj,
@@ -193,7 +193,7 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                 this.props.globalData,
             ));
         }
-        return !(await this.execute(
+        return !!(await this.execute(
             item.hidden,
             this.props.schema.default,
             this.props.data,

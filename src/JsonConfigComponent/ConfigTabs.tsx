@@ -269,7 +269,7 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
                         this.props.index,
                         this.props.globalData,
                     ));
-                    calculatedValuesTable[name] = { hidden: true, disabled: false };
+                    calculatedValuesTable[name] = { hidden: false, disabled };
                 }
             }
 

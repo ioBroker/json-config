@@ -106,7 +106,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     color: item.color,
                     description: this.getText(item.description),
                 };
-                selectItem.hiddenValue = await this.isVisible(selectItem);
+                selectItem.hiddenValue = await this.isHidden(selectItem);
                 selectOptions.push(selectItem);
                 for (const it of groupItem.items) {
                     const selectSubItem: SelectItem = {
@@ -117,7 +117,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         description: this.getText(item.description),
                         icon: it.icon,
                     };
-                    selectSubItem.hiddenValue = await this.isVisible(selectSubItem);
+                    selectSubItem.hiddenValue = await this.isHidden(selectSubItem);
                     selectOptions.push(selectSubItem);
                 }
             } else {
@@ -129,7 +129,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     description: this.getText(item.description),
                     icon: item.icon,
                 };
-                selectItem.hiddenValue = await this.isVisible(selectItem);
+                selectItem.hiddenValue = await this.isHidden(selectItem);
                 selectOptions.push(selectItem);
             }
         }
@@ -175,14 +175,14 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
         return value;
     }
 
-    private async isVisible(item: SelectItem): Promise<boolean> {
+    private async isHidden(item: SelectItem): Promise<boolean> {
         // if optgroup or no hidden function
         if (!item.hidden) {
-            return true;
+            return false;
         }
 
         if (this.props.custom) {
-            return !(await this.executeCustom(
+            return !!(await this.executeCustom(
                 item.hidden,
                 this.props.data,
                 this.props.customObj,
@@ -191,7 +191,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 this.props.globalData,
             ));
         }
-        return !(await this.execute(
+        return !!(await this.execute(
             item.hidden,
             this.props.schema.default,
             this.props.data,
@@ -275,7 +275,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             return this.renderRadio(error, disabled);
         }
 
-        const selectOptions = this.state.selectOptions;
+        const selectOptions = this.state.selectOptions.filter(it => !it.hiddenValue);
 
         const value = this._getValue();
 

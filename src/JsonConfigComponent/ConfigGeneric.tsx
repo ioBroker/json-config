@@ -160,31 +160,39 @@ export default class ConfigGeneric<
         this.isError = {};
 
         this.lang = I18n.getLanguage();
+
+        // Initialize literal defaults synchronously so the first render has them.
+        // defaultFunc is evaluated asynchronously in componentDidMount.
+        if (props.schema) {
+            if (props.custom) {
+                if (!props.schema.defaultFunc) {
+                    this.defaultValue = props.schema.default;
+                }
+            } else if (props.schema.type !== 'state' && !props.schema.defaultFunc) {
+                this.defaultValue = props.schema.default;
+            }
+        }
     }
 
     async componentDidMount(): Promise<void> {
-        if (this.props.schema) {
+        if (this.props.schema?.defaultFunc) {
             if (this.props.custom) {
-                this.defaultValue = this.props.schema.defaultFunc
-                    ? await this.executeCustom(
-                          this.props.schema.defaultFunc,
-                          this.props.data,
-                          this.props.customObj,
-                          this.props.oContext.instanceObj,
-                          this.props.arrayIndex,
-                          this.props.globalData,
-                      )
-                    : this.props.schema.default;
+                this.defaultValue = await this.executeCustom(
+                    this.props.schema.defaultFunc,
+                    this.props.data,
+                    this.props.customObj,
+                    this.props.oContext.instanceObj,
+                    this.props.arrayIndex,
+                    this.props.globalData,
+                );
             } else if (this.props.schema.type !== 'state') {
-                this.defaultValue = this.props.schema.defaultFunc
-                    ? await this.execute(
-                          this.props.schema.defaultFunc,
-                          this.props.schema.default,
-                          this.props.data,
-                          this.props.arrayIndex,
-                          this.props.globalData,
-                      )
-                    : this.props.schema.default;
+                this.defaultValue = await this.execute(
+                    this.props.schema.defaultFunc,
+                    this.props.schema.default,
+                    this.props.data,
+                    this.props.arrayIndex,
+                    this.props.globalData,
+                );
             }
         }
 
@@ -211,7 +219,7 @@ export default class ConfigGeneric<
                 }, 100);
             }
         } else if (this.props.schema.defaultSendTo) {
-            this.sendTo().catch(e => console.log(e));
+            this.sendTo().catch(e => console.error(e));
         }
     }
 
@@ -701,6 +709,17 @@ export default class ConfigGeneric<
         return Promise.resolve();
     }
 
+    /** Ensure that every bare getObject( call is preceded by "await". */
+    static ensureAwaitGetObject(code: string): string {
+        return code.replace(/(?<![\w$.])getObject\(/g, (match, offset) => {
+            const before = code.slice(Math.max(0, offset - 10), offset);
+            if (/await\s+$/.test(before)) {
+                return match;
+            }
+            return `await ${match}`;
+        });
+    }
+
     async execute(
         func: string | boolean | Record<string, string>,
         defaultValue: string | number | boolean,
@@ -721,6 +740,10 @@ export default class ConfigGeneric<
         if (!fun) {
             return defaultValue;
         }
+        if (fun.includes('getObject(')) {
+            // ensure, that await is placed in front of getObject
+            fun = ConfigGeneric.ensureAwaitGetObject(fun);
+        }
         try {
             const f = new Function(
                 'data',
@@ -733,6 +756,7 @@ export default class ConfigGeneric<
                 'arrayIndex',
                 'globalData',
                 '_changed',
+                '_href',
                 'getObject',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
@@ -747,6 +771,7 @@ export default class ConfigGeneric<
                 arrayIndex,
                 globalData,
                 this.props.changed,
+                window.location.href,
                 this.getObject,
             );
         } catch (e) {
@@ -776,6 +801,10 @@ export default class ConfigGeneric<
         if (!fun) {
             return null;
         }
+        if (fun.includes('getObject(')) {
+            // ensure, that await is placed in front of getObject
+            fun = ConfigGeneric.ensureAwaitGetObject(fun);
+        }
         try {
             const f = new Function(
                 'data',
@@ -787,6 +816,7 @@ export default class ConfigGeneric<
                 'arrayIndex',
                 'globalData',
                 '_changed',
+                '_href',
                 'getObject',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
@@ -800,6 +830,7 @@ export default class ConfigGeneric<
                 arrayIndex,
                 globalData,
                 this.props.changed,
+                window.location.href,
                 this.getObject,
             );
         } catch (e) {
@@ -1029,6 +1060,7 @@ export default class ConfigGeneric<
 
         if (patternStr.includes('getObject(')) {
             // ensure, that await is placed in front of getObject
+            patternStr = ConfigGeneric.ensureAwaitGetObject(patternStr);
         }
 
         try {
@@ -1077,6 +1109,7 @@ export default class ConfigGeneric<
                 '_socket',
                 '_changed',
                 '_href',
+                'getObject',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = await f(
@@ -1151,6 +1184,7 @@ export default class ConfigGeneric<
                     this.props.oContext.socket,
                     this.props.changed,
                     window.location.href,
+                    this.getObject,
                 );
                 if (noTranslation) {
                     return text;
@@ -1169,6 +1203,7 @@ export default class ConfigGeneric<
                 '_socket',
                 '_changed',
                 '_href',
+                'getObject',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = f(
