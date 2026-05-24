@@ -41,7 +41,7 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
         const certsChainOptions: { label: string; value: string }[] = [];
 
         let collectionsOptions: string[] | null = [];
-        const collectionsOptionsObj = await this.props.oContext.getCachedObject('system.certificates');
+        const collectionsOptionsObj = await this.getCachedObject('system.certificates');
         if (collectionsOptionsObj?.native?.collections) {
             collectionsOptions = Object.keys(collectionsOptionsObj.native.collections);
         } else {

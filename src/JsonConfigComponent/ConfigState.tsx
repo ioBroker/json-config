@@ -84,7 +84,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
         const objId = await this.getObjectID();
-        const obj: ioBroker.StateObject = (await this.props.oContext.getCachedObject(objId)) as ioBroker.StateObject;
+        const obj: ioBroker.StateObject = (await this.getCachedObject(objId)) as ioBroker.StateObject;
 
         if (obj?.common?.states && !this.props.schema.options) {
             // Normalize states to object

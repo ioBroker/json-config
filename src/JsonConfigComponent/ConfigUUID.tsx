@@ -21,7 +21,7 @@ export default class ConfigUUID extends ConfigGeneric<ConfigUUIDProps, ConfigUUI
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
 
-        const uuidObj = await this.props.oContext.getCachedObject('system.meta.uuid');
+        const uuidObj = await this.getCachedObject('system.meta.uuid');
         this.setState({ uuid: uuidObj?.native?.uuid || 'unknown' });
     }
 

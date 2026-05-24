@@ -349,7 +349,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 if (this.props.oContext.socket.getCompactSystemConfig) {
                     systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
                 } else {
-                    systemConfig = (await this.props.oContext.getCachedObject('system.config')) as
+                    systemConfig = (await this.getCachedObject('system.config')) as
                         | ioBroker.SystemConfigObject
                         | undefined;
                 }

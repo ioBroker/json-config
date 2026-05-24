@@ -367,7 +367,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
 
     async findInLicenseManager(adapterName: string): Promise<LicenseResult[]> {
         // read if the license manager is supported
-        const licenses = await this.props.oContext.getCachedObject('system.licenses');
+        const licenses = await this.getCachedObject('system.licenses');
         const errors: LicenseResult[] = [];
         if (licenses?.native?.licenses?.length) {
             // enable license manager
@@ -376,12 +376,12 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
 
             let uuid: string;
             if (this.props.schema.uuid) {
-                const uuidObj = await this.props.oContext.getCachedObject('system.meta.uuid');
+                const uuidObj = await this.getCachedObject('system.meta.uuid');
                 uuid = uuidObj?.native?.uuid;
             }
             let version: string;
             if (this.props.schema.version) {
-                const aObj = await this.props.oContext.getCachedObject(`system.adapter.${adapterName}`);
+                const aObj = await this.getCachedObject(`system.adapter.${adapterName}`);
                 version = aObj?.common?.version;
             }
 
@@ -431,12 +431,12 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
     async checkLicense(license: string, adapterName: string): Promise<void> {
         let uuid;
         if (this.props.schema.uuid) {
-            const uuidObj = await this.props.oContext.getCachedObject('system.meta.uuid');
+            const uuidObj = await this.getCachedObject('system.meta.uuid');
             uuid = uuidObj?.native?.uuid;
         }
         let version;
         if (this.props.schema.version) {
-            const aObj = await this.props.oContext.getCachedObject(`system.adapter.${adapterName}`);
+            const aObj = await this.getCachedObject(`system.adapter.${adapterName}`);
             version = aObj?.common?.version;
         }
 

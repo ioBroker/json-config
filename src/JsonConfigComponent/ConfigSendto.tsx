@@ -158,12 +158,12 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         if (this.props.schema.openUrl) {
             // read admin host
             const adminInstance = await this.props.oContext.socket.getCurrentInstance();
-            const instanceObj = await this.props.oContext.getCachedObject(
+            const instanceObj = await this.getCachedObject(
                 `system.adapter.${adminInstance}` as ioBroker.ObjectIDs.Instance,
             );
 
             if (instanceObj) {
-                const hostObj = await this.props.oContext.getCachedObject(`system.host.${instanceObj?.common?.host}`);
+                const hostObj = await this.getCachedObject(`system.host.${instanceObj?.common?.host}`);
                 if (hostObj) {
                     const ip = findNetworkAddressOfHost(hostObj, window.location.hostname);
                     if (ip) {

@@ -30,7 +30,7 @@ class ConfigCertCollection extends ConfigGeneric<ConfigCertCollectionProps, Conf
         await super.componentDidMount();
 
         let collectionsOptions: string[];
-        const collectionsOptionsObj = await this.props.oContext.getCachedObject('system.certificates');
+        const collectionsOptionsObj = await this.getCachedObject('system.certificates');
         if (collectionsOptionsObj?.native?.collections) {
             collectionsOptions = Object.keys(
                 collectionsOptionsObj.native.collections as Record<string, CertCollection>,

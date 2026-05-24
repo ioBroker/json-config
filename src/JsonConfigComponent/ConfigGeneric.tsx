@@ -176,6 +176,13 @@ export default class ConfigGeneric<
         }
     }
 
+    protected getCachedObject(id: string): Promise<ioBroker.Object | null> {
+        if (this.props.oContext.getCachedObject) {
+            return this.props.oContext.getCachedObject(id);
+        }
+        return this.props.oContext.socket.getObject(id) || null;
+    }
+
     async componentDidMount(): Promise<void> {
         if (this.props.schema?.defaultFunc) {
             if (this.props.custom) {
