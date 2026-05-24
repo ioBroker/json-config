@@ -176,11 +176,12 @@ export default class ConfigGeneric<
         }
     }
 
-    protected getCachedObject(id: string): Promise<ioBroker.Object | null> {
+    // eslint-disable-next-line react/no-unused-class-component-methods
+    protected async getCachedObject(id: string): Promise<ioBroker.Object | null> {
         if (this.props.oContext.getCachedObject) {
             return this.props.oContext.getCachedObject(id);
         }
-        return this.props.oContext.socket.getObject(id) || null;
+        return (await this.props.oContext.socket.getObject(id)) || null;
     }
 
     async componentDidMount(): Promise<void> {

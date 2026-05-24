@@ -63,9 +63,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
             if (this.props.oContext.socket.getCompactSystemConfig) {
                 systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
             } else {
-                systemConfig = (await this.getCachedObject('system.config')) as
-                    | ioBroker.SystemConfigObject
-                    | undefined;
+                systemConfig = (await this.getCachedObject('system.config')) as ioBroker.SystemConfigObject | undefined;
             }
         } catch (e) {
             console.error(`Cannot get system configuration: ${e}`);

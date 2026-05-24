@@ -48,9 +48,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
         const instances: ioBroker.InstanceObject[] = await this.props.oContext.socket.getAdapterInstances();
 
         const ownId = `system.adapter.${this.props.oContext.adapterName}.${this.props.oContext.instance}`;
-        const instanceObj: ioBroker.InstanceObject = (await this.getCachedObject(
-            ownId,
-        )) as ioBroker.InstanceObject;
+        const instanceObj: ioBroker.InstanceObject = (await this.getCachedObject(ownId)) as ioBroker.InstanceObject;
         const ownHostname = instanceObj?.common.host;
 
         const ports: Port[] = [];
