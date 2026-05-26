@@ -46,7 +46,7 @@ function onLink(href: string, target: '_blank' | '_self' | string, instanceId: s
                 if (_url.startsWith('#')) {
                     window.location.hash = _url;
                 } else if (_url.startsWith('/')) {
-                    url = `${window.location.protocol}:${window.location.host}${url}`;
+                    url = `${window.location.protocol}//${window.location.host}${url}`;
                 } else if (_url.startsWith('http://') || _url.startsWith('https://')) {
                     window.location.href = _url;
                 }
@@ -56,9 +56,9 @@ function onLink(href: string, target: '_blank' | '_self' | string, instanceId: s
         );
     } else {
         if (url.startsWith('#')) {
-            url = `${window.location.protocol}:${window.location.host}${window.location.pathname}${url}`;
+            url = `${window.location.protocol}//${window.location.host}${window.location.pathname}${url}`;
         } else if (url.startsWith('/')) {
-            url = `${window.location.protocol}:${window.location.host}${url}`;
+            url = `${window.location.protocol}//${window.location.host}${url}`;
         }
 
         window.open(url, _target);
