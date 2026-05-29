@@ -113,8 +113,8 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         label: this.getText(it.label, this.props.schema.noTranslation),
                         value: it.value,
                         hidden: it.hidden,
-                        color: item.color,
-                        description: this.getText(item.description),
+                        color: it.color,
+                        description: this.getText(it.description),
                         icon: it.icon,
                     };
                     selectSubItem.hiddenValue = await this.isHidden(selectSubItem);
@@ -382,9 +382,9 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                                     style={{ color: it.color }}
                                 >
                                     <div>{it.label}</div>
-                                    {item.description ? (
+                                    {it.description ? (
                                         <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
-                                            {item.description}
+                                            {it.description}
                                         </div>
                                     ) : null}
                                 </ListSubheader>
