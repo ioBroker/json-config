@@ -1777,7 +1777,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.4.2 (2026-05-29)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Corrected groups in the select component
 
 ### 8.4.3 (2026-05-24)
