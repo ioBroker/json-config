@@ -389,6 +389,39 @@ export default class ConfigGeneric<
         return (text as any).toString();
     }
 
+    async getTextAsync(text: ioBroker.StringOrTranslated, noTranslation?: boolean): Promise<string> {
+        if (!text) {
+            return '';
+        }
+
+        if (typeof text === 'string') {
+            const strText = noTranslation ? text : I18n.t(text);
+            if (strText.includes('${')) {
+                return this.getPatternAsync(strText, null, noTranslation);
+            }
+            return strText;
+        }
+
+        if (isObject(text)) {
+            // todo
+            if ((text as any).func) {
+                // calculate pattern
+                if (typeof (text as any).func === 'object') {
+                    return this.getPatternAsync(
+                        (text as any).func[this.lang] || (text as any).func.en || '',
+                        null,
+                        true,
+                    );
+                }
+                return this.getPatternAsync((text as any).func, null, noTranslation);
+            }
+
+            return text[this.lang] || text.en || '';
+        }
+
+        return (text as any).toString();
+    }
+
     renderDialogConfirm(): JSX.Element | null {
         if (!this.state.confirmDialog) {
             return null;
@@ -1018,6 +1051,36 @@ export default class ConfigGeneric<
         );
     }
 
+    async renderHelpAsync(
+        text: ioBroker.StringOrTranslated,
+        link: string,
+        noTranslation: boolean,
+    ): Promise<JSX.Element | JSX.Element[] | string> {
+        if (!link) {
+            text = (await this.getTextAsync(text, noTranslation)) || '';
+            if (
+                text &&
+                (text.includes('<a ') || text.includes('<br') || text.includes('<b>') || text.includes('<i>'))
+            ) {
+                return Utils.renderTextWithA(text);
+            }
+            return text;
+        }
+        return (
+            <a
+                href={link}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                    color: this.props.oContext.themeType === 'dark' ? '#a147ff' : '#5b238f',
+                    textDecoration: 'underline',
+                }}
+            >
+                {await this.getTextAsync(text, noTranslation)}
+            </a>
+        );
+    }
+
     // we have a problem that a string '{"password": "${password}"}' cannot contain a double quota inside the string
     // escape it with \"
     static escapeString(str: string, data: Record<string, any>): string {
@@ -1171,12 +1234,12 @@ export default class ConfigGeneric<
 
         if (patternStr.includes('getObject(')) {
             // ensure, that await is placed in front of getObject
-            console.log(`It is not possible to use getObject function in text patterns: ${patternStr}`);
+            console.warn(`It is not possible to use getObject function in text patterns: ${patternStr}`);
         }
 
         try {
             if (this.props.custom) {
-                const f = new this.AsyncFunction(
+                const f = new Function(
                     'data',
                     'originalData',
                     'arrayIndex',
@@ -1187,7 +1250,6 @@ export default class ConfigGeneric<
                     '_socket',
                     '_changed',
                     '_href',
-                    'getObject',
                     `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
                 );
                 const text = f(
@@ -1209,7 +1271,7 @@ export default class ConfigGeneric<
                 return I18n.t(text);
             }
 
-            const f = new this.AsyncFunction(
+            const f = new Function(
                 'data',
                 'originalData',
                 'arrayIndex',
@@ -1220,7 +1282,6 @@ export default class ConfigGeneric<
                 '_socket',
                 '_changed',
                 '_href',
-                'getObject',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = f(
@@ -1234,7 +1295,6 @@ export default class ConfigGeneric<
                 this.props.oContext.socket,
                 this.props.changed,
                 window.location.href,
-                this.getObject,
             );
             if (noTranslation) {
                 return text;
