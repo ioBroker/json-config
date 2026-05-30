@@ -1777,7 +1777,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.4.5 (2026-05-30)
 - (@GermanBluefox) Fixing help rendering
 
 ### 8.4.4 (2026-05-29)
