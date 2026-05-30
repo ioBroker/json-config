@@ -1051,6 +1051,7 @@ export default class ConfigGeneric<
         );
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     async renderHelpAsync(
         text: ioBroker.StringOrTranslated,
         link: string,
