@@ -61,6 +61,7 @@ export type {
     ConfigItemCertCollection,
     ConfigItemCRON,
     ConfigItemCertificateSelect,
+    ConfigItemCredentialSelect,
     ConfigItemLicense,
     ConfigItemCertificates,
     ConfigItemCheckLicense,

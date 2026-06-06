@@ -17,6 +17,7 @@ import ConfigCertificateSelect from './ConfigCertificateSelect';
 import ConfigCertificates from './ConfigCertificates';
 import ConfigCertCollection from './ConfigCertCollection';
 import ConfigCheckDocker from './ConfigCheckDocker';
+import ConfigCredentialSelect from './ConfigCredentialSelect';
 import ConfigCheckLicense from './ConfigCheckLicense';
 import ConfigCheckbox from './ConfigCheckbox';
 import ConfigChip from './ConfigChip';
@@ -83,6 +84,7 @@ const components: Record<string, typeof ConfigGeneric<any, any>> = {
     chips: ConfigChip,
     color: ConfigColor,
     coordinates: ConfigCoordinates,
+    credential: ConfigCredentialSelect,
     cron: ConfigCRON,
     custom: ConfigCustom,
     datePicker: ConfigDatePicker,

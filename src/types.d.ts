@@ -32,6 +32,7 @@ export type ConfigItemType =
     | 'color'
     | 'component'
     | 'coordinates'
+    | 'credential'
     | 'cron'
     | 'custom'
     | 'datePicker'
@@ -983,6 +984,12 @@ export interface ConfigItemCertificateSelect extends ConfigItem {
     type: 'certificate';
 }
 
+export interface ConfigItemCredentialSelect extends ConfigItem {
+    type: 'credential';
+    /** Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed. */
+    credentialType?: 'email' | 'cloud' | 'ai' | 'custom';
+}
+
 export interface ConfigItemLicense extends ConfigItem {
     type: 'license';
     /** array of paragraphs with texts, which will be shown each as a separate paragraph */
@@ -1179,6 +1186,7 @@ export type ConfigItemAny =
     | ConfigItemCertCollection
     | ConfigItemCertificateSelect
     | ConfigItemCertificates
+    | ConfigItemCredentialSelect
     | ConfigItemUUID
     | ConfigItemCheckDocker
     | ConfigItemCheckLicense
