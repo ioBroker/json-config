@@ -852,11 +852,11 @@ select a certificate collection or just use all collections or don't use let's e
 
 select a credential from the central credential storage. The user manages the credentials in the admin settings
 (Settings → Credentials), and the adapter configuration only stores the ID of the selected credential
-(like `system.credentials.ai.main`) in the given attribute.
+(like `system.credentials.anthropic`) in the given attribute.
 
-| Property         | Description                                                                                                 |
-|------------------|-------------------------------------------------------------------------------------------------------------|
-| `credentialType` | show only credentials of this type: `email`, `cloud`, `ai` or `custom`. If not defined, all credentials are listed |
+| Property         | Description                                                                                                        |
+|------------------|--------------------------------------------------------------------------------------------------------------------|
+| `credentialType  | show only credentials of this type: `email`, `cloud`, `ai` or `custom`. If not defined, all credentials are listed |
 
 Example:
 
@@ -871,13 +871,16 @@ Example:
 }
 ```
 
-In the adapter, read and decrypt the credential with `@iobroker/adapter-core`:
+Every credential has one of two forms: `login` (a `login` and a `password` field) or `key`
+(a single `key` field, e.g. an API key). In the adapter, read and decrypt the credential
+with `@iobroker/adapter-core`:
 
 ```typescript
 import { Credentials } from '@iobroker/adapter-core';
 
-const cred = await Credentials.getCredentials<Credentials.EmailCredentials>(this, this.config.credentialId);
-// cred.values.host, cred.values.user, cred.values.password (already decrypted), ...
+const cred = await Credentials.getCredentials<Credentials.LoginPasswordCredentials>(this, this.config.credentialId);
+// cred.values.login, cred.values.password (already decrypted)
+// or for the key form: Credentials.KeyCredentials -> cred.values.key
 ```
 
 ### `custom`
@@ -1810,7 +1813,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.4.6 (2026-06-06)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added credential component
 
 ### 8.4.5 (2026-05-30)

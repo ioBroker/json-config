@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { InputLabel, MenuItem, FormControl, Select, FormHelperText } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 import type { ConfigItemCredentialSelect } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
@@ -13,8 +13,36 @@ interface ConfigCredentialSelectProps extends ConfigGenericProps {
     schema: ConfigItemCredentialSelect;
 }
 
+interface CredentialSelectOption {
+    label: string;
+    value: string;
+    /** Icon of the credential (data URL from `common.icon`) */
+    icon?: string;
+}
+
 interface ConfigCredentialSelectState extends ConfigGenericState {
-    selectOptions?: { label: string; value: string }[];
+    selectOptions?: CredentialSelectOption[];
+}
+
+function renderCredentialItem(
+    option: CredentialSelectOption | undefined,
+    label: string,
+    anyIcon: boolean,
+): JSX.Element {
+    return (
+        <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {option?.icon ? (
+                <Icon
+                    src={option.icon}
+                    style={{ width: 20, height: 20 }}
+                />
+            ) : anyIcon ? (
+                // if at least one option has an icon, keep the labels aligned
+                <span style={{ width: 20, height: 20, flexShrink: 0 }} />
+            ) : null}
+            {label}
+        </span>
+    );
 }
 
 export default class ConfigCredentialSelect extends ConfigGeneric<
@@ -26,19 +54,25 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         // Credentials are managed in admin: Settings -> Credentials.
-        // They are stored as objects "system.credentials.<type>.<name>".
-        const prefix = this.props.schema.credentialType
-            ? `${CREDENTIALS_PREFIX}${this.props.schema.credentialType}.`
-            : CREDENTIALS_PREFIX;
-
-        let selectOptions: { label: string; value: string }[] = [];
+        // They are stored as objects "system.credentials.<name>" with the category in native.type.
+        let selectOptions: CredentialSelectOption[] = [];
         try {
-            const objs = await this.props.oContext.socket.getObjectViewSystem('config', prefix, `${prefix}香`);
+            const objs = await this.props.oContext.socket.getObjectViewSystem(
+                'config',
+                CREDENTIALS_PREFIX,
+                `${CREDENTIALS_PREFIX}香`,
+            );
             selectOptions = Object.values(objs)
-                .filter(obj => !!obj)
+                .filter(
+                    obj =>
+                        !!obj &&
+                        (!this.props.schema.credentialType ||
+                            (obj.native as Record<string, any>)?.type === this.props.schema.credentialType),
+                )
                 .map(obj => ({
                     label: ConfigCredentialSelect.getCredentialName(obj as ioBroker.Object),
                     value: obj._id,
+                    icon: typeof obj.common?.icon === 'string' ? obj.common.icon : undefined,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label));
         } catch (e) {
@@ -70,6 +104,8 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
         // The stored value could point to a meanwhile deleted credential
         const unknownValue =
             this.state.value && this.state.value !== ConfigGeneric.NONE_VALUE && !item ? this.state.value : null;
+        // if at least one option has an icon, options without icon get a placeholder for alignment
+        const anyIcon = this.state.selectOptions.some(option => !!option.icon);
 
         return (
             <FormControl
@@ -88,7 +124,11 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                     renderValue={() =>
                         unknownValue
                             ? unknownValue
-                            : this.getText(item?.label, this.props.schema.noTranslation !== false)
+                            : renderCredentialItem(
+                                  item,
+                                  this.getText(item?.label, this.props.schema.noTranslation !== false),
+                                  anyIcon,
+                              )
                     }
                     onChange={e =>
                         this.setState(
@@ -103,7 +143,11 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                             value={item_.value}
                             style={item_.value === ConfigGeneric.NONE_VALUE ? { opacity: 0.5 } : {}}
                         >
-                            {this.getText(item_.label, this.props.schema.noTranslation !== false)}
+                            {renderCredentialItem(
+                                item_,
+                                this.getText(item_.label, this.props.schema.noTranslation !== false),
+                                anyIcon,
+                            )}
                         </MenuItem>
                     ))}
                 </Select>
