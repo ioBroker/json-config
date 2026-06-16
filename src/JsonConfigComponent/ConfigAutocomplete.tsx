@@ -76,6 +76,8 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 item = { value: this.state.value, label: this.state.value };
                 options.push(item);
             }
+            // never pass `false`/`undefined` as a controlled value to the Autocomplete (would switch it to uncontrolled)
+            item ||= null;
         }
 
         return (
@@ -86,13 +88,20 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 options={options}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 filterOptions={(options: { value: string; label: string }[], params) => {
+                    const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
                         if (params.inputValue === '') {
                             return true;
                         }
+                        // label/value may be numbers (or null/undefined), so coerce to string before comparing
+                        // see https://github.com/ioBroker/ioBroker.admin/issues/3507
                         return (
-                            option.label.toLowerCase().includes(params.inputValue.toLowerCase()) ||
-                            option.value.toLowerCase().includes(params.inputValue.toLowerCase())
+                            String(option.label ?? '')
+                                .toLowerCase()
+                                .includes(inputValue) ||
+                            String(option.value ?? '')
+                                .toLowerCase()
+                                .includes(inputValue)
                         );
                     });
 

@@ -207,13 +207,20 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 disabled={disabled}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 filterOptions={(options: { value: string; label: string }[], params) => {
+                    const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
                         if (params.inputValue === '') {
                             return true;
                         }
+                        // label/value may be numbers (or null/undefined), so coerce to string before comparing
+                        // see https://github.com/ioBroker/ioBroker.admin/issues/3507
                         return (
-                            option.label.toLowerCase().includes(params.inputValue.toLowerCase()) ||
-                            option.value.toLowerCase().includes(params.inputValue.toLowerCase())
+                            String(option.label ?? '')
+                                .toLowerCase()
+                                .includes(inputValue) ||
+                            String(option.value ?? '')
+                                .toLowerCase()
+                                .includes(inputValue)
                         );
                     });
 
