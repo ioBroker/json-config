@@ -988,6 +988,8 @@ export interface ConfigItemCredentialSelect extends ConfigItem {
     type: 'credential';
     /** Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed. */
     credentialType?: 'email' | 'cloud' | 'ai' | 'custom';
+    /** Do not allow creation of credentials, just selection */
+    disableCreation?: boolean;
 }
 
 export interface ConfigItemLicense extends ConfigItem {

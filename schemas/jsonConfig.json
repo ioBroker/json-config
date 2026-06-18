@@ -4478,6 +4478,10 @@
                                             "type": "string",
                                             "enum": ["email", "cloud", "ai", "custom"]
                                         },
+                                        "disableCreation": {
+                                            "description": "If true, do not show the button to create a new credential",
+                                            "type": "boolean"
+                                        },
                                         "attr": true,
                                         "label": true,
                                         "type": true,
@@ -7768,6 +7772,10 @@
                                                 "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed",
                                                 "type": "string",
                                                 "enum": ["email", "cloud", "ai", "custom"]
+                                            },
+                                            "disableCreation": {
+                                                "description": "If true, do not show the button to create a new credential",
+                                                "type": "boolean"
                                             },
                                             "label": true,
                                             "type": true,
