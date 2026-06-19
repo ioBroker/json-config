@@ -82,7 +82,7 @@ export default class ConfigYamlEditor extends ConfigGeneric<ConfigYamlEditorProp
                         variant="outlined"
                         onClick={() => this.setState({ showSelectId: true })}
                     >
-                        {I18n.t('ra_YAML editor')}
+                        {I18n.t('jc_YAML editor')}
                     </Button>
                 </div>
                 {showSelectId ? (
@@ -130,7 +130,7 @@ export default class ConfigYamlEditor extends ConfigGeneric<ConfigYamlEditorProp
                 {schema.help || this.state.yamlError ? (
                     <FormHelperText>
                         {this.state.yamlError
-                            ? I18n.t('ra_Invalid YAML')
+                            ? I18n.t('jc_Invalid YAML')
                             : this.renderHelp(
                                   this.props.schema.help,
                                   this.props.schema.helpLink,

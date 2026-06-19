@@ -32,9 +32,9 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                 version: result?.version || '',
                 errorDocker: result
                     ? !result.daemonRunning
-                        ? I18n.t('ra_Docker is not installed or not running')
+                        ? I18n.t('jc_Docker is not installed or not running')
                         : ''
-                    : I18n.t('ra_No response from admin'),
+                    : I18n.t('jc_No response from admin'),
             });
         });
     }
@@ -48,8 +48,8 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
         if (this.state.errorDocker && !value) {
             return (
                 <FormHelperText style={{ color: 'orange' }}>
-                    {I18n.t('ra_Docker is not available')}:&nbsp;
-                    {I18n.t(`ra_${this.state.errorDocker}`).replace(/^ra_/, '')}
+                    {I18n.t('jc_Docker is not available')}:&nbsp;
+                    {I18n.t(`jc_${this.state.errorDocker}`).replace(/^jc_/, '')}
                 </FormHelperText>
             );
         }

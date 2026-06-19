@@ -328,7 +328,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                     const jsonData = JSON.parse(e.target?.result as string);
 
                     if (!Array.isArray(jsonData)) {
-                        alert(I18n.t('ra_Invalid JSON format. Expected an array.'));
+                        alert(I18n.t('jc_Invalid JSON format. Expected an array.'));
                         return;
                     }
 
@@ -341,7 +341,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
 
                     this.setState({ value: newValue, activeIndex: -1 }, () => this.onChangeWrapper(newValue));
                 } catch {
-                    alert(I18n.t('ra_Invalid JSON file.'));
+                    alert(I18n.t('jc_Invalid JSON file.'));
                 }
             };
             reader.readAsText(file);
@@ -372,7 +372,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                         ) : null}
                         {!schema.noDelete ? (
                             <>
-                                <Tooltip title={I18n.t('ra_Export configuration section')}>
+                                <Tooltip title={I18n.t('jc_Export configuration section')}>
                                     <IconButton
                                         size="small"
                                         color="primary"
@@ -381,7 +381,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                         <FileDownloadIcon />
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title={I18n.t('ra_Import and replace configuration section')}>
+                                <Tooltip title={I18n.t('jc_Import and replace configuration section')}>
                                     <IconButton
                                         size="small"
                                         color="primary"
@@ -390,7 +390,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                         <FileUploadIcon />
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title={I18n.t('ra_Import and add configuration section')}>
+                                <Tooltip title={I18n.t('jc_Import and add configuration section')}>
                                     <IconButton
                                         size="small"
                                         color="primary"
@@ -435,7 +435,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                             <Toolbar sx={styles.toolbar}>
                                 {i ? (
                                     <Tooltip
-                                        title={I18n.t('ra_Move up')}
+                                        title={I18n.t('jc_Move up')}
                                         slotProps={{ popper: { sx: styles.tooltip } }}
                                     >
                                         <IconButton
@@ -450,7 +450,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                 )}
                                 {i < value.length - 1 ? (
                                     <Tooltip
-                                        title={I18n.t('ra_Move down')}
+                                        title={I18n.t('jc_Move down')}
                                         slotProps={{ popper: { sx: styles.tooltip } }}
                                     >
                                         <IconButton
@@ -465,7 +465,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                 )}
                                 {!schema.noDelete ? (
                                     <Tooltip
-                                        title={I18n.t('ra_Delete current row')}
+                                        title={I18n.t('jc_Delete current row')}
                                         slotProps={{ popper: { sx: styles.tooltip } }}
                                     >
                                         <IconButton
@@ -478,7 +478,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                 ) : null}
                                 {schema.clone ? (
                                     <Tooltip
-                                        title={I18n.t('ra_Clone current row')}
+                                        title={I18n.t('jc_Clone current row')}
                                         slotProps={{ popper: { sx: styles.tooltip } }}
                                     >
                                         <IconButton

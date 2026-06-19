@@ -256,12 +256,12 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
         const template = CREDENTIAL_TEMPLATES[this.state.addTemplate || ''];
         const name = (this.state.addName || '').trim().replace(Utils.FORBIDDEN_CHARS, '_');
         if (!name) {
-            this.setState({ addError: I18n.t('A unique name is required') });
+            this.setState({ addError: I18n.t('jc_A unique name is required') });
             return;
         }
         const id = `${CREDENTIALS_PREFIX}${name}`;
         if ((this.state.selectOptions || []).find(option => option.value === id)) {
-            this.setState({ addError: I18n.t('A credential with this name already exists') });
+            this.setState({ addError: I18n.t('jc_A credential with this name already exists') });
             return;
         }
 
@@ -269,7 +269,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
         const fields = CREDENTIAL_FORMS[form];
         const addFields = this.state.addFields || {};
         if (fields.some(field => field.required && !(addFields[field.name] || '').trim())) {
-            this.setState({ addError: I18n.t('Please fill in all required fields') });
+            this.setState({ addError: I18n.t('jc_Please fill in all required fields') });
             return;
         }
         const type: CredentialType =
@@ -319,7 +319,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
         } catch (e) {
             this.setState({
                 addSaving: false,
-                addError: I18n.t('Cannot create credential: %s', (e as Error).toString()),
+                addError: I18n.t('jc_Cannot create credential: %s', (e as Error).toString()),
             });
         }
     }
@@ -342,13 +342,13 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                 fullWidth
                 onClose={() => this.setState({ addOpen: false })}
             >
-                <DialogTitle>{I18n.t('Add credential')}</DialogTitle>
+                <DialogTitle>{I18n.t('jc_Add credential')}</DialogTitle>
                 <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 8 }}>
                     <FormControl
                         fullWidth
                         variant="standard"
                     >
-                        <InputLabel shrink>{I18n.t('Template')}</InputLabel>
+                        <InputLabel shrink>{I18n.t('jc_Template')}</InputLabel>
                         <Select
                             variant="standard"
                             value={this.state.addTemplate || ''}
@@ -378,7 +378,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                             fullWidth
                             variant="standard"
                         >
-                            <InputLabel shrink>{I18n.t('Credential type')}</InputLabel>
+                            <InputLabel shrink>{I18n.t('jc_Credential type')}</InputLabel>
                             <Select
                                 variant="standard"
                                 value={this.state.addType || 'custom'}
@@ -399,7 +399,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                     <TextField
                         variant="standard"
                         fullWidth
-                        label={I18n.t('ra_Name')}
+                        label={I18n.t('jc_Name')}
                         value={this.state.addName || ''}
                         error={!!this.state.addError}
                         helperText={this.state.addName ? id : ''}
@@ -439,7 +439,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                         startIcon={<CheckIcon />}
                         onClick={() => this.createCredential()}
                     >
-                        {I18n.t('ra_Create')}
+                        {I18n.t('jc_Create')}
                     </Button>
                     <Button
                         variant="contained"
@@ -448,7 +448,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                         startIcon={<CloseIcon />}
                         onClick={() => this.setState({ addOpen: false })}
                     >
-                        {I18n.t('ra_Cancel')}
+                        {I18n.t('jc_Cancel')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -528,7 +528,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                     <IconButton
                         size="small"
                         disabled={!!disabled}
-                        title={I18n.t('Add credential')}
+                        title={I18n.t('jc_Add credential')}
                         onClick={() => this.openAddDialog()}
                     >
                         <AddIcon />

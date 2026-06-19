@@ -118,24 +118,24 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
         const f = value === '' ? 0 : parseInt(value, 10);
 
         if (value !== '' && Number.isNaN(f)) {
-            return 'ra_Not a number';
+            return 'jc_Not a number';
         }
 
         if (value !== '' && window.isFinite(Number(value))) {
             if (f < min) {
-                return 'ra_Too small';
+                return 'jc_Too small';
             }
             if (f > max) {
-                return 'ra_Too big';
+                return 'jc_Too big';
             }
             if (value === '' || value === '-' || Number.isNaN(f)) {
-                return 'ra_Not a number';
+                return 'jc_Not a number';
             }
 
             return null;
         }
 
-        return 'ra_Not a number';
+        return 'jc_Not a number';
     }
 
     renderItem(error: unknown, disabled: boolean): JSX.Element {
@@ -214,7 +214,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
                     const originalPort = this.state.ports.find(
                         p => p.port === num && p.enabled && ports.some(fp => fp.name === p.name && fp.bind === p.bind),
                     );
-                    error = I18n.t('ra_Port is already used by %s', originalPort?.name || ports[idx].name);
+                    error = I18n.t('jc_Port is already used by %s', originalPort?.name || ports[idx].name);
                 } else {
                     idx = ports.findIndex(item => item.port === num && !item.enabled);
                     if (idx !== -1) {
@@ -225,7 +225,7 @@ class ConfigPort extends ConfigGeneric<ConfigPortProps, ConfigPortState> {
                                 !p.enabled &&
                                 ports.some(fp => fp.name === p.name && fp.bind === p.bind),
                         );
-                        error = I18n.t('ra_Port could be used by %s', originalPort?.name || ports[idx].name);
+                        error = I18n.t('jc_Port could be used by %s', originalPort?.name || ports[idx].name);
                     }
                 }
             }

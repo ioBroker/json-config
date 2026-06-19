@@ -65,7 +65,7 @@ class ConfigPattern extends ConfigGeneric<ConfigPatternProps, ConfigPatternState
                                             this.props.schema.noTranslation,
                                         ),
                                     );
-                                    window.alert(I18n.t('ra_Copied'));
+                                    window.alert(I18n.t('jc_Copied'));
                                 }}
                             >
                                 <IconCopy />

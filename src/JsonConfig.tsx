@@ -303,12 +303,12 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     const data = JSON.parse(contents);
                     this.setState({ data, changed: JSON.stringify(data) !== JSON.stringify(this.state.originalData) });
                 } catch {
-                    window.alert(I18n.t('[JsonConfig] Failed to parse JSON file'));
+                    window.alert(I18n.t('jc_[JsonConfig] Failed to parse JSON file'));
                 }
             };
             r.readAsText(f);
         } else {
-            window.alert(I18n.t('[JsonConfig] Failed to open JSON File'));
+            window.alert(I18n.t('jc_[JsonConfig] Failed to open JSON File'));
         }
     };
 
@@ -316,7 +316,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         return (
             <div style={styles.exportImportButtons}>
                 <Tooltip
-                    title={this.props.t('Import settings from JSON file')}
+                    title={this.props.t('jc_Import settings from JSON file')}
                     slotProps={{ popper: { sx: styles.tooltip } }}
                 >
                     <Fab
@@ -336,7 +336,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     </Fab>
                 </Tooltip>
                 <Tooltip
-                    title={this.props.t('Export setting to JSON file')}
+                    title={this.props.t('jc_Export setting to JSON file')}
                     slotProps={{ popper: { sx: styles.tooltip } }}
                 >
                     <Fab
@@ -416,10 +416,10 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         }
         return (
             <DialogConfirm
-                title={I18n.t('ra_Please confirm')}
-                text={I18n.t('ra_Some data are not stored. Discard?')}
-                ok={I18n.t('ra_Discard')}
-                cancel={I18n.t('ra_Cancel')}
+                title={I18n.t('jc_Please confirm')}
+                text={I18n.t('jc_Some data are not stored. Discard?')}
+                ok={I18n.t('jc_Discard')}
+                cancel={I18n.t('jc_Cancel')}
                 onClose={(isYes: boolean) =>
                     this.setState({ confirmDialog: false }, () => isYes && Router.doNavigate(null))
                 }
@@ -520,10 +520,10 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         }
         return (
             <DialogConfirm
-                title={I18n.t('ra_Please confirm')}
-                text={I18n.t('Save configuration?')}
-                ok={I18n.t('ra_Save')}
-                cancel={I18n.t('ra_Cancel')}
+                title={I18n.t('jc_Please confirm')}
+                text={I18n.t('jc_Save configuration?')}
+                ok={I18n.t('jc_Save')}
+                cancel={I18n.t('jc_Cancel')}
                 onClose={(isYes: boolean) =>
                     this.setState({ saveConfigDialog: false }, () => isYes && this.onSave(true))
                 }
@@ -736,7 +736,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     onError={error => this.setState({ error })}
                     onChange={(data, changed, saveConfigDialog) => {
                         if (saveConfigDialog && this.state.error) {
-                            window.alert(I18n.t('Cannot save configuration because of error in configuration'));
+                            window.alert(I18n.t('jc_Cannot save configuration because of error in configuration'));
                             saveConfigDialog = false;
                         }
                         if (saveConfigDialog && !this.state.changed && !changed) {

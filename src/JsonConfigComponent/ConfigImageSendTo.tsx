@@ -52,7 +52,7 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
             if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
                 const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
                 if (!alive?.val) {
-                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    window.alert(I18n.t('jc_Instance %s is not alive', instance));
                     return;
                 }
             }
@@ -104,7 +104,7 @@ export default class ConfigImageSendTo extends ConfigGeneric<ConfigImageSendToPr
                     {this.state.loading ? (
                         <CircularProgress />
                     ) : typeof this.props.schema.sendFirstByClick === 'boolean' ? (
-                        I18n.t('ra_Click to show')
+                        I18n.t('jc_Click to show')
                     ) : (
                         this.getText(this.props.schema.sendFirstByClick, this.props.schema.noTranslation)
                     )}

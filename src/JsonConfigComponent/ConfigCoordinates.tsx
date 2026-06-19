@@ -69,7 +69,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
             console.error(`Cannot get system configuration: ${e}`);
         }
         if (systemConfig?.common && (systemConfig.common.longitude || systemConfig.common.latitude)) {
-            window.alert(I18n.t('ra_Used system settings'));
+            window.alert(I18n.t('jc_Used system settings'));
             if (this.props.schema.longitudeName && this.props.schema.latitudeName) {
                 this.setState(
                     {
@@ -99,7 +99,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
         } else {
             window.alert(
                 I18n.t(
-                    'ra_Cannot determine position: System settings are empty and GPS detection is disabled in browser',
+                    'jc_Cannot determine position: System settings are empty and GPS detection is disabled in browser',
                 ),
             );
         }
@@ -173,7 +173,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                                 }}
                             />
                         }
-                        label={I18n.t('ra_Use system settings for position')}
+                        label={I18n.t('jc_Use system settings for position')}
                     />
                 ) : null}
                 {this.props.schema.longitudeName && this.props.schema.latitudeName ? (
@@ -195,7 +195,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                                 }
                             });
                         }}
-                        label={I18n.t('ra_Longitude')}
+                        label={I18n.t('jc_Longitude')}
                     />
                 ) : null}
                 {this.props.schema.longitudeName && this.props.schema.latitudeName ? (
@@ -211,7 +211,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                                 this.onChange(this.props.schema.latitudeName, (latitude || '').trim()),
                             );
                         }}
-                        label={I18n.t('ra_Latitude')}
+                        label={I18n.t('jc_Latitude')}
                     />
                 ) : null}
                 {!this.props.schema.longitudeName || !this.props.schema.latitudeName ? (
@@ -244,7 +244,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                     <Fab
                         size="small"
                         onClick={() => this.getCoordinates()}
-                        title={I18n.t('ra_Take browser position')}
+                        title={I18n.t('jc_Take browser position')}
                         style={{ marginRight: 4 }}
                     >
                         <IconLocationOn />
@@ -254,7 +254,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                     <Fab
                         size="small"
                         onClick={() => this.getSystemCoordinates()}
-                        title={I18n.t('ra_Take position from system settings')}
+                        title={I18n.t('jc_Take position from system settings')}
                     >
                         <IconGpsFixed />
                     </Fab>

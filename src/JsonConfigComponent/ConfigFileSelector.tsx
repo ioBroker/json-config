@@ -268,7 +268,7 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
         reader.onerror = () => console.log('file reading has failed');
         reader.onload = (/* e: ProgressEvent<FileReader> */): void => {
             if (file.size > maxSize) {
-                window.alert(I18n.t('File is too big. Max %sk allowed. Try use SVG.', Math.round(maxSize / 1024)));
+                window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(maxSize / 1024)));
                 return;
             }
 
@@ -292,10 +292,10 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
         }
         return (
             <DialogConfirm
-                title={I18n.t('ra_Are you sure?')}
-                text={I18n.t('ra_File will be deleted')}
-                ok={I18n.t('ra_Delete')}
-                cancel={I18n.t('ra_Cancel')}
+                title={I18n.t('jc_Are you sure?')}
+                text={I18n.t('jc_File will be deleted')}
+                ok={I18n.t('jc_Delete')}
+                cancel={I18n.t('jc_Cancel')}
                 onClose={isOk => {
                     const deleteFile = this.state.deleteFile;
                     this.setState({ deleteFile: '' }, () => {
@@ -406,7 +406,7 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
         }));
 
         if (!this.props.schema.noNone) {
-            selectOptions.unshift({ label: I18n.t('ra_none'), value: '' });
+            selectOptions.unshift({ label: I18n.t('jc_none'), value: '' });
         }
 
         const item: { value: string; label: string; extension?: string } = selectOptions.find(
@@ -579,7 +579,7 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
                 onDrop={(acceptedFiles, errors) => {
                     this.setState({ uploadFile: false });
                     if (!acceptedFiles.length) {
-                        window.alert(errors?.[0]?.errors?.[0]?.message || I18n.t('Cannot upload'));
+                        window.alert(errors?.[0]?.errors?.[0]?.message || I18n.t('jc_Cannot upload'));
                     } else {
                         this.onDrop(acceptedFiles);
                     }
@@ -606,9 +606,9 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
                                     <UploadIcon style={styles.uploadCenterIcon} />
                                     <div style={styles.uploadCenterText}>
                                         {this.state.uploadFile === 'dragging'
-                                            ? I18n.t('ra_Drop file here')
+                                            ? I18n.t('jc_Drop file here')
                                             : I18n.t(
-                                                  'ra_Place your files here or click here to open the browse dialog',
+                                                  'jc_Place your files here or click here to open the browse dialog',
                                               )}
                                     </div>
                                 </div>

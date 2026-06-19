@@ -40,7 +40,7 @@ export default class ConfigUUID extends ConfigGeneric<ConfigUUIDProps, ConfigUUI
                                 tabIndex={-1}
                                 onClick={() => {
                                     Utils.copyToClipboard(this.state.uuid);
-                                    window.alert(I18n.t('ra_Copied %s', this.state.uuid));
+                                    window.alert(I18n.t('jc_Copied %s', this.state.uuid));
                                 }}
                             >
                                 <IconCopy />
@@ -49,7 +49,7 @@ export default class ConfigUUID extends ConfigGeneric<ConfigUUIDProps, ConfigUUI
                     },
                 }}
                 value={this.state.uuid || ''}
-                label={this.getText(this.props.schema.label) || I18n.t('ra_Serial number (UUID)')}
+                label={this.getText(this.props.schema.label) || I18n.t('jc_Serial number (UUID)')}
                 helperText={this.renderHelp(
                     this.props.schema.help,
                     this.props.schema.helpLink,

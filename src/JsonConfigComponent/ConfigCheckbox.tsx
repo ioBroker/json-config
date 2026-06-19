@@ -57,7 +57,7 @@ class ConfigCheckbox extends ConfigGeneric<ConfigCheckboxProps, ConfigGenericSta
                     {error
                         ? this.props.schema.validatorErrorText
                             ? I18n.t(this.props.schema.validatorErrorText)
-                            : I18n.t('ra_Error')
+                            : I18n.t('jc_Error')
                         : null}
                 </FormHelperText>
                 {this.props.schema.help ? (

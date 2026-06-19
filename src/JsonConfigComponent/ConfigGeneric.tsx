@@ -133,9 +133,9 @@ export default class ConfigGeneric<
     State extends ConfigGenericState = ConfigGenericState,
 > extends Component<Props, State> {
     static DIFFERENT_VALUE = '__different__';
-    static DIFFERENT_LABEL = 'ra___different__';
+    static DIFFERENT_LABEL = 'jc___different__';
     static NONE_VALUE = '';
-    static NONE_LABEL = 'ra_none';
+    static NONE_LABEL = 'jc_none';
     private defaultValue: any;
     private isError: any;
     private readonly lang: ioBroker.Languages;
@@ -262,7 +262,7 @@ export default class ConfigGeneric<
             if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
                 const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
                 if (!alive?.val) {
-                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    window.alert(I18n.t('jc_Instance %s is not alive', instance));
                     return;
                 }
             }
@@ -288,7 +288,7 @@ export default class ConfigGeneric<
                 // show error, that instance did not start
                 this.onError(
                     this.props.attr,
-                    I18n.t('ra_Instance %s is not alive', this.props.oContext.instance.toString()),
+                    I18n.t('jc_Instance %s is not alive', this.props.oContext.instance.toString()),
                 );
             }
         }
@@ -438,10 +438,10 @@ export default class ConfigGeneric<
 
         return (
             <DialogConfirm
-                title={this.getText(confirm.title) || I18n.t('ra_Please confirm')}
+                title={this.getText(confirm.title) || I18n.t('jc_Please confirm')}
                 text={this.getText(confirm.text)}
-                ok={this.getText(confirm.ok) || I18n.t('ra_Ok')}
-                cancel={this.getText(confirm.cancel) || I18n.t('ra_Cancel')}
+                ok={this.getText(confirm.ok) || I18n.t('jc_Ok')}
+                cancel={this.getText(confirm.cancel) || I18n.t('jc_Cancel')}
                 icon={icon || undefined}
                 onClose={isOk =>
                     this.setState({ confirmDialog: false }, () => {
@@ -1477,7 +1477,7 @@ export default class ConfigGeneric<
                                               this.props.schema.buttonTooltip,
                                               this.props.schema.buttonTooltipNoTranslation,
                                           )
-                                        : I18n.t('ra_Request data by instance')
+                                        : I18n.t('jc_Request data by instance')
                                 }
                             >
                                 {this.getText(this.props.schema.button as ioBroker.StringOrTranslated)}

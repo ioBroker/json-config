@@ -75,14 +75,14 @@ class ConfigCertCollection extends ConfigGeneric<ConfigCertCollectionProps, Conf
                         value="false"
                         style={{ fontWeight: 'bold' }}
                     >
-                        {I18n.t("ra_Do not use let's encrypt")}
+                        {I18n.t("jc_Do not use let's encrypt")}
                     </MenuItem>
                     <MenuItem
                         key="_true"
                         value="true"
                         style={{ fontWeight: 'bold' }}
                     >
-                        {I18n.t("ra_Use all available let's encrypt certificates")}
+                        {I18n.t("jc_Use all available let's encrypt certificates")}
                     </MenuItem>
                     {this.state.collectionsOptions?.map(item => (
                         <MenuItem

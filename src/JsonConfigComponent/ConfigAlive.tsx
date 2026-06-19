@@ -97,12 +97,12 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
                         ? this.props.schema.textAlive
                             ? I18n.t(this.props.schema.textAlive, instance)
                             : ''
-                        : I18n.t('ra_Instance %s is alive', instance)
+                        : I18n.t('jc_Instance %s is alive', instance)
                     : this.props.schema.textNotAlive !== undefined
                       ? this.props.schema.textNotAlive
                           ? I18n.t(this.props.schema.textNotAlive, instance)
                           : ''
-                      : I18n.t('ra_Instance %s is not alive', instance)}
+                      : I18n.t('jc_Instance %s is not alive', instance)}
             </div>
         );
     }

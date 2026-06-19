@@ -103,7 +103,7 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
                 }}
             >
                 <DialogTitle>
-                    {this.props.schema.title ? I18n.t(this.props.schema.title) : I18n.t('ra_License agreement')}
+                    {this.props.schema.title ? I18n.t(this.props.schema.title) : I18n.t('jc_License agreement')}
                 </DialogTitle>
                 <DialogContent>
                     {this.props.schema.licenseUrl ? (
@@ -172,7 +172,7 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
                     >
                         {this.props.schema.agreeText
                             ? I18n.t(this.props.schema.agreeText)
-                            : I18n.t('ra_Accept license')}
+                            : I18n.t('jc_Accept license')}
                     </Button>
                     <Button
                         onClick={() => {
@@ -183,7 +183,7 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
                         variant="contained"
                         startIcon={<Close />}
                     >
-                        {I18n.t('ra_Close')}
+                        {I18n.t('jc_Close')}
                     </Button>
                 </DialogActions>
             </Dialog>

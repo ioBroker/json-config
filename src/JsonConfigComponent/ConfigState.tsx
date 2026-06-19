@@ -752,7 +752,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             key={this.props.schema.blinkOnUpdate ? text : undefined}
                         >
                             {icon}
-                            {text || (this.state.stateValue ? I18n.t('ra_true') : I18n.t('ra_false'))}
+                            {text || (this.state.stateValue ? I18n.t('jc_true') : I18n.t('jc_false'))}
                         </Box>
                     </div>
                 );

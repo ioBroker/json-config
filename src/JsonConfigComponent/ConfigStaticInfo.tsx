@@ -285,7 +285,7 @@ class ConfigStaticInfo extends ConfigGeneric<ConfigStaticInfoProps, ConfigGeneri
                     }}
                     onClick={() => {
                         Utils.copyToClipboard(valueTxt);
-                        window.alert(I18n.t('ra_Copied'));
+                        window.alert(I18n.t('jc_Copied'));
                     }}
                 />
             );

@@ -211,14 +211,14 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
             label = this.props.schema.refreshLabel
                 ? this.getText(this.props.schema.refreshLabel)
                 : I18n.t(
-                      'ra_Renew %s access',
+                      'jc_Renew %s access',
                       this.props.schema.identifier[0].toUpperCase() + this.props.schema.identifier.slice(1),
                   );
         } else {
             label = this.props.schema.label
                 ? this.getText(this.props.schema.label)
                 : I18n.t(
-                      'ra_Get %s access',
+                      'jc_Get %s access',
                       this.props.schema.identifier[0].toUpperCase() + this.props.schema.identifier.slice(1),
                   );
         }
@@ -241,7 +241,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                         fullWidth
                         error={!this.state.clientId}
                         disabled={!!disabled}
-                        label={I18n.t('ra_OAuth Client ID')}
+                        label={I18n.t('jc_OAuth Client ID')}
                         slotProps={{
                             input: {
                                 endAdornment: this.state.clientId ? (
@@ -276,7 +276,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                         fullWidth
                         error={!this.state.clientSecret}
                         disabled={!!disabled}
-                        label={I18n.t('ra_OAuth Client secret')}
+                        label={I18n.t('jc_OAuth Client secret')}
                         slotProps={{
                             input: {
                                 endAdornment: this.state.clientSecret ? (
@@ -310,18 +310,18 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                 </Button>
                 {this.state.blocked ? (
                     <div style={{ color: 'red', fontSize: 16, marginTop: 20 }}>
-                        {I18n.t('ra_Please allow popups in your browser for this page!')}
+                        {I18n.t('jc_Please allow popups in your browser for this page!')}
                     </div>
                 ) : null}
                 {this.state.accessTokens ? (
                     <div style={{ color: 'green', fontSize: 16, marginTop: 20 }}>
                         {this.props.alive
                             ? I18n.t(
-                                  'ra_Successfully authorized. Token valid till %s and will be automatically renewed.',
+                                  'jc_Successfully authorized. Token valid till %s and will be automatically renewed.',
                                   validTill,
                               )
                             : I18n.t(
-                                  'ra_Successfully authorized. Token valid till %s but it can expire as the instance is not running.',
+                                  'jc_Successfully authorized. Token valid till %s but it can expire as the instance is not running.',
                                   validTill,
                               )}
                     </div>
@@ -330,7 +330,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                     <>
                         <div style={{ width: '100%', margin: '1rem 0 1rem 0' }}>
                             <span style={{ marginRight: 4 }}>
-                                {`${I18n.t('ra_If the button above does not work, you can authorize manually this app by visiting this url')}`}
+                                {`${I18n.t('jc_If the button above does not work, you can authorize manually this app by visiting this url')}`}
                                 :
                             </span>
                             <br />
@@ -344,7 +344,7 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                         </div>
                         <TextField
                             value={this.state.accessTokens}
-                            label={I18n.t('ra_Enter the code from that page here')}
+                            label={I18n.t('jc_Enter the code from that page here')}
                             variant="standard"
                             error={!!this.state.accessTokenError}
                             helperText={this.state.accessTokenError || ''}

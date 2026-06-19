@@ -87,7 +87,7 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
                         variant="outlined"
                         onClick={() => this.setState({ showSelectId: true })}
                     >
-                        {I18n.t('ra_JSON editor')}
+                        {I18n.t('jc_JSON editor')}
                     </Button>
                 </div>
                 {showSelectId ? (
@@ -135,7 +135,7 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
                 {schema.help || this.state.jsonError ? (
                     <FormHelperText>
                         {this.state.jsonError
-                            ? I18n.t('ra_Invalid JSON')
+                            ? I18n.t('jc_Invalid JSON')
                             : this.renderHelp(
                                   this.props.schema.help,
                                   this.props.schema.helpLink,

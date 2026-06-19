@@ -119,14 +119,14 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
                                 value="false"
                                 style={{ fontWeight: 'bold' }}
                             >
-                                {I18n.t("ra_Do not use let's encrypt")}
+                                {I18n.t("jc_Do not use let's encrypt")}
                             </MenuItem>
                             <MenuItem
                                 key="_true"
                                 value="true"
                                 style={{ fontWeight: 'bold' }}
                             >
-                                {I18n.t("ra_Use all available let's encrypt certificates")}
+                                {I18n.t("jc_Use all available let's encrypt certificates")}
                             </MenuItem>
                             {this.state.collectionsOptions?.map(item => (
                                 <MenuItem
@@ -141,13 +141,13 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
                 ) : null}
                 {this.state.collectionsOptions ? <br /> : null}
                 {this.state.collectionsOptions && leCollection !== 'false' ? (
-                    <div>{I18n.t('ra_Fallback custom certificates')}</div>
+                    <div>{I18n.t('jc_Fallback custom certificates')}</div>
                 ) : null}
                 <FormControl
                     style={styles.certWidth}
                     variant="standard"
                 >
-                    <InputLabel shrink>{I18n.t('ra_Public certificate')}</InputLabel>
+                    <InputLabel shrink>{I18n.t('jc_Public certificate')}</InputLabel>
                     <Select
                         variant="standard"
                         error={!!error}
@@ -172,7 +172,7 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
                     style={styles.certWidth}
                     variant="standard"
                 >
-                    <InputLabel shrink>{I18n.t('ra_Private certificate')}</InputLabel>
+                    <InputLabel shrink>{I18n.t('jc_Private certificate')}</InputLabel>
                     <Select
                         variant="standard"
                         error={!!error}
@@ -199,7 +199,7 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
                     style={styles.certWidth}
                     variant="standard"
                 >
-                    <InputLabel shrink>{I18n.t('ra_Chained certificate')}</InputLabel>
+                    <InputLabel shrink>{I18n.t('jc_Chained certificate')}</InputLabel>
                     <Select
                         variant="standard"
                         error={!!error}

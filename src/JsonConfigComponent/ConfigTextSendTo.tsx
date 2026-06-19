@@ -57,7 +57,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
             if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
                 const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
                 if (!alive?.val) {
-                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    window.alert(I18n.t('jc_Instance %s is not alive', instance));
                     return;
                 }
             }
@@ -133,7 +133,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
                                     size="small"
                                     onClick={() => {
                                         Utils.copyToClipboard(this.state.text);
-                                        window.alert(I18n.t('ra_Copied'));
+                                        window.alert(I18n.t('jc_Copied'));
                                     }}
                                 >
                                     <IconCopy />

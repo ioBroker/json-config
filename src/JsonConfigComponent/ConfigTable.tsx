@@ -535,7 +535,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         if (firstErrorColumn) {
             this.setState({
                 errorMessage: I18n.t(
-                    'Non-allowed duplicate entry "%s" in column "%s"',
+                    'jc_Non-allowed duplicate entry "%s" in column "%s"',
                     firstErrorValue,
                     firstErrorColumn,
                 ),
@@ -638,7 +638,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         }
         return (
             <IconButton
-                title={I18n.t('ra_Show/hide filter input')}
+                title={I18n.t('jc_Show/hide filter input')}
                 size="small"
                 onClick={() => {
                     const filterOn = [...this.state.filterOn];
@@ -666,7 +666,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             <>
                 {!schema.noDelete && schema.import ? (
                     <Tooltip
-                        title={I18n.t('ra_Import data from %s file', 'CSV')}
+                        title={I18n.t('jc_Import data from %s file', 'CSV')}
                         slotProps={{ popper: { sx: styles.tooltip } }}
                     >
                         <IconButton
@@ -679,7 +679,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 ) : null}
                 {schema.export ? (
                     <Tooltip
-                        title={I18n.t('ra_Export data to %s file', 'CSV')}
+                        title={I18n.t('jc_Export data to %s file', 'CSV')}
                         slotProps={{ popper: { sx: styles.tooltip } }}
                     >
                         <IconButton
@@ -705,7 +705,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
     renderAddButton(doAnyFilterSet: boolean): React.JSX.Element {
         return (
             <Tooltip
-                title={doAnyFilterSet ? I18n.t('ra_Cannot add items with set filter') : I18n.t('ra_Add row')}
+                title={doAnyFilterSet ? I18n.t('jc_Cannot add items with set filter') : I18n.t('jc_Add row')}
                 slotProps={{ popper: { sx: styles.tooltip } }}
             >
                 <span>
@@ -883,7 +883,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 this.setState({ value: values, showImportDialog: false });
             }
         } else {
-            window.alert('ra_No data found in file');
+            window.alert('jc_No data found in file');
         }
     }
 
@@ -1095,7 +1095,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         reader.onerror = () => console.log('file reading has failed');
         reader.onload = () => {
             if (file.size > MAX_SIZE) {
-                window.alert(I18n.t('ra_File is too big. Max %sk allowed. Try use SVG.', Math.round(MAX_SIZE / 1024)));
+                window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(MAX_SIZE / 1024)));
                 return;
             }
             const text = new Uint8Array(reader.result as ArrayBufferLike).reduce(
@@ -1118,9 +1118,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 onClose={() => this.setState({ showTypeOfImportDialog: false })}
                 maxWidth="md"
             >
-                <DialogTitle>{I18n.t('ra_Append or replace?')}</DialogTitle>
+                <DialogTitle>{I18n.t('jc_Append or replace?')}</DialogTitle>
                 <DialogContent>
-                    {I18n.t('ra_Append %s entries or replace existing?', this.state.showTypeOfImportDialog.length)}
+                    {I18n.t('jc_Append %s entries or replace existing?', this.state.showTypeOfImportDialog.length)}
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -1144,7 +1144,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             );
                         }}
                     >
-                        {I18n.t('ra_Append')}
+                        {I18n.t('jc_Append')}
                     </Button>
                     <Button
                         variant="contained"
@@ -1165,7 +1165,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             );
                         }}
                     >
-                        {I18n.t('ra_Replace')}
+                        {I18n.t('jc_Replace')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -1188,7 +1188,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>{I18n.t('ra_Import from %s', 'CSV')}</DialogTitle>
+                <DialogTitle>{I18n.t('jc_Import from %s', 'CSV')}</DialogTitle>
                 <DialogContent>
                     <Dropzone
                         multiple={false}
@@ -1205,7 +1205,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                         errors[0].errors &&
                                         errors[0].errors[0] &&
                                         errors[0].errors[0].message) ||
-                                        I18n.t('ra_Cannot upload'),
+                                        I18n.t('jc_Cannot upload'),
                                 );
                             } else {
                                 this.onDrop(acceptedFiles);
@@ -1228,9 +1228,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                         <ImportIcon style={styles.uploadCenterIcon} />
                                         <div style={styles.uploadCenterText}>
                                             {this.state.uploadFile === 'dragging'
-                                                ? I18n.t('ra_Drop file here')
+                                                ? I18n.t('jc_Drop file here')
                                                 : I18n.t(
-                                                      'ra_Place your files here or click here to open the browse dialog',
+                                                      'jc_Place your files here or click here to open the browse dialog',
                                                   )}
                                         </div>
                                     </div>
@@ -1246,7 +1246,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         color="primary"
                         startIcon={<IconClose />}
                     >
-                        {I18n.t('Cancel')}
+                        {I18n.t('jc_Cancel')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -1290,7 +1290,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             variant="standard"
                             ref={this.filterRefs[props.headCell.attr]}
                             onChange={() => this.applyFilter()}
-                            title={I18n.t('ra_You can filter entries by entering here some text')}
+                            title={I18n.t('jc_You can filter entries by entering here some text')}
                             slotProps={{
                                 input: {
                                     endAdornment: ConfigTable.getFilterValue(this.filterRefs[props.headCell.attr]) && (
@@ -1349,7 +1349,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         <Paper style={styles.paper}>
                             <Accordion style={styles.paper}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography>{I18n.t('ra_Filter and Data Actions')}</Typography>
+                                    <Typography>{I18n.t('jc_Filter and Data Actions')}</Typography>
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Table>
@@ -1380,7 +1380,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                         align="left"
                                                         style={tdStyle}
                                                     >
-                                                        <span style={styles.headerText}>{I18n.t('ra_Actions')}</span>
+                                                        <span style={styles.headerText}>{I18n.t('jc_Actions')}</span>
                                                     </TableCell>
                                                     <TableCell style={tdStyle}>
                                                         {this.renderImportExportButtons(schema)}
@@ -1473,7 +1473,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                         <div>
                                             {!doAnyFilterSet && !this.state.orderBy ? (
                                                 <Tooltip
-                                                    title={I18n.t('ra_Move up')}
+                                                    title={I18n.t('jc_Move up')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
                                                 >
                                                     <span>
@@ -1489,7 +1489,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                             ) : null}
                                             {!doAnyFilterSet && !this.state.orderBy ? (
                                                 <Tooltip
-                                                    title={I18n.t('ra_Move down')}
+                                                    title={I18n.t('jc_Move down')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
                                                 >
                                                     <span>
@@ -1504,7 +1504,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                 </Tooltip>
                                             ) : null}
                                             <Tooltip
-                                                title={I18n.t('ra_Delete current row')}
+                                                title={I18n.t('jc_Delete current row')}
                                                 slotProps={{ popper: { sx: styles.tooltip } }}
                                             >
                                                 <IconButton
@@ -1516,7 +1516,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                             </Tooltip>
                                             {this.props.schema.clone ? (
                                                 <Tooltip
-                                                    title={I18n.t('ra_Clone current row')}
+                                                    title={I18n.t('jc_Clone current row')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
                                                 >
                                                     <IconButton
@@ -1528,7 +1528,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                 </Tooltip>
                                             ) : null}
                                             <Tooltip
-                                                title={I18n.t('ra_Expand/Collapse card')}
+                                                title={I18n.t('jc_Expand/Collapse card')}
                                                 slotProps={{ popper: { sx: styles.tooltip } }}
                                             >
                                                 <IconButton
@@ -1613,7 +1613,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                     >
                                                         {!doAnyFilterSet && !this.state.orderBy ? (
                                                             <Tooltip
-                                                                title={I18n.t('ra_Move up')}
+                                                                title={I18n.t('jc_Move up')}
                                                                 slotProps={{ popper: { sx: styles.tooltip } }}
                                                             >
                                                                 <span>
@@ -1629,7 +1629,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                         ) : null}
                                                         {!doAnyFilterSet && !this.state.orderBy ? (
                                                             <Tooltip
-                                                                title={I18n.t('ra_Move down')}
+                                                                title={I18n.t('jc_Move down')}
                                                                 slotProps={{ popper: { sx: styles.tooltip } }}
                                                             >
                                                                 <span>
@@ -1644,7 +1644,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                             </Tooltip>
                                                         ) : null}
                                                         <Tooltip
-                                                            title={I18n.t('ra_Delete current row')}
+                                                            title={I18n.t('jc_Delete current row')}
                                                             slotProps={{ popper: { sx: styles.tooltip } }}
                                                         >
                                                             <IconButton
@@ -1656,7 +1656,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                         </Tooltip>
                                                         {this.props.schema.clone ? (
                                                             <Tooltip
-                                                                title={I18n.t('ra_Clone current row')}
+                                                                title={I18n.t('jc_Clone current row')}
                                                                 slotProps={{ popper: { sx: styles.tooltip } }}
                                                             >
                                                                 <IconButton
@@ -1746,7 +1746,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                             {!doAnyFilterSet && !this.state.orderBy ? (
                                                 i ? (
                                                     <Tooltip
-                                                        title={I18n.t('ra_Move up')}
+                                                        title={I18n.t('jc_Move up')}
                                                         slotProps={{ popper: { sx: styles.tooltip } }}
                                                     >
                                                         <IconButton
@@ -1763,7 +1763,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                             {!doAnyFilterSet && !this.state.orderBy ? (
                                                 i < visibleValue.length - 1 ? (
                                                     <Tooltip
-                                                        title={I18n.t('ra_Move down')}
+                                                        title={I18n.t('jc_Move down')}
                                                         slotProps={{ popper: { sx: styles.tooltip } }}
                                                     >
                                                         <IconButton
@@ -1778,7 +1778,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                 )
                                             ) : null}
                                             <Tooltip
-                                                title={I18n.t('ra_Delete current row')}
+                                                title={I18n.t('jc_Delete current row')}
                                                 slotProps={{ popper: { sx: styles.tooltip } }}
                                             >
                                                 <IconButton
@@ -1790,7 +1790,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                             </Tooltip>
                                             {this.props.schema.clone ? (
                                                 <Tooltip
-                                                    title={I18n.t('ra_Clone current row')}
+                                                    title={I18n.t('jc_Clone current row')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
                                                 >
                                                     <IconButton
@@ -1825,7 +1825,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 id="tableTitle"
                                 component="div"
                             >
-                                {I18n.t('ra_All items are filtered out')}
+                                {I18n.t('jc_All items are filtered out')}
                                 <IconButton
                                     size="small"
                                     onClick={() => this.applyFilter(true)}

@@ -72,7 +72,7 @@ class ConfigChip extends ConfigGeneric<ConfigChipProps, ConfigGenericState> {
                         });
                     }}
                 />
-                <FormHelperText>{I18n.t('ra_Press ENTER Key to add new item')}</FormHelperText>
+                <FormHelperText>{I18n.t('jc_Press ENTER Key to add new item')}</FormHelperText>
                 {this.props.schema.help ? (
                     <FormHelperText>
                         {this.renderHelp(

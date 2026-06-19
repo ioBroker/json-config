@@ -58,7 +58,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
             if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
                 const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
                 if (!alive?.val) {
-                    window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                    window.alert(I18n.t('jc_Instance %s is not alive', instance));
                     return;
                 }
             }

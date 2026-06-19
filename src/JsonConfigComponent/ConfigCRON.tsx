@@ -75,13 +75,13 @@ class ConfigCRON extends ConfigGeneric<ConfigCRONProps, ConfigCRONState> {
                 </div>
                 {showDialog ? (
                     <DialogCron
-                        title={I18n.t('ra_Define schedule')}
+                        title={I18n.t('jc_Define schedule')}
                         simple={schema.simple}
                         complex={schema.complex}
                         cron={value}
                         onClose={() => this.setState({ showDialog: false })}
-                        cancel={I18n.t('ra_Cancel')}
-                        ok={I18n.t('ra_Ok')}
+                        cancel={I18n.t('jc_Cancel')}
+                        ok={I18n.t('jc_Ok')}
                         theme={this.props.oContext.theme}
                         onOk={value_ =>
                             this.setState({ showDialog: false, value: value_ }, () => this.onChange(attr, value_))

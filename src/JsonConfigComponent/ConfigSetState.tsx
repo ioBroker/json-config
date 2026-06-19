@@ -43,7 +43,7 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
             if (this.props.schema.error && this.props.schema.error[e.toString()]) {
                 window.alert(this.getText(this.props.schema.error[e.toString()]));
             } else {
-                window.alert(I18n.t(e.toString()) || I18n.t('ra_Error'));
+                window.alert(I18n.t(e.toString()) || I18n.t('jc_Error'));
             }
         }
     }
@@ -64,10 +64,10 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
 
         return (
             <DialogConfirm
-                title={this.getText(confirm.title) || I18n.t('ra_Please confirm')}
+                title={this.getText(confirm.title) || I18n.t('jc_Please confirm')}
                 text={this.getText(confirm.text)}
-                ok={this.getText(confirm.ok) || I18n.t('ra_Ok')}
-                cancel={this.getText(confirm.cancel) || I18n.t('ra_Cancel')}
+                ok={this.getText(confirm.ok) || I18n.t('jc_Ok')}
+                cancel={this.getText(confirm.cancel) || I18n.t('jc_Cancel')}
                 icon={icon}
                 onClose={isOk => this.setState({ confirmDialog: false }, () => isOk && this._onClick())}
             />

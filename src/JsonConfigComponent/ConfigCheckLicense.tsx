@@ -121,12 +121,12 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         variant="contained"
                         onClick={() => window.open('https://iobroker.net/www/account/licenses', '_blank')}
                     >
-                        {I18n.t('iobroker.net')}
+                        iobroker.net
                     </Button>,
                 );
                 if (!this.state.allLicenses.length) {
-                    content.push(<div key="text1">{I18n.t('ra_No one license found in license manager')}</div>);
-                    content.push(<div key="text2">{I18n.t('ra_Please create license')}</div>);
+                    content.push(<div key="text1">{I18n.t('jc_No one license found in license manager')}</div>);
+                    content.push(<div key="text2">{I18n.t('jc_Please create license')}</div>);
                 } else {
                     // license.id,
                     // validName,
@@ -139,11 +139,11 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>{I18n.t('ra_Product')}</TableCell>
-                                        <TableCell>{I18n.t('ra_Version')}</TableCell>
+                                        <TableCell>{I18n.t('jc_Product')}</TableCell>
+                                        <TableCell>{I18n.t('jc_Version')}</TableCell>
                                         <TableCell>UUID</TableCell>
-                                        <TableCell>{I18n.t('ra_ValidTill')}</TableCell>
-                                        <TableCell>{I18n.t('ra_Commercial')}</TableCell>
+                                        <TableCell>{I18n.t('jc_ValidTill')}</TableCell>
+                                        <TableCell>{I18n.t('jc_Commercial')}</TableCell>
                                         <TableCell>ID</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -189,7 +189,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     fullWidth={this.props.fullWidth !== undefined ? this.props.fullWidth : true}
                     onClick={() => this.setState({ _error: '', allLicenses: null })}
                 >
-                    <DialogTitle>{I18n.t('ra_Error')}</DialogTitle>
+                    <DialogTitle>{I18n.t('jc_Error')}</DialogTitle>
                     <DialogContent>
                         <DialogContentText>{content}</DialogContentText>
                     </DialogContent>
@@ -201,7 +201,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             autoFocus
                             startIcon={<IconCheck />}
                         >
-                            {I18n.t('ra_Ok')}
+                            {I18n.t('jc_Ok')}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -253,8 +253,8 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
             });
             pre.push(
                 <div key="checked">
-                    <div style={styles.licLabel}>{I18n.t('ra_Checked')}:</div>
-                    {this.state.licenseOfflineCheck ? I18n.t('ra_locally') : I18n.t('ra_via internet')}
+                    <div style={styles.licLabel}>{I18n.t('jc_Checked')}:</div>
+                    {this.state.licenseOfflineCheck ? I18n.t('jc_locally') : I18n.t('jc_via internet')}
                 </div>,
             );
 
@@ -268,7 +268,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             component="span"
                             sx={this.state.result ? styles.okTitle : styles.errorTitle}
                         >
-                            {I18n.t('ra_License %s', this.state.result ? 'OK' : 'INVALID')}
+                            {I18n.t('jc_License %s', this.state.result ? 'OK' : 'INVALID')}
                         </Box>
                     </DialogTitle>
                     <DialogContent>
@@ -296,7 +296,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             color="primary"
                             variant="contained"
                         >
-                            {I18n.t('ra_Close')}
+                            {I18n.t('jc_Close')}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -478,7 +478,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
             if (data?.error) {
                 try {
                     const data_ = ConfigCheckLicense.parseJwt(license);
-                    const _error = I18n.t(`ra_${data_.error || data.error || 'Unknown error'}`).replace(/^ra_/, '');
+                    const _error = I18n.t(`jc_${data_.error || data.error || 'Unknown error'}`).replace(/^jc_/, '');
 
                     return this.setState({
                         _error,
@@ -506,7 +506,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         new Date(validTill).getTime() < Date.now()
                     ) {
                         return this.setState({
-                            _error: I18n.t('ra_License expired on %s', new Date(validTill).toLocaleString()),
+                            _error: I18n.t('jc_License expired on %s', new Date(validTill).toLocaleString()),
                             licenseOfflineCheck: false,
                             showLicenseData,
                             result: false,
@@ -518,7 +518,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         // check UUID
                         if (uuid && !data.uuid && adapterName === 'vis-2') {
                             return this.setState({
-                                _error: I18n.t('ra_License must be converted', data.uuid),
+                                _error: I18n.t('jc_License must be converted', data.uuid),
                                 showLinkToProfile: true,
                                 licenseOfflineCheck: false,
                                 showLicenseData,
@@ -530,7 +530,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         if (uuid && data.uuid && data.uuid !== uuid) {
                             return this.setState({
                                 _error: I18n.t(
-                                    'ra_Serial number (UUID) "%s" in license is for other device.',
+                                    'jc_Serial number (UUID) "%s" in license is for other device.',
                                     data.uuid,
                                 ),
                                 licenseOfflineCheck: false,
@@ -543,7 +543,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         if (!ConfigCheckLicense.isVersionValid(version, data.version, data.invoice, adapterName)) {
                             return this.setState({
                                 _error: I18n.t(
-                                    'ra_License is for version %s, but required version is %s',
+                                    'jc_License is for version %s, but required version is %s',
                                     data.version,
                                     this.props.schema.version,
                                 ),
@@ -562,18 +562,18 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         });
                     }
                     return this.setState({
-                        _error: I18n.t('ra_License for other product "%s"', data.name),
+                        _error: I18n.t('jc_License for other product "%s"', data.name),
                         licenseOfflineCheck: false,
                         showLicenseData,
                         result: false,
                         running: false,
                     });
                 }
-                throw new Error('ra_Invalid answer from server');
+                throw new Error('jc_Invalid answer from server');
             }
         } catch (error) {
             if (error?.response?.status === 404) {
-                return this.setState({ _error: I18n.t('ra_License does not exist'), result: false, running: false });
+                return this.setState({ _error: I18n.t('jc_License does not exist'), result: false, running: false });
             }
             // check offline
             try {
@@ -586,7 +586,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     new Date(data.valid_till).getTime() < Date.now()
                 ) {
                     return this.setState({
-                        _error: I18n.t('ra_License expired on %s', new Date(data.valid_till).toLocaleString()),
+                        _error: I18n.t('jc_License expired on %s', new Date(data.valid_till).toLocaleString()),
                         showLicenseData: data,
                         licenseOfflineCheck: true,
                         running: false,
@@ -597,7 +597,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     // check UUID
                     if (uuid && data.uuid && data.uuid !== uuid) {
                         return this.setState({
-                            _error: I18n.t('ra_Serial number (UUID) "%s" in license is for other device.', data.uuid),
+                            _error: I18n.t('jc_Serial number (UUID) "%s" in license is for other device.', data.uuid),
                             showLicenseData: data,
                             licenseOfflineCheck: true,
                             result: false,
@@ -608,7 +608,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     if (!ConfigCheckLicense.isVersionValid(version, data.version, data.invoice, adapterName)) {
                         return this.setState({
                             _error: I18n.t(
-                                'ra_License is for version %s, but required version is %s',
+                                'jc_License is for version %s, but required version is %s',
                                 data.version,
                                 this.props.schema.version,
                             ),
@@ -627,7 +627,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     });
                 }
                 return this.setState({
-                    _error: I18n.t('ra_License for other product "%s"', data.name),
+                    _error: I18n.t('jc_License for other product "%s"', data.name),
                     licenseOfflineCheck: true,
                     showLicenseData: data,
                     result: false,
@@ -635,7 +635,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                 });
             } catch {
                 return this.setState({
-                    _error: I18n.t('ra_Cannot decode license'),
+                    _error: I18n.t('jc_Cannot decode license'),
                     result: false,
                     licenseOfflineCheck: true,
                     running: false,
@@ -651,9 +651,9 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
         return (
             <DialogConfirm
                 text={I18n.t(
-                    'ra_License not found in license manager. Do you want to read licenses from iobroker.net?',
+                    'jc_License not found in license manager. Do you want to read licenses from iobroker.net?',
                 )}
-                ok={I18n.t('ra_Yes')}
+                ok={I18n.t('jc_Yes')}
                 onClose={async isYes => {
                     if (isYes) {
                         this.setState({ askForUpdate: false });
@@ -661,7 +661,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             // updateLicense is available only in AdminConnection
                             await this.props.oContext.socket.updateLicenses(null, null);
                         } catch (e) {
-                            window.alert(I18n.t('ra_Cannot read licenses: %s', e));
+                            window.alert(I18n.t('jc_Cannot read licenses: %s', e));
                             return;
                         }
                         await this._onClick(true);
@@ -697,7 +697,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
             await this.checkLicense(license, adapterName);
         } else if (this.props.data.useLicenseManager) {
             this.setState({
-                _error: I18n.t('ra_Suitable license not found in license manager'),
+                _error: I18n.t('jc_Suitable license not found in license manager'),
                 result: false,
                 running: false,
                 allLicenses: licenses,
@@ -705,7 +705,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
         } else {
             // this case could not happen
             this.setState({
-                _error: I18n.t('ra_Please enter the license'),
+                _error: I18n.t('jc_Please enter the license'),
                 result: false,
                 running: false,
             });
@@ -729,7 +729,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             style={{ marginRight: 8 }}
                         />
                     ) : null}
-                    {this.getText(this.props.schema.label || 'ra_Check license', this.props.schema.noTranslation)}
+                    {this.getText(this.props.schema.label || 'jc_Check license', this.props.schema.noTranslation)}
                 </Button>
                 {this.renderMessageDialog()}
                 {this.renderErrorDialog()}

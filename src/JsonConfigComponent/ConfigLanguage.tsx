@@ -75,9 +75,9 @@ class ConfigLanguage extends ConfigGeneric<ConfigLanguageProps, ConfigLanguageSt
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
         const languages: LanguageSelectOption[] = [...LANGUAGES];
         if (this.props.schema.system) {
-            languages.unshift({ value: '', label: I18n.t('ra_System language') });
+            languages.unshift({ value: '', label: I18n.t('jc_System language') });
         } else {
-            languages.unshift({ value: '', label: I18n.t('ra_none') });
+            languages.unshift({ value: '', label: I18n.t('jc_none') });
         }
 
         this.setState({

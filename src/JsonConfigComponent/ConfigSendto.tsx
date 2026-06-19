@@ -215,7 +215,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         if (this.state._copyDialog) {
             return (
                 <CustomModal
-                    title={this.getText(this.state._copyDialog.title || I18n.t('ra_Result'))}
+                    title={this.getText(this.state._copyDialog.title || I18n.t('jc_Result'))}
                     overflowHidden
                     onClose={() => {
                         this.setState({ _copyDialog: null });
@@ -223,10 +223,10 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                     onApply={() => {
                         // Copy to clipboard
                         copy(this.state._copyDialog.text);
-                        window.alert(I18n.t('ra_Copied'));
+                        window.alert(I18n.t('jc_Copied'));
                         this.setState({ _copyDialog: null });
                     }}
-                    titleButtonApply={I18n.t('ra_Copy content')}
+                    titleButtonApply={I18n.t('jc_Copy content')}
                 >
                     <div style={{ width: 'calc(100vw - 40px)', height: 'calc(100vh - 188px)' }}>
                         <Editor
@@ -281,7 +281,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
             timeout = setTimeout(
                 () => {
                     this.props.oContext.onCommandRunning(false);
-                    this.setState({ _error: I18n.t('ra_Request timed out'), running: false });
+                    this.setState({ _error: I18n.t('jc_Request timed out'), running: false });
                 },
                 parseInt(this.props.schema.timeout as any as string, 10) || 10000,
             );
@@ -293,7 +293,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
             const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
             if (!alive?.val) {
-                window.alert(I18n.t('ra_Instance %s is not alive', instance));
+                window.alert(I18n.t('jc_Instance %s is not alive', instance));
                 return;
             }
         }
@@ -332,7 +332,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                                     ? typeof response.error === 'string'
                                         ? I18n.t(response.error)
                                         : JSON.stringify(response.error)
-                                    : I18n.t('ra_Error'),
+                                    : I18n.t('jc_Error'),
                             });
                         }
                     } else {
@@ -367,7 +367,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                         } else if (response?.copyDialog) {
                             this.setState({ _copyDialog: response.copyDialog });
                         } else {
-                            window.alert(I18n.t('ra_Ok'));
+                            window.alert(I18n.t('jc_Ok'));
                         }
 
                         if (response?.saveConfig) {
@@ -380,7 +380,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 if (this.props.schema.error && this.props.schema.error[e.toString()]) {
                     this.setState({ _error: this.getText(this.props.schema.error[e.toString()]) });
                 } else {
-                    this.setState({ _error: I18n.t(e.toString()) || I18n.t('ra_Error') });
+                    this.setState({ _error: I18n.t(e.toString()) || I18n.t('jc_Error') });
                 }
             })
             .then(() => {
@@ -405,10 +405,10 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
 
         return (
             <DialogConfirm
-                title={this.getText(confirm.title) || I18n.t('ra_Please confirm')}
+                title={this.getText(confirm.title) || I18n.t('jc_Please confirm')}
                 text={this.getText(confirm.text)}
-                ok={this.getText(confirm.ok) || I18n.t('ra_Ok')}
-                cancel={this.getText(confirm.cancel) || I18n.t('ra_Cancel')}
+                ok={this.getText(confirm.ok) || I18n.t('jc_Ok')}
+                cancel={this.getText(confirm.cancel) || I18n.t('jc_Cancel')}
                 icon={icon || undefined}
                 onClose={isOk => this.setState({ confirmDialog: false }, () => isOk && this._onClick())}
             />
@@ -429,7 +429,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                     title={
                         this.props.alive
                             ? this.getText(this.props.schema.title) || ''
-                            : I18n.t('ra_Instance %s is not alive', this.props.oContext.instance.toString())
+                            : I18n.t('jc_Instance %s is not alive', this.props.oContext.instance.toString())
                     }
                     onClick={() => {
                         if (this.props.schema.confirm) {

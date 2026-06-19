@@ -213,7 +213,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                     size="small"
                     onClick={() => {
                         Utils.copyToClipboard(this.state.value);
-                        window.alert(I18n.t('ra_Copied'));
+                        window.alert(I18n.t('jc_Copied'));
                     }}
                 >
                     <IconCopy />
@@ -282,7 +282,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                     />
                     {helper || error || this.state.jsonError ? (
                         <div style={error ? styles.error : styles.helper}>
-                            {error || (this.state.jsonError ? I18n.t('ra_Invalid JSON') : helper)}
+                            {error || (this.state.jsonError ? I18n.t('jc_Invalid JSON') : helper)}
                         </div>
                     ) : null}
                 </div>
@@ -316,7 +316,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                 label={this.getText(this.props.schema.label)}
                 helperText={
                     this.state.jsonError
-                        ? I18n.t('ra_Invalid JSON')
+                        ? I18n.t('jc_Invalid JSON')
                         : this.renderHelp(
                               this.props.schema.help,
                               this.props.schema.helpLink,

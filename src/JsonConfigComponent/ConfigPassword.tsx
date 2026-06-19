@@ -59,7 +59,7 @@ class ConfigPassword extends ConfigGeneric<ConfigPasswordProps, ConfigPasswordSt
         const _notEqual = !!this.props.schema.repeat && repeatPassword !== password;
         this.setState({ value: password, _repeat: repeatPassword, _notEqual }, () => {
             if (_notEqual) {
-                this.onError(this.props.attr, I18n.t('ra_Passwords are not equal!'));
+                this.onError(this.props.attr, I18n.t('jc_Passwords are not equal!'));
             } else {
                 this.onError(this.props.attr); // clear error
                 const mayBePromise = this.onChange(this.props.attr, password);
@@ -119,7 +119,7 @@ class ConfigPassword extends ConfigGeneric<ConfigPasswordProps, ConfigPasswordSt
                 }}
                 helperText={
                     this.state._notEqual
-                        ? I18n.t('ra_Passwords are not equal!')
+                        ? I18n.t('jc_Passwords are not equal!')
                         : this.renderHelp(
                               this.props.schema.help,
                               this.props.schema.helpLink,
@@ -139,7 +139,7 @@ class ConfigPassword extends ConfigGeneric<ConfigPasswordProps, ConfigPasswordSt
                     error={!!error || this.state._notEqual}
                     disabled={!!disabled}
                     onChange={e => this.onChangePassword(undefined, e.target.value)}
-                    label={`${this.getText(this.props.schema.label)} (${I18n.t('ra_repeat')})`}
+                    label={`${this.getText(this.props.schema.label)} (${I18n.t('jc_repeat')})`}
                     slotProps={{
                         input: {
                             autoComplete: 'new-password',
@@ -152,7 +152,7 @@ class ConfigPassword extends ConfigGeneric<ConfigPasswordProps, ConfigPasswordSt
                     }}
                     helperText={
                         this.state._notEqual
-                            ? I18n.t('ra_Passwords are not equal!')
+                            ? I18n.t('jc_Passwords are not equal!')
                             : this.renderHelp(
                                   this.props.schema.help,
                                   this.props.schema.helpLink,

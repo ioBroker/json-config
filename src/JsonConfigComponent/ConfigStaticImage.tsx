@@ -40,7 +40,7 @@ class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStat
 
             return (
                 <>
-                    <Tooltip title={I18n.t('ra_Click to see in full size')}>
+                    <Tooltip title={I18n.t('jc_Click to see in full size')}>
                         <img
                             src={src}
                             style={{
@@ -80,7 +80,7 @@ class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStat
                                     onClick={() => this.setState({ showDialog: false })}
                                     color="primary"
                                 >
-                                    {I18n.t('ra_Close')}
+                                    {I18n.t('jc_Close')}
                                 </Button>
                             </DialogActions>
                         </Dialog>

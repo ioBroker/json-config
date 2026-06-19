@@ -89,24 +89,24 @@ class ConfigNumber extends ConfigGeneric<ConfigNumberProps, ConfigNumberState> {
         const f = value === '' ? 0 : parseFloat(value);
 
         if (value !== '' && Number.isNaN(f)) {
-            return 'ra_Not a number';
+            return 'jc_Not a number';
         }
 
         if (value !== '' && window.isFinite(f)) {
             if (this.props.schema.min !== undefined && f < this.props.schema.min) {
-                return 'ra_Too small';
+                return 'jc_Too small';
             }
             if (this.props.schema.max !== undefined && f > this.props.schema.max) {
-                return 'ra_Too big';
+                return 'jc_Too big';
             }
             if (value === '' || value === '-' || Number.isNaN(f)) {
-                return 'ra_Not a number';
+                return 'jc_Not a number';
             }
 
             return null;
         }
 
-        return 'ra_Not a number';
+        return 'jc_Not a number';
     }
 
     renderItem(error: unknown, disabled: boolean): JSX.Element | null {
