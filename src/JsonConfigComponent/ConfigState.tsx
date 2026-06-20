@@ -160,8 +160,15 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 clearTimeout(this.delayedUpdate.timer);
                 this.delayedUpdate.timer = null;
             }
-        } else if (this.state.stateValue.toString() !== val.toString()) {
-            this.setState({ stateValue: val });
+        } else {
+            const oldValue =
+                this.state.stateValue === null || this.state.stateValue === undefined
+                    ? null
+                    : this.state.stateValue.toString();
+            const newValue = val === null || val === undefined ? null : val.toString();
+            if (oldValue !== newValue) {
+                this.setState({ stateValue: val });
+            }
         }
     };
 
