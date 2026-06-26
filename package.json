@@ -39,7 +39,7 @@
     "@emotion/styled": "^11.14.1",
     "@iobroker/adapter-react-v5": "^8.2.13",
     "@module-federation/runtime": "^2.3.3",
-    "@mui/x-date-pickers": "^7.29.4",
+    "@mui/x-date-pickers": "^9.7.0",
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react": "^18.3.1",
