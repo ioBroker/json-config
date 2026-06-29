@@ -49,7 +49,7 @@ interface ConfigFileState extends ConfigGenericState {
     showFileBrowser?: boolean;
 }
 
-class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
+export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
     private imagePrefix = '../..';
 
     async componentDidMount(): Promise<void> {
@@ -212,5 +212,3 @@ class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
         );
     }
 }
-
-export default ConfigFile;

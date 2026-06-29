@@ -27,7 +27,7 @@ interface ConfigObjectIdState extends ConfigGenericState {
     initialized?: boolean;
 }
 
-class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdState> {
+export default class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdState> {
     private fillOnSelect: { attr: string; pathInObject: string; overwrite?: boolean }[] = [];
 
     async componentDidMount(): Promise<void> {
@@ -147,5 +147,3 @@ class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, ConfigObjectIdSt
         );
     }
 }
-
-export default ConfigObjectId;

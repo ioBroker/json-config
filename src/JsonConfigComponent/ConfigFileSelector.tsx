@@ -125,7 +125,7 @@ interface ConfigFileSelectorState extends ConfigGenericState {
     deleteFile?: string;
 }
 
-class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFileSelectorState> {
+export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFileSelectorState> {
     private readonly dropzoneRef: React.RefObject<DropzoneRef>;
 
     private readonly imagePrefix: string;
@@ -160,7 +160,7 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
         void this.updateFiles().then(() => {
             const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
             this.setState({ value });
-            // subscribe on this folder
+            // subscribe to this folder
             this.props.oContext.socket
                 .subscribeFiles(this.objectID, `${this.path}/*`, this.onFolderChanged)
                 .catch(e => console.error(`Cannot subscribe: ${e}`));
@@ -462,11 +462,14 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
                             >
                                 <ListItemIcon>{this.getFileIcon(it)}</ListItemIcon>
                                 <ListItemText>{it.label}</ListItemText>
-                                {this.props.schema.delete && item.value ? (
+                                {this.props.schema.delete && it.value ? (
                                     <IconButton
                                         style={styles.deleteButton}
                                         size="small"
-                                        onClick={() => this.setState({ deleteFile: item.value })}
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            this.setState({ deleteFile: it.value });
+                                        }}
                                     >
                                         <IconDelete />
                                     </IconButton>
@@ -622,5 +625,3 @@ class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFi
         );
     }
 }
-
-export default ConfigFileSelector;

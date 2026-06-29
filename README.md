@@ -1822,6 +1822,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Corrected the file selector component
+
 ### 8.4.11 (2026-06-21)
 - (@GermanBluefox) Added missing translations
 
