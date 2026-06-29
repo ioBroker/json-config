@@ -1822,7 +1822,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.4.12 (2026-06-29)
 - (@GermanBluefox) Corrected the file selector component
 - (@GermanBluefox) Implemented no translation for select component
 - (@GermanBluefox) Implemented debug mode for components to analyze JS functions
