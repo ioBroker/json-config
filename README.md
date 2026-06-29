@@ -1822,11 +1822,11 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 8.4.13 (2026-06-29)
 - (@GermanBluefox) Corrected the file selector component
 - (@GermanBluefox) Implemented no translation for the select component
 - (@GermanBluefox) Implemented debug mode for components to analyze JS functions
-- (@ThomasPohl) Corrected rendering of the link in the static text component 
+- (@ThomasPohl) Corrected rendering of the link in the static text component
 
 ### 8.4.11 (2026-06-21)
 - (@GermanBluefox) Added missing translations
