@@ -212,6 +212,11 @@ export interface ConfigItem {
     /** If the control should be shown ONLY in the expert mode */
     expertMode?: boolean;
     noMultiEdit?: boolean;
+    /**
+     * If true, the evaluation of JS functions of this element (`hidden`, `disabled`, `validator`,
+     * `defaultFunc`, `onChange.calculateFunc`, `confirm.condition`) is logged to the browser console.
+     */
+    debug?: boolean;
     confirm?: ConfigItemConfirmData;
     icon?: ConfigIconType;
     width?: string | number;
@@ -261,6 +266,8 @@ export interface ConfigItemSelectOption {
     description?: ioBroker.StringOrTranslated;
     /** Icon URL or base64 to display next to the option */
     icon?: string;
+    /** Do not translate this option */
+    noTranslation?: boolean;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
@@ -623,6 +630,7 @@ export interface ConfigItemSelect extends ConfigItem {
               color?: string;
               hidden?: string | boolean;
               description?: ioBroker.StringOrTranslated;
+              noTranslation?: boolean;
               icon?: string;
           }
     )[];

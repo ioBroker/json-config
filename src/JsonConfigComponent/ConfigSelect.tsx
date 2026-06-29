@@ -110,7 +110,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 selectOptions.push(selectItem);
                 for (const it of groupItem.items) {
                     const selectSubItem: SelectItem = {
-                        label: this.getText(it.label, this.props.schema.noTranslation),
+                        label: this.getText(it.label, this.props.schema.noTranslation || it.noTranslation),
                         value: it.value,
                         hidden: it.hidden,
                         color: it.color,
@@ -122,7 +122,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 }
             } else {
                 const selectItem: SelectItem = {
-                    label: this.getText(item.label, this.props.schema.noTranslation),
+                    label: this.getText(item.label, this.props.schema.noTranslation || item.noTranslation),
                     value: item.value,
                     hidden: item.hidden,
                     color: item.color,
