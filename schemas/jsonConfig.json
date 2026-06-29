@@ -8788,7 +8788,7 @@
     },
     "then": {
         "type": "object",
-        "required": ["type"],
+        "required": ["type", "i18n"],
         "additionalProperties": false,
         "properties": {
             "type": true,
@@ -8817,7 +8817,7 @@
     },
     "else": {
         "type": "object",
-        "required": ["type"],
+        "required": ["type", "i18n"],
         "additionalProperties": false,
         "properties": {
             "type": true,
