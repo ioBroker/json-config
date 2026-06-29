@@ -194,6 +194,7 @@ export default class ConfigGeneric<
                     this.props.oContext.instanceObj,
                     this.props.arrayIndex,
                     this.props.globalData,
+                    'defaultFunc',
                 );
             } else if (this.props.schema.type !== 'state') {
                 this.defaultValue = await this.execute(
@@ -202,6 +203,7 @@ export default class ConfigGeneric<
                     this.props.data,
                     this.props.arrayIndex,
                     this.props.globalData,
+                    'defaultFunc',
                 );
             }
         }
@@ -593,6 +595,7 @@ export default class ConfigGeneric<
                 data,
                 this.props.arrayIndex,
                 this.props.globalData,
+                'confirm.condition',
             ))
         ) {
             return new Promise<void>(resolve => {
@@ -627,6 +630,7 @@ export default class ConfigGeneric<
                             data,
                             this.props.arrayIndex,
                             this.props.globalData,
+                            'confirm.condition',
                         )
                     ) {
                         return new Promise<void>(resolve => {
@@ -669,6 +673,7 @@ export default class ConfigGeneric<
                             this.props.oContext.instanceObj,
                             this.props.arrayIndex,
                             this.props.globalData,
+                            'onChange.calculateFunc',
                         );
                     } else {
                         _newValue = await this.execute(
@@ -677,6 +682,7 @@ export default class ConfigGeneric<
                             data,
                             this.props.arrayIndex,
                             this.props.globalData,
+                            'onChange.calculateFunc',
                         );
                     }
 
@@ -726,6 +732,7 @@ export default class ConfigGeneric<
                       this.props.oContext.instanceObj,
                       this.props.arrayIndex,
                       this.props.globalData,
+                      'onChange.calculateFunc',
                   )
                 : await this.execute(
                       this.props.schema.onChange.calculateFunc,
@@ -733,6 +740,7 @@ export default class ConfigGeneric<
                       data,
                       this.props.arrayIndex,
                       this.props.globalData,
+                      'onChange.calculateFunc',
                   );
             if (newValue_ !== val) {
                 ConfigGeneric.setValue(data, this.props.attr, newValue_);
@@ -770,12 +778,51 @@ export default class ConfigGeneric<
         });
     }
 
+    /**
+     * Log the evaluation of a JS function to the browser console if the element has `debug: true`.
+     * Requested in https://github.com/ioBroker/ioBroker.admin/issues/3374
+     *
+     * @param funcName name of the evaluated function, e.g. `hidden`, `disabled`, `validator`
+     * @param func the JS function source that was executed
+     * @param result the value the function returned (or an Error if it threw)
+     * @param data the data object the function was executed against
+     */
+    protected debugLog(funcName: string, func: string, result: unknown, data?: Record<string, any>): void {
+        if (!this.props.schema?.debug) {
+            return;
+        }
+        const attr = this.props.attr || (this.props.schema as { attr?: string })?.attr || '';
+        const label = `%c[jsonConfig]%c ${attr ? `${attr} → ` : ''}${funcName}`;
+        const payload = {
+            function: func,
+            result,
+            data: data ?? this.props.data,
+            arrayIndex: this.props.arrayIndex,
+        };
+        if (result instanceof Error) {
+            console.error(
+                label,
+                'background:#b71c1c;color:#fff;border-radius:3px;padding:1px 4px',
+                'color:#e53935',
+                payload,
+            );
+        } else {
+            console.log(
+                label,
+                'background:#33691e;color:#fff;border-radius:3px;padding:1px 4px',
+                'color:#7cb342',
+                payload,
+            );
+        }
+    }
+
     async execute(
         func: string | boolean | Record<string, string>,
         defaultValue: string | number | boolean,
         data: Record<string, any>,
         arrayIndex: number,
         globalData: Record<string, any>,
+        funcName?: string,
     ): Promise<string | number | boolean> {
         let fun: string;
 
@@ -810,7 +857,7 @@ export default class ConfigGeneric<
                 'getObject',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
-            return await f(
+            const result = await f(
                 data || this.props.data,
                 this.props.originalData,
                 this.props.oContext.systemConfig,
@@ -824,7 +871,10 @@ export default class ConfigGeneric<
                 window.location.href,
                 this.getObject,
             );
+            this.debugLog(funcName || 'JS function', fun, result, data);
+            return result;
         } catch (e) {
+            this.debugLog(funcName || 'JS function', fun, e instanceof Error ? e : new Error(String(e)), data);
             console.error(`Cannot execute ${JSON.stringify(func)}: ${e}`);
             return defaultValue;
         }
@@ -837,6 +887,7 @@ export default class ConfigGeneric<
         instanceObj: ioBroker.InstanceObject,
         arrayIndex: number,
         globalData: Record<string, any>,
+        funcName?: string,
     ): Promise<string | boolean | number | null> {
         let fun: string;
 
@@ -870,7 +921,7 @@ export default class ConfigGeneric<
                 'getObject',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
-            return await f(
+            const result = await f(
                 data || this.props.data,
                 this.props.originalData,
                 this.props.oContext.systemConfig,
@@ -883,7 +934,10 @@ export default class ConfigGeneric<
                 window.location.href,
                 this.getObject,
             );
+            this.debugLog(funcName || 'JS function', fun, result, data);
+            return result;
         } catch (e) {
+            this.debugLog(funcName || 'JS function', fun, e instanceof Error ? e : new Error(String(e)), data);
             console.error(`Cannot execute ${fun}: ${e}`);
             return null;
         }
@@ -909,6 +963,7 @@ export default class ConfigGeneric<
                       this.props.oContext.instanceObj,
                       this.props.arrayIndex,
                       this.props.globalData,
+                      'validator',
                   ))
                 : false;
             if (schema.disabled === true) {
@@ -922,6 +977,7 @@ export default class ConfigGeneric<
                           this.props.oContext.instanceObj,
                           this.props.arrayIndex,
                           this.props.globalData,
+                          'disabled',
                       )) as boolean)
                     : false;
             }
@@ -936,6 +992,7 @@ export default class ConfigGeneric<
                           this.props.oContext.instanceObj,
                           this.props.arrayIndex,
                           this.props.globalData,
+                          'hidden',
                       )) as boolean)
                     : false;
             }
@@ -947,6 +1004,7 @@ export default class ConfigGeneric<
                       this.props.oContext.instanceObj,
                       this.props.arrayIndex,
                       this.props.globalData,
+                      'defaultFunc',
                   )
                 : schema.default;
         } else {
@@ -957,6 +1015,7 @@ export default class ConfigGeneric<
                       this.props.data,
                       this.props.arrayIndex,
                       this.props.globalData,
+                      'validator',
                   ))
                 : false;
             if (schema.disabled === true) {
@@ -969,6 +1028,7 @@ export default class ConfigGeneric<
                           this.props.data,
                           this.props.arrayIndex,
                           this.props.globalData,
+                          'disabled',
                       )) as boolean)
                     : false;
             }
@@ -982,6 +1042,7 @@ export default class ConfigGeneric<
                           this.props.data,
                           this.props.arrayIndex,
                           this.props.globalData,
+                          'hidden',
                       )) as boolean)
                     : false;
             }
@@ -992,6 +1053,7 @@ export default class ConfigGeneric<
                       this.props.data,
                       this.props.arrayIndex,
                       this.props.globalData,
+                      'defaultFunc',
                   )
                 : schema.default;
         }
