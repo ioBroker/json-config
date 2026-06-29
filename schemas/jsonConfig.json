@@ -5,7 +5,7 @@
             "type": "object",
             "required": ["en"],
             "patternProperties": {
-                "en|de|ru|pt|nl|fr|it|es|pl|uk|zh-cn": {
+                "^(en|de|ru|pt|nl|fr|it|es|pl|uk|zh-cn)$": {
                     "type": "string"
                 }
             },
@@ -451,8 +451,11 @@
                 "defaultFunc": true,
                 "noTranslation": true,
                 "confirm": true,
-                "button": true
+                "button": true,
+                "onChange": true,
+                "doNotSave": true
             },
+            "additionalProperties": false,
             "required": ["type", "href"]
         },
         "textProps": {
@@ -842,7 +845,8 @@
                 "defaultFunc": true,
                 "onChange": true,
                 "noTranslation": true,
-                "confirm": true
+                "confirm": true,
+                "doNotSave": true
             }
         },
         "qrCodeSendToProps": {
@@ -925,7 +929,8 @@
                 "defaultFunc": true,
                 "onChange": true,
                 "noTranslation": true,
-                "confirm": true
+                "confirm": true,
+                "doNotSave": true
             }
         },
         "deviceManagerProps": {
@@ -1077,7 +1082,7 @@
                 "window": {
                     "description": "if `openUrl` is true, this is a name of the new window. Could be overwritten if response consist `window` attribute. It is not the title of the new window!",
                     "type": "string",
-                    "default": ["_blank", "_self"]
+                    "default": "_blank"
                 },
                 "controlStyle": {
                     "description": "Style of the button or control itself",
@@ -1216,19 +1221,16 @@
                 },
                 "size": {
                     "description": "Font size: small, normal, large or number",
-                    "size": {
-                        "description": "Font size",
-                        "oneOf": [
-                            {
-                                "default": "normal",
-                                "type": "string",
-                                "enum": ["small", "normal", "large"]
-                            },
-                            {
-                                "type": "number"
-                            }
-                        ]
-                    }
+                    "oneOf": [
+                        {
+                            "default": "normal",
+                            "type": "string",
+                            "enum": ["small", "normal", "large"]
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
                 },
                 "addColon": {
                     "description": "Add to label the colon at the end if not exist in label",
@@ -4677,9 +4679,6 @@
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
-                                },
-                                {
-                                    "$ref": "#/definitions/staticLinkProps"
                                 }
                             ],
                             "properties": {
@@ -5775,19 +5774,16 @@
                                         },
                                         "size": {
                                             "description": "Font size: small, normal, large or number",
-                                            "size": {
-                                                "description": "Font size",
-                                                "oneOf": [
-                                                    {
-                                                        "default": "normal",
-                                                        "type": "string",
-                                                        "enum": ["small", "normal", "large"]
-                                                    },
-                                                    {
-                                                        "type": "number"
-                                                    }
-                                                ]
-                                            }
+                                            "oneOf": [
+                                                {
+                                                    "default": "normal",
+                                                    "type": "string",
+                                                    "enum": ["small", "normal", "large"]
+                                                },
+                                                {
+                                                    "type": "number"
+                                                }
+                                            ]
                                         },
                                         "addColon": {
                                             "description": "Add to label the colon at the end if not exist in label",
