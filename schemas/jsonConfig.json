@@ -1,11 +1,15 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
     "definitions": {
         "multilingual": {
             "type": "object",
             "required": ["en"],
+            "properties": {
+                "en": { "type": "string" }
+            },
             "patternProperties": {
-                "^(en|de|ru|pt|nl|fr|it|es|pl|uk|zh-cn)$": {
+                "^(de|ru|pt|nl|fr|it|es|pl|uk|zh-cn)$": {
                     "type": "string"
                 }
             },
@@ -313,6 +317,7 @@
             ]
         },
         "numberProps": {
+            "type": "object",
             "properties": {
                 "placeholder": {
                     "description": "Placeholder (for text control)",
@@ -376,6 +381,7 @@
             "required": ["type"]
         },
         "staticLinkProps": {
+            "type": "object",
             "properties": {
                 "href": {
                     "description": "Link",
@@ -459,6 +465,7 @@
             "required": ["type", "href"]
         },
         "textProps": {
+            "type": "object",
             "properties": {
                 "text": {
                     "description": "Text input",
@@ -539,13 +546,14 @@
             "required": ["type"]
         },
         "tableItemBaseProps": {
+            "type": "object",
             "properties": {
                 "attr": {
                     "description": "The linked attribute name",
                     "type": "string"
                 },
                 "width": {
-                    "type": ["number", "string"]
+                    "anyOf": [{ "type": "number" }, { "type": "string" }]
                 },
                 "title": {
                     "oneOf": [
@@ -567,6 +575,7 @@
             "additionalProperties": true
         },
         "customProps": {
+            "type": "object",
             "properties": {
                 "name": {
                     "description": "Component name that will be provided via props, like ComponentInstancesEditor",
@@ -622,6 +631,7 @@
             "required": ["type"]
         },
         "certificatesProps": {
+            "type": "object",
             "description": "Universal type that manages `certPublic`, `certPrivate`, `certChained` and `leCollection` attributes",
             "properties": {
                 "label": true,
@@ -658,6 +668,7 @@
             "required": ["type"]
         },
         "passwordProps": {
+            "type": "object",
             "properties": {
                 "encrypted": {
                     "description": "Is value encrypted or not (of course only for texts)",
@@ -711,6 +722,7 @@
             "required": ["type"]
         },
         "checkboxProps": {
+            "type": "object",
             "properties": {
                 "doNotSave": true,
                 "label": true,
@@ -747,6 +759,7 @@
             "required": ["type"]
         },
         "aliveProps": {
+            "type": "object",
             "properties": {
                 "instance": {
                     "description": "Check if the instance is alive. If not defined, it will be used current instance. You can use `${data.number}` pattern in the text.",
@@ -794,6 +807,7 @@
             "required": ["type"]
         },
         "qrCodeProps": {
+            "type": "object",
             "required": ["type", "data"],
             "additionalProperties": false,
             "properties": {
@@ -850,6 +864,7 @@
             }
         },
         "qrCodeSendToProps": {
+            "type": "object",
             "required": ["type", "command"],
             "additionalProperties": false,
             "properties": {
@@ -934,6 +949,7 @@
             }
         },
         "deviceManagerProps": {
+            "type": "object",
             "properties": {
                 "smallCards": {
                     "description": "Show small device cards in the device manager",
@@ -973,6 +989,7 @@
             "required": ["type"]
         },
         "cronProps": {
+            "type": "object",
             "properties": {
                 "complex": {
                     "description": "Show CRON with \"minutes\", \"seconds\" and so on",
@@ -1016,14 +1033,19 @@
             "required": ["type"],
             "oneOf": [
                 {
+                    "type": "object",
+                    "properties": { "complex": true },
                     "required": ["complex"]
                 },
                 {
+                    "type": "object",
+                    "properties": { "simple": true },
                     "required": ["simple"]
                 }
             ]
         },
         "sendToProps": {
+            "type": "object",
             "properties": {
                 "command": {
                     "description": "Command to be sent.",
@@ -1129,6 +1151,7 @@
             "required": ["type", "command"]
         },
         "stateProps": {
+            "type": "object",
             "properties": {
                 "oid": {
                     "description": "Which object ID should be taken for the controlling. The ID is without \"adapter.X.\" prefix",
@@ -1319,6 +1342,7 @@
             "required": ["type", "oid"]
         },
         "instanceProps": {
+            "type": "object",
             "properties": {
                 "adapter": {
                     "description": "Name of the adapter. With special name _dataSources you can get all adapters with flag common.getHistory",
@@ -1385,6 +1409,7 @@
             "required": ["type", "adapter"]
         },
         "objectIdProps": {
+            "type": "object",
             "properties": {
                 "types": {
                     "description": "Filter for one of the possible types: 'channel', 'device', ... (is state by default)",
@@ -1495,6 +1520,7 @@
             "required": ["type"]
         },
         "oauth2Props": {
+            "type": "object",
             "properties": {
                 "saveTokenIn": {
                     "description": "State name where the token will be saved. Default is 'oauth2Tokens'. The path is relative to the adapter instance, like 'adapterName.X.oauth2Tokens'",
@@ -1544,6 +1570,7 @@
             "required": ["type", "identifier"]
         },
         "fileSelectorProps": {
+            "type": "object",
             "properties": {
                 "pattern": {
                     "type": "string",
@@ -1619,6 +1646,7 @@
             "required": []
         },
         "timePickerProps": {
+            "type": "object",
             "properties": {
                 "format": {
                     "description": "Format passed to the date picker",
@@ -1685,6 +1713,7 @@
             "required": ["type"]
         },
         "interfaceProps": {
+            "type": "object",
             "properties": {
                 "ignoreLoopback": {
                     "description": "do not show loopback interface (127.0.0.1)",
@@ -1728,6 +1757,7 @@
             "required": ["type"]
         },
         "coordinatesProps": {
+            "type": "object",
             "properties": {
                 "divider": {
                     "description": "divider between latitude and longitude. Default \",\" (Used if longitudeName and latitudeName are not defined)",
@@ -1782,6 +1812,7 @@
             "required": ["type"]
         },
         "jsonEditorProps": {
+            "type": "object",
             "properties": {
                 "validateJson": {
                     "description": "if false, the text will be not validated as JSON",
@@ -1833,6 +1864,7 @@
             "required": ["type"]
         },
         "yamlEditorProps": {
+            "type": "object",
             "properties": {
                 "validateYaml": {
                     "description": "if false, the text will be not validated as YAML",
@@ -1930,6 +1962,7 @@
                 "allOf": [
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "language"
@@ -1939,6 +1972,7 @@
                         "then": {
                             "allOf": [
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "system": {
                                             "description": "Allow the usage of the system language from system.config as default",
@@ -1987,6 +2021,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "autocompleteSendTo"
@@ -1994,6 +2029,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -2068,6 +2104,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "selectSendTo"
@@ -2075,6 +2112,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -2148,6 +2186,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "textSendTo"
@@ -2155,6 +2194,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -2228,6 +2268,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "imageSendTo"
@@ -2235,6 +2276,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -2322,6 +2364,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "header"
@@ -2334,6 +2377,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "size": {
                                             "description": "Size of the header: h1-h5",
@@ -2392,6 +2436,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "color"
@@ -2404,6 +2449,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "attr": true,
                                         "label": true,
@@ -2448,6 +2494,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "divider"
@@ -2460,6 +2507,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "color": {
                                             "description": "Optional color",
@@ -2513,6 +2561,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "fileSelector"
@@ -2520,6 +2569,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -2607,6 +2657,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "icon"
@@ -2619,6 +2670,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "crop": {
                                             "description": "If true, allow user to crop the image (only for non svg)",
@@ -2683,6 +2735,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "panel"
@@ -2695,6 +2748,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "items": {
                                             "$ref": "#/definitions/topLevelProperties/properties/items"
@@ -2755,9 +2809,13 @@
                                     "required": ["type"],
                                     "oneOf": [
                                         {
+                                            "type": "object",
+                                            "properties": { "items": true },
                                             "required": ["items"]
                                         },
                                         {
+                                            "type": "object",
+                                            "properties": { "#include": true },
                                             "required": ["#include"]
                                         }
                                     ]
@@ -2767,6 +2825,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "image"
@@ -2779,6 +2838,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "accept": {
                                             "description": "HTML accept attribute, like { 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }. String is possible, but deprecated",
@@ -2862,6 +2922,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "iframe"
@@ -2874,6 +2935,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "url": {
                                             "description": "URL to display in the iframe",
@@ -2947,6 +3009,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "iframeSendTo"
@@ -2954,6 +3017,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3021,6 +3085,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "sendTo"
@@ -3033,6 +3098,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "command": {
                                             "description": "Command to be sent.",
@@ -3134,6 +3200,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "password"
@@ -3141,6 +3208,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3200,6 +3268,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "file"
@@ -3212,6 +3281,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "filename": {
                                             "description": "Name of the file",
@@ -3260,6 +3330,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "slider"
@@ -3272,6 +3343,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "min": {
                                             "description": "Minimal value",
@@ -3342,6 +3414,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "custom"
@@ -3354,6 +3427,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "name": {
                                             "description": "Component name that will be provided via props, like ComponentInstancesEditor",
@@ -3418,6 +3492,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "checkbox"
@@ -3425,6 +3500,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3472,6 +3548,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "enum": ["number", "port"]
@@ -3479,6 +3556,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3554,6 +3632,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "alive"
@@ -3573,6 +3652,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "autocomplete"
@@ -3585,6 +3665,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "placeholder": {
                                             "description": "Placeholder (for text control)",
@@ -3689,6 +3770,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "cron"
@@ -3696,6 +3778,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3749,9 +3832,13 @@
                             "required": ["type"],
                             "oneOf": [
                                 {
+                                    "type": "object",
+                                    "properties": { "complex": true },
                                     "required": ["complex"]
                                 },
                                 {
+                                    "type": "object",
+                                    "properties": { "simple": true },
                                     "required": ["simple"]
                                 }
                             ]
@@ -3759,6 +3846,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "text"
@@ -3766,6 +3854,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3858,6 +3947,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "select"
@@ -3865,6 +3955,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -3943,6 +4034,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "pattern"
@@ -3955,6 +4047,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "pattern": {
                                             "description": "Read-only field with pattern like 'https://${data.ip}:${data.port}' (will not be saved in config)",
@@ -4007,6 +4100,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "setState"
@@ -4019,6 +4113,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "color": {
                                             "description": "Optional color",
@@ -4097,6 +4192,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "qrCode"
@@ -4109,6 +4205,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "data": {
                                             "description": "The data to be encoded in the QR Code",
@@ -4173,6 +4270,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "qrCodeSendTo"
@@ -4185,6 +4283,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "command": {
                                             "description": "Command to be sent to the adapter instance. The response must be a string to be encoded in the QR code.",
@@ -4271,6 +4370,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "func"
@@ -4283,6 +4383,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "short": {
                                             "description": "no system.func.",
@@ -4331,6 +4432,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "room"
@@ -4343,6 +4445,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "short": {
                                             "description": "no system.room.",
@@ -4391,6 +4494,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "user"
@@ -4403,6 +4507,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "short": {
                                             "description": "no system.user.",
@@ -4451,6 +4556,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "ip"
@@ -4463,6 +4569,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "listenOnAllPorts": {
                                             "description": "Add 0.0.0.0 to option",
@@ -4522,6 +4629,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "certificate"
@@ -4534,6 +4642,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "certType": {
                                             "description": "Type of the certificate",
@@ -4583,6 +4692,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "credential"
@@ -4595,6 +4705,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "credentialType": {
                                             "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed",
@@ -4648,6 +4759,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "certificates"
@@ -4667,6 +4779,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "staticLink"
@@ -4674,6 +4787,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "additionalProperties": false,
                             "required": ["type"],
                             "allOf": [
@@ -4731,6 +4845,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "staticText"
@@ -4738,6 +4853,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -4832,9 +4948,13 @@
                             "required": ["type"],
                             "oneOf": [
                                 {
+                                    "type": "object",
+                                    "properties": { "text": true },
                                     "required": ["text"]
                                 },
                                 {
+                                    "type": "object",
+                                    "properties": { "label": true },
                                     "required": ["label"]
                                 }
                             ]
@@ -4842,6 +4962,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "staticInfo"
@@ -4849,6 +4970,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -4879,7 +5001,12 @@
                                 "noTranslation": true,
                                 "data": {
                                     "description": "Value to be shown",
-                                    "type": ["object", "string", "number", "boolean"]
+                                    "anyOf": [
+                                        { "type": "object" },
+                                        { "type": "string" },
+                                        { "type": "number" },
+                                        { "type": "boolean" }
+                                    ]
                                 },
                                 "unit": {
                                     "description": "Unit (could be multi-language)",
@@ -4902,11 +5029,11 @@
                                 },
                                 "blinkOnUpdate": {
                                     "description": "Value should blink when updated (true or color)",
-                                    "type": ["boolean", "string"]
+                                    "anyOf": [{ "type": "boolean" }, { "type": "string" }]
                                 },
                                 "blink": {
                                     "description": "Value should blink continuously (true or color)",
-                                    "type": ["boolean", "string"]
+                                    "anyOf": [{ "type": "boolean" }, { "type": "string" }]
                                 },
                                 "styleLabel": {
                                     "description": "React CSS Styles for label",
@@ -4960,6 +5087,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "instance"
@@ -4967,6 +5095,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -5045,6 +5174,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "staticImage"
@@ -5057,6 +5187,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "src": {
                                             "description": "Name of picture (from admin directory)",
@@ -5127,6 +5258,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "chips"
@@ -5139,6 +5271,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "delimiter": {
                                             "description": "Delimiter for options. If no delimiter, the setting will be stored as array",
@@ -5187,6 +5320,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "objectId"
@@ -5194,6 +5328,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -5312,6 +5447,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "checkLicense"
@@ -5324,6 +5460,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "uuid": {
                                             "description": "If UUID must be checked too",
@@ -5364,6 +5501,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "checkDocker"
@@ -5376,6 +5514,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "hideVersion": {
                                             "description": "If the information about docker version or error should be hidden (e.g. if used more than one such element on the page the error or version will be shown once",
@@ -5409,6 +5548,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "uuid"
@@ -5421,6 +5561,7 @@
                                     "$ref": "#/definitions/tableItemBaseProps"
                                 },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "attr": true,
                                         "label": true,
@@ -5453,6 +5594,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "datePicker"
@@ -5460,6 +5602,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -5504,6 +5647,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "timePicker"
@@ -5511,6 +5655,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -5595,6 +5740,7 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": {
                                 "type": {
                                     "const": "coordinates"
@@ -5602,6 +5748,7 @@
                             }
                         },
                         "then": {
+                            "type": "object",
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/tableItemBaseProps"
@@ -5667,12 +5814,14 @@
                     },
                     {
                         "if": {
+                            "type": "object",
                             "properties": { "type": { "const": "state" } }
                         },
                         "then": {
                             "allOf": [
                                 { "$ref": "#/definitions/tableItemBaseProps" },
                                 {
+                                    "type": "object",
                                     "properties": {
                                         "oid": {
                                             "description": "Which object ID should be taken for the controlling. The ID is without \"adapter.X.\" prefix",
@@ -6126,6 +6275,7 @@
             }
         },
         "topLevelProperties": {
+            "type": "object",
             "properties": {
                 "type": {
                     "type": "string",
@@ -6149,6 +6299,7 @@
                             "allOf": [
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "language"
@@ -6156,6 +6307,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "system": {
                                                 "description": "Allow the usage of the system language from system.config as default",
@@ -6197,6 +6349,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "autocompleteSendTo"
@@ -6204,6 +6357,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "command": {
                                                 "description": "Command to be sent.",
@@ -6268,6 +6422,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "selectSendTo"
@@ -6275,6 +6430,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "command": {
                                                 "description": "Command to be sent.",
@@ -6338,6 +6494,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "textSendTo"
@@ -6345,6 +6502,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "container": {
                                                 "description": "div, text",
@@ -6408,6 +6566,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "imageSendTo"
@@ -6415,6 +6574,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "alsoDependsOn": {
                                                 "$ref": "#/definitions/alsoDependsOnSendProp"
@@ -6481,6 +6641,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "iframe"
@@ -6488,6 +6649,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "url": {
                                                 "description": "URL to display in the iframe",
@@ -6551,6 +6713,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "iframeSendTo"
@@ -6558,6 +6721,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "alsoDependsOn": {
                                                 "$ref": "#/definitions/alsoDependsOnSendProp"
@@ -6614,6 +6778,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "header"
@@ -6621,6 +6786,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "size": {
                                                 "description": "Size of the header: h1-h5",
@@ -6672,6 +6838,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "color"
@@ -6679,6 +6846,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "label": true,
                                             "type": true,
@@ -6716,6 +6884,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "divider"
@@ -6723,6 +6892,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "color": {
                                                 "description": "Optional color",
@@ -6769,6 +6939,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "icon"
@@ -6776,6 +6947,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "crop": {
                                                 "description": "If true, allow user to crop the image (only for non svg)",
@@ -6833,6 +7005,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "panel"
@@ -6840,6 +7013,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "items": {
                                                 "$ref": "#/definitions/topLevelProperties/properties/items"
@@ -6892,9 +7066,13 @@
                                         "required": ["type"],
                                         "oneOf": [
                                             {
+                                                "type": "object",
+                                                "properties": { "items": true },
                                                 "required": ["items"]
                                             },
                                             {
+                                                "type": "object",
+                                                "properties": { "#include": true },
                                                 "required": ["#include"]
                                             }
                                         ]
@@ -6902,6 +7080,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "image"
@@ -6909,6 +7088,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "accept": {
                                                 "description": "HTML accept attribute, like { 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }. String is possible, but deprecated",
@@ -6985,6 +7165,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "sendTo"
@@ -6997,6 +7178,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "state"
@@ -7009,6 +7191,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "password"
@@ -7021,6 +7204,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "file"
@@ -7028,6 +7212,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "filename": {
                                                 "description": "Name of the file",
@@ -7072,6 +7257,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "slider"
@@ -7079,6 +7265,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "min": {
                                                 "description": "Minimal value",
@@ -7142,6 +7329,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "custom"
@@ -7154,6 +7342,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "checkbox"
@@ -7166,6 +7355,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "fileSelector"
@@ -7178,6 +7368,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "enum": ["number", "port"]
@@ -7190,6 +7381,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "alive"
@@ -7202,6 +7394,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "autocomplete"
@@ -7209,6 +7402,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "placeholder": {
                                                 "description": "Placeholder (for text control)",
@@ -7303,6 +7497,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "qrCode"
@@ -7315,6 +7510,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "qrCodeSendTo"
@@ -7327,6 +7523,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "cron"
@@ -7339,6 +7536,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "deviceManager"
@@ -7351,6 +7549,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "text"
@@ -7363,6 +7562,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "select"
@@ -7370,6 +7570,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "options": {
                                                 "description": "Options which can be selected",
@@ -7438,6 +7639,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "table"
@@ -7445,6 +7647,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "noDelete": {
                                                 "description": "If delete or add disabled, If noDelete is false, add, delete and move up/down should work",
@@ -7535,6 +7738,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "pattern"
@@ -7542,6 +7746,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "pattern": {
                                                 "description": "Read-only field with pattern like 'https://${data.ip}:${data.port}' (will not be saved in config)",
@@ -7587,6 +7792,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "setState"
@@ -7594,6 +7800,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "color": {
                                                 "description": "Optional color",
@@ -7665,6 +7872,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "func"
@@ -7672,6 +7880,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "short": {
                                                 "description": "no system.func.",
@@ -7713,6 +7922,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "room"
@@ -7720,6 +7930,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "short": {
                                                 "description": "no system.room.",
@@ -7761,6 +7972,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "user"
@@ -7768,6 +7980,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "short": {
                                                 "description": "no system.user.",
@@ -7809,6 +8022,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "ip"
@@ -7816,6 +8030,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "listenOnAllPorts": {
                                                 "description": "Add 0.0.0.0 to option",
@@ -7868,6 +8083,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "certificate"
@@ -7875,6 +8091,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "certType": {
                                                 "description": "Type of the certificate",
@@ -7917,6 +8134,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "credential"
@@ -7924,6 +8142,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "credentialType": {
                                                 "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed",
@@ -7970,6 +8189,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "certificates"
@@ -7982,6 +8202,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "staticLink"
@@ -7994,6 +8215,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "staticText"
@@ -8001,6 +8223,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "text": {
                                                 "description": "Static text like description",
@@ -8085,9 +8308,13 @@
                                         "required": ["type"],
                                         "oneOf": [
                                             {
+                                                "type": "object",
+                                                "properties": { "text": true },
                                                 "required": ["text"]
                                             },
                                             {
+                                                "type": "object",
+                                                "properties": { "label": true },
                                                 "required": ["label"]
                                             }
                                         ]
@@ -8095,6 +8322,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "infoBox"
@@ -8102,6 +8330,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "text": {
                                                 "description": "Text to be shown",
@@ -8164,6 +8393,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "staticInfo"
@@ -8171,6 +8401,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "label": true,
                                             "type": true,
@@ -8191,7 +8422,12 @@
                                             "noTranslation": true,
                                             "data": {
                                                 "description": "Value to be shown",
-                                                "type": ["object", "string", "number", "boolean"]
+                                                "anyOf": [
+                                                    { "type": "object" },
+                                                    { "type": "string" },
+                                                    { "type": "number" },
+                                                    { "type": "boolean" }
+                                                ]
                                             },
                                             "unit": {
                                                 "description": "Unit (could be multi-language)",
@@ -8214,11 +8450,11 @@
                                             },
                                             "blinkOnUpdate": {
                                                 "description": "Value should blink when updated (true or color)",
-                                                "type": ["boolean", "string"]
+                                                "anyOf": [{ "type": "boolean" }, { "type": "string" }]
                                             },
                                             "blink": {
                                                 "description": "Value should blink continuously (true or color)",
-                                                "type": ["boolean", "string"]
+                                                "anyOf": [{ "type": "boolean" }, { "type": "string" }]
                                             },
                                             "styleLabel": {
                                                 "description": "React CSS Styles for label",
@@ -8272,6 +8508,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "instance"
@@ -8284,6 +8521,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "staticImage"
@@ -8291,6 +8529,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "src": {
                                                 "description": "Name of picture (from admin directory)",
@@ -8354,6 +8593,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "chips"
@@ -8361,6 +8601,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "delimiter": {
                                                 "description": "Delimiter for options. If no delimiter, the setting will be stored as array",
@@ -8402,6 +8643,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "objectId"
@@ -8414,6 +8656,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "oauth2"
@@ -8426,6 +8669,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "checkLicense"
@@ -8433,6 +8677,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "uuid": {
                                                 "description": "If UUID must be checked too",
@@ -8466,6 +8711,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "checkDocker"
@@ -8473,6 +8719,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "hideVersion": {
                                                 "description": "If the information about docker version or error should be hidden (e.g. if used more than one such element on the page the error or version will be shown once",
@@ -8502,6 +8749,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "datePicker"
@@ -8509,6 +8757,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "label": true,
                                             "type": true,
@@ -8534,6 +8783,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "timePicker"
@@ -8546,6 +8796,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "uuid"
@@ -8553,6 +8804,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "label": true,
                                             "type": true,
@@ -8578,6 +8830,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "coordinates"
@@ -8590,6 +8843,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "jsonEditor"
@@ -8602,6 +8856,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "yamlEditor"
@@ -8614,6 +8869,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "interface"
@@ -8626,6 +8882,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "accordion"
@@ -8633,6 +8890,7 @@
                                         }
                                     },
                                     "then": {
+                                        "type": "object",
                                         "properties": {
                                             "titleAttr": {
                                                 "description": "Title shown on the accordion",
@@ -8686,6 +8944,7 @@
                                 },
                                 {
                                     "if": {
+                                        "type": "object",
                                         "properties": {
                                             "type": {
                                                 "const": "state"
@@ -8948,6 +9207,7 @@
         }
     },
     "if": {
+        "type": "object",
         "properties": {
             "type": {
                 "const": "tabs"
@@ -8972,6 +9232,7 @@
                 "$ref": "#/definitions/topLevelProperties"
             },
             {
+                "type": "object",
                 "properties": {
                     "iconPosition": {
                         "$ref": "#/definitions/iconPositionProp"
