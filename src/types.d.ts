@@ -994,8 +994,8 @@ export interface ConfigItemCertificateSelect extends ConfigItem {
 
 export interface ConfigItemCredentialSelect extends ConfigItem {
     type: 'credential';
-    /** Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed. */
-    credentialType?: 'email' | 'cloud' | 'ai' | 'custom';
+    /** Show only credentials of this type, e.g. 'email', 'cloud', 'ai', 'aws', 'azure' or 'custom'. If not defined, all credentials are listed. */
+    credentialType?: 'email' | 'cloud' | 'ai' | 'aws' | 'azure' | 'custom';
     /** Do not allow creation of credentials, just selection */
     disableCreation?: boolean;
 }

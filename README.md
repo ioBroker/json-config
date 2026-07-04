@@ -1822,6 +1822,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Extended Credentials Component with AWS and Azure
+
 ### 8.4.13 (2026-06-29)
 - (@GermanBluefox) Corrected the file selector component
 - (@GermanBluefox) Implemented no translation for the select component
