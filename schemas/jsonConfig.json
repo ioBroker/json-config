@@ -4708,9 +4708,9 @@
                                     "type": "object",
                                     "properties": {
                                         "credentialType": {
-                                            "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed",
+                                            "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai', 'aws', 'azure' or 'custom'. If not defined, all credentials are listed",
                                             "type": "string",
-                                            "enum": ["email", "cloud", "ai", "custom"]
+                                            "enum": ["email", "cloud", "ai", "aws", "azure", "custom"]
                                         },
                                         "disableCreation": {
                                             "description": "If true, do not show the button to create a new credential",
@@ -8145,9 +8145,9 @@
                                         "type": "object",
                                         "properties": {
                                             "credentialType": {
-                                                "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai' or 'custom'. If not defined, all credentials are listed",
+                                                "description": "Show only credentials of this type, e.g. 'email', 'cloud', 'ai', 'aws', 'azure' or 'custom'. If not defined, all credentials are listed",
                                                 "type": "string",
-                                                "enum": ["email", "cloud", "ai", "custom"]
+                                                "enum": ["email", "cloud", "ai", "aws", "azure", "custom"]
                                             },
                                             "disableCreation": {
                                                 "description": "If true, do not show the button to create a new credential",
