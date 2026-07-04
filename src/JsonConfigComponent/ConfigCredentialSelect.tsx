@@ -41,16 +41,83 @@ const CREDENTIAL_TYPE_LABELS: Record<CredentialType, string> = {
 
 type CredentialForm = 'login' | 'key' | 'aws' | 'azure';
 
+interface CredentialFieldOption {
+    /** Value stored in `native` */
+    value: string;
+    /** Text shown in the dropdown (defaults to `value`) */
+    label?: string;
+}
+
 interface CredentialFieldDefinition {
     /** Attribute name in the object's `native` */
     name: string;
-    type: 'text' | 'password';
+    type: 'text' | 'password' | 'select';
     /** Stored encrypted with the system secret */
     encrypted?: boolean;
     required?: boolean;
     /** Label shown in the create dialog */
     label: string;
+    /** For `type: 'select'`: the selectable options */
+    options?: CredentialFieldOption[];
 }
+
+/** Common AWS regions offered in the region selector (keep in sync with admin `credentialTypes.ts`). */
+const AWS_REGIONS: CredentialFieldOption[] = [
+    { value: 'us-east-1', label: 'us-east-1 (US East, N. Virginia)' },
+    { value: 'us-east-2', label: 'us-east-2 (US East, Ohio)' },
+    { value: 'us-west-1', label: 'us-west-1 (US West, N. California)' },
+    { value: 'us-west-2', label: 'us-west-2 (US West, Oregon)' },
+    { value: 'ca-central-1', label: 'ca-central-1 (Canada Central)' },
+    { value: 'sa-east-1', label: 'sa-east-1 (South America, São Paulo)' },
+    { value: 'eu-west-1', label: 'eu-west-1 (Europe, Ireland)' },
+    { value: 'eu-west-2', label: 'eu-west-2 (Europe, London)' },
+    { value: 'eu-west-3', label: 'eu-west-3 (Europe, Paris)' },
+    { value: 'eu-central-1', label: 'eu-central-1 (Europe, Frankfurt)' },
+    { value: 'eu-central-2', label: 'eu-central-2 (Europe, Zurich)' },
+    { value: 'eu-north-1', label: 'eu-north-1 (Europe, Stockholm)' },
+    { value: 'eu-south-1', label: 'eu-south-1 (Europe, Milan)' },
+    { value: 'eu-south-2', label: 'eu-south-2 (Europe, Spain)' },
+    { value: 'ap-south-1', label: 'ap-south-1 (Asia Pacific, Mumbai)' },
+    { value: 'ap-northeast-1', label: 'ap-northeast-1 (Asia Pacific, Tokyo)' },
+    { value: 'ap-northeast-2', label: 'ap-northeast-2 (Asia Pacific, Seoul)' },
+    { value: 'ap-northeast-3', label: 'ap-northeast-3 (Asia Pacific, Osaka)' },
+    { value: 'ap-southeast-1', label: 'ap-southeast-1 (Asia Pacific, Singapore)' },
+    { value: 'ap-southeast-2', label: 'ap-southeast-2 (Asia Pacific, Sydney)' },
+    { value: 'me-central-1', label: 'me-central-1 (Middle East, UAE)' },
+    { value: 'me-south-1', label: 'me-south-1 (Middle East, Bahrain)' },
+    { value: 'af-south-1', label: 'af-south-1 (Africa, Cape Town)' },
+];
+
+/** Common Azure regions offered in the region selector (keep in sync with admin `credentialTypes.ts`). */
+const AZURE_REGIONS: CredentialFieldOption[] = [
+    { value: 'eastus', label: 'eastus (East US)' },
+    { value: 'eastus2', label: 'eastus2 (East US 2)' },
+    { value: 'centralus', label: 'centralus (Central US)' },
+    { value: 'northcentralus', label: 'northcentralus (North Central US)' },
+    { value: 'southcentralus', label: 'southcentralus (South Central US)' },
+    { value: 'westus', label: 'westus (West US)' },
+    { value: 'westus2', label: 'westus2 (West US 2)' },
+    { value: 'westus3', label: 'westus3 (West US 3)' },
+    { value: 'canadacentral', label: 'canadacentral (Canada Central)' },
+    { value: 'brazilsouth', label: 'brazilsouth (Brazil South)' },
+    { value: 'northeurope', label: 'northeurope (North Europe)' },
+    { value: 'westeurope', label: 'westeurope (West Europe)' },
+    { value: 'francecentral', label: 'francecentral (France Central)' },
+    { value: 'germanywestcentral', label: 'germanywestcentral (Germany West Central)' },
+    { value: 'norwayeast', label: 'norwayeast (Norway East)' },
+    { value: 'swedencentral', label: 'swedencentral (Sweden Central)' },
+    { value: 'switzerlandnorth', label: 'switzerlandnorth (Switzerland North)' },
+    { value: 'uksouth', label: 'uksouth (UK South)' },
+    { value: 'ukwest', label: 'ukwest (UK West)' },
+    { value: 'uaenorth', label: 'uaenorth (UAE North)' },
+    { value: 'southafricanorth', label: 'southafricanorth (South Africa North)' },
+    { value: 'centralindia', label: 'centralindia (Central India)' },
+    { value: 'eastasia', label: 'eastasia (East Asia)' },
+    { value: 'southeastasia', label: 'southeastasia (Southeast Asia)' },
+    { value: 'japaneast', label: 'japaneast (Japan East)' },
+    { value: 'koreacentral', label: 'koreacentral (Korea Central)' },
+    { value: 'australiaeast', label: 'australiaeast (Australia East)' },
+];
 
 /** The credential forms and their fields (keep in sync with admin `credentialTypes.ts`). */
 const CREDENTIAL_FORMS: Record<CredentialForm, CredentialFieldDefinition[]> = {
@@ -62,11 +129,11 @@ const CREDENTIAL_FORMS: Record<CredentialForm, CredentialFieldDefinition[]> = {
     aws: [
         { name: 'accessKeyId', type: 'text', required: true, label: 'Access Key ID' },
         { name: 'secretAccessKey', type: 'password', encrypted: true, required: true, label: 'Secret Access Key' },
-        { name: 'region', type: 'text', required: true, label: 'Region' },
+        { name: 'region', type: 'select', required: true, label: 'Region', options: AWS_REGIONS },
     ],
     azure: [
         { name: 'subscriptionKey', type: 'password', encrypted: true, required: true, label: 'Subscription Key' },
-        { name: 'region', type: 'text', required: true, label: 'Region' },
+        { name: 'region', type: 'select', required: true, label: 'Region', options: AZURE_REGIONS },
     ],
 };
 
@@ -425,27 +492,67 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                         onChange={e => this.setState({ addName: e.target.value, addError: '' })}
                     />
 
-                    {fields.map(field => (
-                        <TextField
-                            key={field.name}
-                            variant="standard"
-                            fullWidth
-                            type={field.type === 'password' ? 'password' : 'text'}
-                            required={field.required}
-                            label={I18n.t(field.label)}
-                            value={this.state.addFields?.[field.name] || ''}
-                            slotProps={{
-                                inputLabel: { shrink: true },
-                                htmlInput: { autoComplete: field.type === 'password' ? 'new-password' : 'off' },
-                            }}
-                            onChange={e =>
-                                this.setState({
-                                    addFields: { ...(this.state.addFields || {}), [field.name]: e.target.value },
-                                    addError: '',
-                                })
+                    {fields.map(field => {
+                        const fieldValue = this.state.addFields?.[field.name] || '';
+                        if (field.type === 'select') {
+                            const options = field.options ? [...field.options] : [];
+                            // keep a preset value that is not part of the predefined list selectable
+                            if (fieldValue && !options.find(option => option.value === fieldValue)) {
+                                options.unshift({ value: fieldValue });
                             }
-                        />
-                    ))}
+                            return (
+                                <TextField
+                                    key={field.name}
+                                    select
+                                    variant="standard"
+                                    fullWidth
+                                    required={field.required}
+                                    label={I18n.t(field.label)}
+                                    value={fieldValue}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                    onChange={e =>
+                                        this.setState({
+                                            addFields: {
+                                                ...(this.state.addFields || {}),
+                                                [field.name]: e.target.value,
+                                            },
+                                            addError: '',
+                                        })
+                                    }
+                                >
+                                    {options.map(option => (
+                                        <MenuItem
+                                            key={option.value}
+                                            value={option.value}
+                                        >
+                                            {option.label || option.value}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            );
+                        }
+                        return (
+                            <TextField
+                                key={field.name}
+                                variant="standard"
+                                fullWidth
+                                type={field.type === 'password' ? 'password' : 'text'}
+                                required={field.required}
+                                label={I18n.t(field.label)}
+                                value={fieldValue}
+                                slotProps={{
+                                    inputLabel: { shrink: true },
+                                    htmlInput: { autoComplete: field.type === 'password' ? 'new-password' : 'off' },
+                                }}
+                                onChange={e =>
+                                    this.setState({
+                                        addFields: { ...(this.state.addFields || {}), [field.name]: e.target.value },
+                                        addError: '',
+                                    })
+                                }
+                            />
+                        );
+                    })}
 
                     {this.state.addError ? <Alert severity="error">{this.state.addError}</Alert> : null}
                 </DialogContent>
