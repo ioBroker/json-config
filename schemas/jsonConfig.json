@@ -1593,7 +1593,7 @@
                     "description": "Show refresh button near the select"
                 },
                 "maxSize": {
-                    "type": "string",
+                    "type": "number",
                     "description": "max file size (default 2MB)"
                 },
                 "withFolder": {
@@ -2602,7 +2602,7 @@
                                     "description": "Show refresh button near the select"
                                 },
                                 "maxSize": {
-                                    "type": "string",
+                                    "type": "number",
                                     "description": "max file size (default 2MB)"
                                 },
                                 "withFolder": {
