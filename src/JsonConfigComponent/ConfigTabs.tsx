@@ -39,7 +39,7 @@ interface ConfigTabsState extends ConfigGenericState {
     calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> | null;
 }
 
-class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
+export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
     private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
     private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
 
@@ -83,9 +83,9 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
         Object.assign(this.state, { tab, width: 0, openMenu: null, tabErrors: {} });
     }
 
-    onTabError = (attr: string, error?: string): void => {
+    onTabError = (attr?: string, error?: string): void => {
         const currentTab = this.state.tab;
-        if (!currentTab) {
+        if (!currentTab && attr) {
             // Forward to parent if no current tab
             this.props.onError(attr, error);
             return;
@@ -93,18 +93,20 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
 
         const newTabErrors = { ...this.state.tabErrors };
 
-        if (!newTabErrors[currentTab]) {
-            newTabErrors[currentTab] = {};
+        if (currentTab) {
+            newTabErrors[currentTab] ||= {};
         }
 
-        if (!error) {
-            delete newTabErrors[currentTab][attr];
-            // Clean up empty tab error objects
-            if (Object.keys(newTabErrors[currentTab]).length === 0) {
-                delete newTabErrors[currentTab];
+        if (currentTab && attr) {
+            if (!error) {
+                delete newTabErrors[currentTab][attr];
+                // Clean up empty tab error objects
+                if (Object.keys(newTabErrors[currentTab]).length === 0) {
+                    delete newTabErrors[currentTab];
+                }
+            } else {
+                newTabErrors[currentTab][attr] = error;
             }
-        } else {
-            newTabErrors[currentTab][attr] = error;
         }
 
         this.setState({ tabErrors: newTabErrors });
@@ -114,7 +116,7 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
     };
 
     hasTabErrors = (tabName: string): boolean => {
-        return !!(this.state.tabErrors[tabName] && Object.keys(this.state.tabErrors[tabName]).length > 0);
+        return !!this.state.tabErrors[tabName] && Object.keys(this.state.tabErrors[tabName]).length > 0;
     };
 
     componentWillUnmount(): void {
@@ -192,7 +194,10 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
             }
             this.resizeTimeout = setTimeout(() => {
                 this.resizeTimeout = null;
-                this.setState({ width: this.refDiv.current?.clientWidth });
+                const width = this.refDiv.current?.clientWidth;
+                if (width) {
+                    this.setState({ width });
+                }
             }, 50);
         }
     }
@@ -206,7 +211,7 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
             if (this.props.root) {
                 const hash = (window.location.hash || '').split('/');
                 if (hash.length >= 3 && hash[1] === 'config') {
-                    hash[3] = this.state.tab;
+                    hash[3] = this.state.tab || '';
                     window.location.hash = hash.join('/');
                 }
             }
@@ -279,7 +284,7 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
         }, 50);
     }
 
-    render(): JSX.Element {
+    render(): JSX.Element | null {
         const items = this.props.schema.items;
         let withIcons = false;
 
@@ -290,13 +295,13 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
         const elements: { icon: React.JSX.Element | null; label: string; name: string; disabled: boolean }[] = [];
 
         Object.keys(items)
-            .filter(name => !this.state.calculatedValuesTable[name]?.hidden)
+            .filter(name => !this.state.calculatedValuesTable?.[name]?.hidden)
             .map(name => {
                 const icon = this.getIcon(items[name].icon);
                 withIcons ||= !!icon;
                 elements.push({
                     icon,
-                    disabled: this.state.calculatedValuesTable[name]?.disabled,
+                    disabled: !!this.state.calculatedValuesTable?.[name]?.disabled,
                     label: this.getText(items[name].label),
                     name,
                 });
@@ -383,7 +388,7 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
                                 key={el.name}
                                 value={el.name}
                                 iconPosition={this.props.schema.iconPosition || 'start'}
-                                icon={el.icon}
+                                icon={el.icon || undefined}
                                 label={label}
                                 sx={hasErrors ? { '& .MuiTab-wrapper': { color: 'error.main' } } : undefined}
                             />
@@ -392,7 +397,9 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
                 </Tabs>
             );
         }
-
+        if (!this.state.tab) {
+            return null;
+        }
         return (
             <div
                 style={styles.tabs}
@@ -432,5 +439,3 @@ class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
         );
     }
 }
-
-export default ConfigTabs;

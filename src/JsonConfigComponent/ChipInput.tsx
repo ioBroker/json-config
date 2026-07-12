@@ -5,7 +5,17 @@
 import React, { type RefObject, type JSX } from 'react';
 import ReactDOM from 'react-dom';
 
-import { Input, OutlinedInput, InputLabel, Chip, FormControl, FormHelperText, Box, FilledInput } from '@mui/material';
+import {
+    Input,
+    OutlinedInput,
+    InputLabel,
+    Chip,
+    FormControl,
+    FormHelperText,
+    Box,
+    FilledInput,
+    type SxProps,
+} from '@mui/material';
 import { blue } from '@mui/material/colors';
 
 import { type IobTheme, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
@@ -16,7 +26,7 @@ const variantComponent = {
     outlined: OutlinedInput,
 };
 
-const styles: Record<string, any> = (theme: IobTheme): Record<string, any> => {
+const styles = (theme: IobTheme): SxProps => {
     const light = theme.palette.mode === 'light';
     const bottomLineColor = light ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.7)';
 
@@ -298,9 +308,9 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
 
     private inputBlurTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    private _keyPressed: boolean;
+    private _keyPressed = false;
 
-    private _preventChipCreation: boolean;
+    private _preventChipCreation = false;
 
     private styles: Record<string, any> = {};
 

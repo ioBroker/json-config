@@ -22,7 +22,7 @@ function ip2int(ip: string): number {
 }
 
 // copied from iobroker.admin/src-rx/src/Utils.js
-function findNetworkAddressOfHost(obj: Record<string, any>, localIp: string): string {
+function findNetworkAddressOfHost(obj: Record<string, any>, localIp: string): string | null {
     const networkInterfaces = obj?.native?.hardware?.networkInterfaces;
     if (!networkInterfaces) {
         return null;
@@ -131,7 +131,7 @@ function findNetworkAddressOfHost(obj: Record<string, any>, localIp: string): st
         });
     }
 
-    return hostIp;
+    return hostIp || null;
 }
 
 interface ConfigSendToProps extends ConfigGenericProps {
@@ -145,7 +145,7 @@ interface ConfigSendToState extends ConfigGenericState {
         text: string;
         title?: ioBroker.StringOrTranslated;
         type?: 'json' | 'css' | 'html' | 'json5' | 'yaml';
-    };
+    } | null;
     hostname: string;
     running?: boolean;
 }
@@ -222,7 +222,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                     }}
                     onApply={() => {
                         // Copy to clipboard
-                        copy(this.state._copyDialog.text);
+                        copy(this.state._copyDialog!.text);
                         window.alert(I18n.t('jc_Copied'));
                         this.setState({ _copyDialog: null });
                     }}
@@ -249,7 +249,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         const _origin = `${window.location.protocol}//${window.location.host}${window.location.pathname.replace(/\/index\.html$/, '')}`;
         const _originIp = `${window.location.protocol}//${this.state.hostname.split(':').length > 3 ? `[${this.state.hostname}]` : this.state.hostname}${window.location.pathname.replace(/\/index\.html$/, '')}`;
 
-        let data: Record<string, any> = this.props.schema.data;
+        let data: Record<string, any> | undefined | null = this.props.schema.data;
         if (data === undefined && this.props.schema.jsonData) {
             const dataStr = await this.getPatternAsync(
                 this.props.schema.jsonData,
@@ -267,9 +267,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 console.error(`Cannot parse json data: ${dataStr}`);
             }
         }
-        if (data === undefined) {
-            data = null;
-        }
+        data ??= null;
         if (this.props.schema.openUrl && !data) {
             data = {
                 _origin,
@@ -357,7 +355,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                             }
 
                             setTimeout(
-                                () => this.props.oContext.forceUpdate(Object.keys(response.native), this.props.data),
+                                () => this.props.oContext.forceUpdate(Object.keys(response.native!), this.props.data),
                                 300,
                             );
                         } else if (response?.result) {
@@ -371,7 +369,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                         }
 
                         if (response?.saveConfig) {
-                            this.props.onChange(null, null, null, true);
+                            this.props.onChange(undefined, null, undefined, true);
                         }
                     }
                 },
@@ -394,6 +392,9 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
             return null;
         }
         const confirm = this.state.confirmData || this.props.schema.confirm;
+        if (!confirm) {
+            throw new Error('Confirm dialog requested but no confirm data provided');
+        }
         let icon = null;
         if (confirm.type === 'warning') {
             icon = <IconWarning />;

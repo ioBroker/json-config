@@ -115,6 +115,7 @@ const DOC_EXT = ['txt', 'log', 'html', 'htm'];
 const JS_EXT = ['json', 'js', 'ts'];
 
 interface ConfigFileSelectorProps extends ConfigGenericProps {
+    attr: string;
     schema: ConfigItemFileSelector;
 }
 
@@ -122,7 +123,7 @@ interface ConfigFileSelectorState extends ConfigGenericState {
     uploadFile?: boolean | 'dragging';
     uploadError?: boolean;
     files?: { name: string; size: string }[];
-    deleteFile?: string;
+    deleteFile: string;
 }
 
 export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFileSelectorState> {
@@ -130,12 +131,16 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
 
     private readonly imagePrefix: string;
 
-    private objectID: string;
+    private objectID!: string;
 
-    private path: string;
+    private path!: string;
 
     constructor(props: ConfigFileSelectorProps) {
         super(props);
+        this.state = {
+            ...this.state,
+            deleteFile: '',
+        };
         this.dropzoneRef = React.createRef();
         this.imagePrefix = this.props.oContext.imagePrefix ?? './files';
     }
@@ -147,7 +152,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
             '%INSTANCE%',
             (this.props.oContext.instance || 0).toString(),
         );
-        this.path = this.props.schema.upload;
+        this.path = this.props.schema.upload || '';
         if (this.path) {
             if (this.path === '/') {
                 this.path = '';
@@ -192,10 +197,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
         filter: string,
     ): Promise<{ name: string; size: string }[]> {
         try {
-            const dirFiles = await this.props.oContext.socket.readDir(
-                this.objectID,
-                folderName.replace(/^\//, '') || null,
-            );
+            const dirFiles = await this.props.oContext.socket.readDir(this.objectID, folderName.replace(/^\//, ''));
             for (let f = 0; f < dirFiles.length; f++) {
                 const file = dirFiles[f];
                 if (file.isDir) {
@@ -217,7 +219,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                     if (ok) {
                         files.push({
                             name: folderName + file.file,
-                            size: file.stats ? Utils.formatBytes(file.stats.size) : '--',
+                            size: file.stats?.size ? Utils.formatBytes(file.stats.size) : '--',
                         });
                     }
                 }
@@ -231,10 +233,8 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
 
     async readFiles(pattern: string): Promise<{ name: string; size: string }[]> {
         const files: { name: string; size: string }[] = [];
-        pattern = pattern || this.props.schema.pattern;
-        if (!pattern) {
-            pattern = '**/*.*';
-        }
+        pattern ||= this.props.schema.pattern;
+        pattern ||= '**/*.*';
         let filter;
         const pos = pattern.lastIndexOf('/');
         if (pos === -1) {
@@ -344,7 +344,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
         });
     }
 
-    getFileIcon(item: { value: string; label: string; extension?: string }): JSX.Element | null {
+    getFileIcon(item: { value: string; label: string; extension?: string } | undefined | null): JSX.Element | null {
         if (!item?.extension) {
             return null;
         }
@@ -409,7 +409,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
             selectOptions.unshift({ label: I18n.t('jc_none'), value: '' });
         }
 
-        const item: { value: string; label: string; extension?: string } = selectOptions.find(
+        const item: { value: string; label: string; extension?: string } | undefined = selectOptions.find(
             _item => _item.value === this.state.value,
         );
 
@@ -531,7 +531,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
             };
         }
         if (this.props.schema.pattern) {
-            const last = this.props.schema.pattern.split('/').pop().toLowerCase().replace(/.*\./, '');
+            const last = (this.props.schema.pattern.split('/').pop() || '').toLowerCase().replace(/.*\./, '');
             if (
                 last === 'png' ||
                 last === 'jpg' ||

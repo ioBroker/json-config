@@ -28,7 +28,7 @@ interface ConfigCertificatesState extends ConfigGenericState {
     certsPublicOptions?: { label: string; value: string }[];
     certsChainOptions?: { label: string; value: string }[];
     certsPrivateOptions?: { label: string; value: string }[];
-    collectionsOptions?: string[];
+    collectionsOptions?: string[] | null;
 }
 
 export default class ConfigCertificates extends ConfigGeneric<ConfigCertificatesProps, ConfigCertificatesState> {
@@ -40,7 +40,7 @@ export default class ConfigCertificates extends ConfigGeneric<ConfigCertificates
         const certsPrivateOptions: { label: string; value: string }[] = [];
         const certsChainOptions: { label: string; value: string }[] = [];
 
-        let collectionsOptions: string[] | null = [];
+        let collectionsOptions: string[] | null;
         const collectionsOptionsObj = await this.getCachedObject('system.certificates');
         if (collectionsOptionsObj?.native?.collections) {
             collectionsOptions = Object.keys(collectionsOptionsObj.native.collections);

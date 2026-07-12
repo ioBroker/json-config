@@ -30,7 +30,7 @@ class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImag
         if (this.props.schema.base64) {
             const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
             this.setState({ value });
-        } else {
+        } else if (this.props.attr) {
             void this.props.oContext.socket
                 .fileExists(`${this.props.oContext.adapterName}.${this.props.oContext.instance}`, this.props.attr)
                 .then(exist => exist && this.loadImage());
@@ -80,40 +80,44 @@ class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImag
                     icon={this.state.value || undefined}
                     removeIconFunc={() =>
                         this.setState({ value: null }, () => {
-                            if (this.props.schema.base64) {
-                                const mayBePromise = this.onChange(this.props.attr, this.state.value);
-                                if (mayBePromise instanceof Promise) {
-                                    void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                            if (this.props.attr) {
+                                if (this.props.schema.base64) {
+                                    const mayBePromise = this.onChange(this.props.attr, this.state.value);
+                                    if (mayBePromise instanceof Promise) {
+                                        void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                                    }
+                                } else {
+                                    // delete file to /instance/attr
+                                    void this.props.oContext.socket
+                                        .deleteFile(
+                                            `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                                            this.props.attr,
+                                        )
+                                        .catch(e => console.error(e));
                                 }
-                            } else {
-                                // delete file to /instance/attr
-                                void this.props.oContext.socket
-                                    .deleteFile(
-                                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                                        this.props.attr,
-                                    )
-                                    .catch(e => console.error(e));
                             }
                         })
                     }
                     onChange={base64 =>
                         this.setState({ value: base64 }, () => {
-                            if (this.props.schema.base64) {
-                                const mayBePromise = this.onChange(this.props.attr, this.state.value);
-                                if (mayBePromise instanceof Promise) {
-                                    void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                            if (this.props.attr) {
+                                if (this.props.schema.base64) {
+                                    const mayBePromise = this.onChange(this.props.attr, this.state.value);
+                                    if (mayBePromise instanceof Promise) {
+                                        void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                                    }
+                                } else if (base64.startsWith('data')) {
+                                    base64 = base64.split(',')[1];
                                 }
-                            } else if (base64.startsWith('data')) {
-                                base64 = base64.split(',')[1];
+                                // upload file to /instance/attr
+                                this.props.oContext.socket
+                                    .writeFile64(
+                                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+                                        this.props.attr,
+                                        base64,
+                                    )
+                                    .catch(e => console.error(e));
                             }
-                            // upload file to /instance/attr
-                            this.props.oContext.socket
-                                .writeFile64(
-                                    `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                                    this.props.attr,
-                                    base64,
-                                )
-                                .catch(e => console.error(e));
                         })
                     }
                 />

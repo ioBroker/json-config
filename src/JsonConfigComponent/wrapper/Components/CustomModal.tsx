@@ -49,14 +49,13 @@ interface CustomModalProps {
     help?: string;
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
     progress?: boolean;
-    icon?: any;
     applyDisabled?: boolean;
     applyButton?: boolean;
     onClose: () => void;
     children: JSX.Element | JSX.Element[] | string | string[] | undefined | null;
     titleButtonApply?: string;
     titleButtonClose?: string;
-    onApply: (value: string) => void;
+    onApply?: (value: string) => void;
     textInput?: boolean;
     defaultValue?: string;
     overflowHidden?: boolean;
@@ -70,7 +69,6 @@ const CustomModal = ({
     help,
     maxWidth,
     progress,
-    icon,
     applyDisabled,
     applyButton,
     onClose,
@@ -90,12 +88,6 @@ const CustomModal = ({
     const muiTheme = useTheme();
     const isSmallScreen = useMediaQuery(muiTheme.breakpoints.down('md'));
 
-    let Icon = null;
-
-    if (icon) {
-        Icon = icon;
-    }
-
     return (
         <Dialog
             open={!0}
@@ -108,7 +100,6 @@ const CustomModal = ({
         >
             {title && (
                 <DialogTitle>
-                    {icon ? <Icon style={styles.titleIcon} /> : null}
                     {title}
                     {I18n.getLanguage() !== 'en' && toggleTranslation ? (
                         <IconButton
@@ -149,7 +140,7 @@ const CustomModal = ({
                     <Button
                         startIcon={<CheckIcon />}
                         disabled={progress || (applyDisabled && defaultValue === value)}
-                        onClick={() => onApply && onApply(textInput ? value : '')}
+                        onClick={() => onApply?.(textInput ? value || '' : '')}
                         variant="contained"
                         color="primary"
                     >

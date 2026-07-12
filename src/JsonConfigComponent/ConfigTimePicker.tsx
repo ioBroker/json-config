@@ -49,13 +49,10 @@ export default class ConfigTimePicker extends ConfigGeneric<ConfigTimePickerProp
                 format={this.props.schema.format || 'HH:mm:ss'}
                 disabled={!!disabled}
                 value={value}
-                onChange={(newValue: Date) => {
+                onChange={(newValue: Date | null) => {
                     let strValue: string;
-                    strValue =
-                        (newValue as any) instanceof Date
-                            ? newValue.toTimeString().split(' ')[0]
-                            : newValue.toTimeString();
-                    if (shortFormat) {
+                    strValue = newValue instanceof Date ? newValue.toTimeString().split(' ')[0] : '';
+                    if (shortFormat && strValue) {
                         strValue = strValue.split(':').slice(0, 2).join(':');
                     }
 

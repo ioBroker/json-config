@@ -149,8 +149,14 @@ export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFil
                 onClose={() => this.setState({ showFileBrowser: false })}
                 onOk={_value => {
                     const value = Array.isArray(_value) ? _value[0] : _value;
-                    this.setState({ value }, () =>
-                        this.onChange(this.props.attr, this.props.schema.trim === false ? value : (value || '').trim()),
+                    this.setState(
+                        { value },
+                        () =>
+                            this.props.attr &&
+                            this.onChange(
+                                this.props.attr,
+                                this.props.schema.trim === false ? value : (value || '').trim(),
+                            ),
                     );
                 }}
                 selectOnlyFolders={this.props.schema.selectOnlyFolders}
@@ -186,7 +192,7 @@ export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFil
                     onChange={e => {
                         const value = e.target.value;
                         this.setState({ value }, () =>
-                            this.onChange(
+                            this.props.attr && this.onChange(
                                 this.props.attr,
                                 this.props.schema.trim === false ? value : (value || '').trim(),
                             ),

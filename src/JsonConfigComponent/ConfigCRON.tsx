@@ -22,6 +22,7 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 interface ConfigCRONProps extends ConfigGenericProps {
+    attr: string;
     schema: ConfigItemCRON;
 }
 

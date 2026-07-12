@@ -33,7 +33,7 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
 
     async askInstance(): Promise<void> {
         if (this.props.alive) {
-            let data = this.props.schema.data;
+            let data: Record<string, any> | undefined | null = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
                 const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 if (dataStr) {
@@ -45,9 +45,7 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
                 }
             }
 
-            if (data === undefined) {
-                data = null;
-            }
+            data ??= null;
             const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );

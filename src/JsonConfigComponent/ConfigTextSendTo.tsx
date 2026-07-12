@@ -39,7 +39,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
 
     async askInstance(): Promise<void> {
         if (this.props.alive) {
-            let data: Record<string, any> | undefined = this.props.schema.data;
+            let data: Record<string, any> | null | undefined = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
                 const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 try {
@@ -90,7 +90,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
         return JSON.stringify(localContext);
     }
 
-    renderItem(/* error, disabled, defaultValue */): JSX.Element {
+    renderItem(/* error, disabled, defaultValue */): JSX.Element | null {
         if (this.props.alive) {
             const localContext = this.getLocalContext();
             if (localContext !== this.localContext || !this.initialized) {
@@ -132,7 +132,7 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
                                     tabIndex={-1}
                                     size="small"
                                     onClick={() => {
-                                        Utils.copyToClipboard(this.state.text);
+                                        Utils.copyToClipboard(this.state.text || '');
                                         window.alert(I18n.t('jc_Copied'));
                                     }}
                                 >

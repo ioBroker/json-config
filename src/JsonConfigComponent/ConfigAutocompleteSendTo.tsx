@@ -33,7 +33,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
             : [];
 
         if (this.props.alive) {
-            let data = this.props.schema.data;
+            let data: Record<string, any> | undefined | null = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
                 const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 try {
@@ -109,7 +109,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
     /** Report value-to-label mapping to parent table for filtering */
     reportFilterLabels(options: { value: string; label: string }[]): void {
-        if (this.props.onFilterLabelUpdate && this.props.table) {
+        if (this.props.onFilterLabelUpdate && this.props.table && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of options) {
                 if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
@@ -186,7 +186,10 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                     }}
                     onChange={e => {
                         const value = e.target.value;
-                        this.setState({ value }, () => this.onChange(this.props.attr, (value || '').trim()));
+                        this.setState(
+                            { value },
+                            () => this.props.attr && this.onChange(this.props.attr, (value || '').trim()),
+                        );
                     }}
                     placeholder={this.getText(this.props.schema.placeholder)}
                     label={this.getText(this.props.schema.label)}
@@ -233,7 +236,9 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
                     return filtered;
                 }}
-                getOptionLabel={(option: { value: string; label: string }): string => option?.label ?? ''}
+                getOptionLabel={(
+                    option: { value: string | number; label: ioBroker.StringOrTranslated } | string,
+                ): string => this.getText(typeof option === 'object' ? (option?.label ?? '') : option)}
                 onInputChange={e => {
                     if (!e || !this.props.schema.freeSolo) {
                         return;
@@ -241,13 +246,13 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
                     const val = (e.target as HTMLInputElement).value;
                     if (val !== this.state.value) {
-                        this.setState({ value: val }, () => this.onChange(this.props.attr, val));
+                        this.setState({ value: val }, () => this.props.attr && this.onChange(this.props.attr, val));
                     }
                 }}
                 onChange={(_, value) => {
                     const val = typeof value === 'object' ? (value ? value.value : '') : value;
                     if (val !== this.state.value) {
-                        this.setState({ value: val }, () => this.onChange(this.props.attr, val));
+                        this.setState({ value: val }, () => this.props.attr && this.onChange(this.props.attr, val));
                     }
                 }}
                 renderInput={params => (

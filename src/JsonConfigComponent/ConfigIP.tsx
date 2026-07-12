@@ -18,6 +18,9 @@ interface ConfigIPState extends ConfigGenericState {
 class ConfigIP extends ConfigGeneric<ConfigIPProps, ConfigIPState> {
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
+        if (!this.props.common?.host) {
+            return;
+        }
         this.props.oContext.socket
             .getHostByIp(this.props.common.host)
             .then(ips => {
@@ -64,7 +67,7 @@ class ConfigIP extends ConfigGeneric<ConfigIPProps, ConfigIPState> {
                         error={!!error}
                         disabled={!!disabled}
                         value={value}
-                        onChange={e => this.onChange(this.props.attr, e.target.value)}
+                        onChange={e => this.props.attr && this.onChange(this.props.attr, e.target.value)}
                         label={this.getText(this.props.schema.label)}
                     />
                 ) : (
@@ -74,7 +77,7 @@ class ConfigIP extends ConfigGeneric<ConfigIPProps, ConfigIPState> {
                         disabled={!!disabled}
                         value={value}
                         renderValue={val => item?.name || val}
-                        onChange={e => this.onChange(this.props.attr, e.target.value)}
+                        onChange={e => this.props.attr && this.onChange(this.props.attr, e.target.value)}
                     >
                         {this.state.ips?.map((it, i) => (
                             <MenuItem

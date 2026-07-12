@@ -51,9 +51,9 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
             if (value || !this.props.schema.allowEmpty) {
                 try {
                     if (this.props.schema.json5) {
-                        JSON5.parse(value);
+                        JSON5.parse(value as string);
                     } else {
-                        JSON.parse(value);
+                        JSON.parse(value as string);
                     }
                 } catch (err: unknown) {
                     console.log('Error in JSON', err);
@@ -105,7 +105,7 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
                         onApply={
                             isReadOnly
                                 ? undefined
-                                : () => this.setState({ showSelectId: false }, () => this.onChange(attr, value))
+                                : () => this.setState({ showSelectId: false }, () => attr && this.onChange(attr, value))
                         }
                     >
                         <div

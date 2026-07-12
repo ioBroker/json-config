@@ -299,8 +299,8 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                 <Button
                     disabled={
                         this.state.running ||
-                        (this.props.schema.ownClientSecret && !this.state.clientSecret) ||
-                        (this.props.schema.ownClientId && !this.state.clientId)
+                        !!(this.props.schema.ownClientSecret && !this.state.clientSecret) ||
+                        !!(this.props.schema.ownClientId && !this.state.clientId)
                     }
                     endIcon={icon || <CloudUpload />}
                     variant="contained"

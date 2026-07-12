@@ -41,35 +41,40 @@ interface ConfigInterfaceState extends ConfigGenericState {
 class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfaceState> {
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
-        this.props.oContext
-            .getCachedObject(`system.host.${this.props.common.host}`)
-            .then((obj: ioBroker.HostObject) => {
-                const interfaces: { value: string; address: string }[] = [];
-                if (obj?.native?.hardware?.networkInterfaces) {
-                    const list = obj.native.hardware.networkInterfaces;
-                    Object.keys(list).forEach(inter => {
-                        if (this.props.schema.ignoreInternal && !list[inter].find(_ip => !_ip.internal)) {
-                            return;
-                        }
-                        if (
-                            this.props.schema.ignoreLoopback &&
-                            list[inter].find(_ip => _ip.address === '127.0.0.1' || _ip.address === '::1')
-                        ) {
-                            return;
-                        }
+        if (!this.props.common?.host) {
+            return;
+        }
+        try {
+            const obj: ioBroker.HostObject | null | undefined = (await this.props.oContext.getCachedObject?.(
+                `system.host.${this.props.common.host}`,
+            )) as ioBroker.HostObject | null | undefined;
+            const interfaces: { value: string; address: string }[] = [];
+            if (obj?.native?.hardware?.networkInterfaces) {
+                const list = obj.native.hardware.networkInterfaces;
+                Object.keys(list).forEach(inter => {
+                    if (this.props.schema.ignoreInternal && !list[inter]?.find(_ip => !_ip.internal)) {
+                        return;
+                    }
+                    if (
+                        this.props.schema.ignoreLoopback &&
+                        list[inter]?.find(_ip => _ip.address === '127.0.0.1' || _ip.address === '::1')
+                    ) {
+                        return;
+                    }
 
-                        // find ipv4 address
-                        let ip: NetworkInterfaceInfo = list[inter].find(
-                            _ip => _ip.family === 'IPv4',
-                        ) as NetworkInterfaceInfo;
-                        ip ||= list[inter].find(_ip => _ip.family === 'IPv6');
-                        interfaces.push({ value: inter, address: ip.address });
-                    });
-                }
+                    // find ipv4 address
+                    let ip: NetworkInterfaceInfo | undefined = list[inter]?.find(
+                        _ip => _ip.family === 'IPv4',
+                    ) as NetworkInterfaceInfo;
+                    ip ||= list[inter]?.find(_ip => _ip.family === 'IPv6');
+                    interfaces.push({ value: inter, address: ip?.address || '' });
+                });
+            }
 
-                this.setState({ interfaces });
-            })
-            .catch(e => window.alert(`Cannot read interfaces: ${e}`));
+            this.setState({ interfaces });
+        } catch (e) {
+            window.alert(`Cannot read interfaces: ${e}`);
+        }
     }
 
     renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
@@ -91,7 +96,7 @@ class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfac
                         error={!!error}
                         disabled={!!disabled}
                         value={value}
-                        onChange={e => this.onChange(this.props.attr, e.target.value)}
+                        onChange={e => this.props.attr && this.onChange(this.props.attr, e.target.value)}
                         label={this.getText(this.props.schema.label)}
                     />
                 ) : (
@@ -111,7 +116,7 @@ class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfac
                             }
                             return val;
                         }}
-                        onChange={e => this.onChange(this.props.attr, e.target.value)}
+                        onChange={e => this.props.attr && this.onChange(this.props.attr, e.target.value)}
                     >
                         {this.state.interfaces.map((it, i) => (
                             <MenuItem

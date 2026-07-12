@@ -198,6 +198,7 @@ const CREDENTIAL_TEMPLATES: Record<string, CredentialTemplate> = {
 };
 
 interface ConfigCredentialSelectProps extends ConfigGenericProps {
+    attr: string;
     schema: ConfigItemCredentialSelect;
 }
 
@@ -209,6 +210,7 @@ interface CredentialSelectOption {
 }
 
 interface ConfigCredentialSelectState extends ConfigGenericState {
+    attr: string;
     selectOptions?: CredentialSelectOption[];
     /** Whether the "create credential" dialog is open */
     addOpen?: boolean;
@@ -248,6 +250,9 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
 > {
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
+        if (!this.props.attr) {
+            throw new Error('Missing attribute attribute');
+        }
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         const selectOptions = await this.readCredentials();
@@ -293,7 +298,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
         if (name && typeof name === 'object') {
             text = name[I18n.getLanguage()] || name.en || Object.values(name)[0] || '';
         } else {
-            text = (name as string) || '';
+            text = name || '';
         }
         return text || obj._id.substring(CREDENTIALS_PREFIX.length);
     }

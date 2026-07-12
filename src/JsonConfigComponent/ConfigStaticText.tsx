@@ -20,7 +20,7 @@ const styles: Record<string, any> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-function onLink(href: string, target: '_blank' | '_self' | string, instanceId: string): void {
+function onLink(href: string, target: '_blank' | '_self' | string | undefined, instanceId: string): void {
     let _target;
     let url = '';
     if (!href) {
@@ -104,7 +104,7 @@ export default class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProp
                                       }
                                   }
                               }
-                            : null
+                            : undefined
                     }
                 >
                     {this.getText(this.props.schema.text || this.props.schema.label, this.props.schema.noTranslation)}
@@ -163,7 +163,7 @@ export default class ConfigStaticText extends ConfigGeneric<ConfigStaticTextProp
                                   }
                               }
                           }
-                        : null
+                        : undefined
                 }
             >
                 {text}

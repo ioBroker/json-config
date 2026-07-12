@@ -188,7 +188,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
         }
     }
 
-    renderItems(items: Record<string, any>, disabled: boolean): JSX.Element[] | null {
+    renderItems(items: Record<string, any>, disabled: boolean): (JSX.Element | null)[] | null {
         return items
             ? Object.keys(items).map(attr => {
                   if (this.props.oContext.multiEdit && items[attr].noMultiEdit) {
@@ -211,13 +211,13 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                       }
                       socket = this.props.oContext.socket;
                   } else if (type === 'component') {
-                      if (this.props.customComponents[(items[attr] as ConfigItemComponent).subType]) {
-                          ItemComponent = this.props.customComponents[(items[attr] as ConfigItemComponent).subType];
+                      const subType = (items[attr] as ConfigItemComponent).subType;
+
+                      if (subType && this.props.customComponents?.[subType]) {
+                          ItemComponent = this.props.customComponents[subType];
                       } else {
                           return (
-                              <div
-                                  key={`${attr}_${this.props.index ?? ''}`}
-                              >{`Component ${(items[attr] as ConfigItemComponent).subType} not provided`}</div>
+                              <div key={`${attr}_${this.props.index ?? ''}`}>{`Component ${subType} not provided`}</div>
                           );
                       }
                   } else if (type === 'panel') {
@@ -292,7 +292,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                             this.props.oContext.theme,
                             { marginBottom: 0, textAlign: 'left' /* marginRight: 8, */ },
                             schemaStyle,
-                            this.props.oContext.themeType === 'dark' && schema.darkStyle,
+                            this.props.oContext.themeType === 'dark' ? schema.darkStyle : undefined,
                         )}
                     />
                 );

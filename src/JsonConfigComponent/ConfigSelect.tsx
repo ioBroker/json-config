@@ -101,7 +101,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             if (Array.isArray(groupItem.items)) {
                 const selectItem: SelectItem = {
                     label: this.getText(item.label, this.props.schema.noTranslation),
-                    value: item.value,
+                    value: item.value!,
                     group: true,
                     color: item.color,
                     description: this.getText(item.description),
@@ -123,7 +123,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             } else {
                 const selectItem: SelectItem = {
                     label: this.getText(item.label, this.props.schema.noTranslation || item.noTranslation),
-                    value: item.value,
+                    value: item.value!,
                     hidden: item.hidden,
                     color: item.color,
                     description: this.getText(item.description),
@@ -135,7 +135,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
         }
 
         // Report value-to-label mapping to parent table for filtering
-        if (this.props.onFilterLabelUpdate && this.props.table) {
+        if (this.props.onFilterLabelUpdate && this.props.table && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of selectOptions) {
                 if (!opt.group && opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
@@ -201,7 +201,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
     }
 
     renderRadio(error: string, disabled: boolean): JSX.Element {
-        const selectOptions = this.state.selectOptions.filter(it => !it.hiddenValue && !it.group);
+        const selectOptions = this.state.selectOptions?.filter(it => !it.hiddenValue && !it.group);
         const value = this._getValue();
 
         return (
@@ -217,7 +217,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     value={value === undefined || value === null ? '' : value.toString()}
                     onChange={e => {
                         // find the original option value to preserve its type (number vs. string)
-                        const opt = selectOptions.find(it => it.value.toString() === e.target.value);
+                        const opt = selectOptions?.find(it => it.value.toString() === e.target.value);
                         const newValue = opt ? opt.value : e.target.value;
                         this.setState({ value: newValue }, () => {
                             const mayBePromise = this.onChange(this.props.attr, newValue);
@@ -227,7 +227,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         });
                     }}
                 >
-                    {selectOptions.map((it, i) => (
+                    {selectOptions?.map((it, i) => (
                         <FormControlLabel
                             key={i}
                             value={it.value.toString()}
@@ -266,7 +266,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
         );
     }
 
-    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (!this.state.selectOptions) {
             return null;
         }

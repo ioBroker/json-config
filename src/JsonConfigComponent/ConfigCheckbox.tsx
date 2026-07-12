@@ -26,7 +26,7 @@ class ConfigCheckbox extends ConfigGeneric<ConfigCheckboxProps, ConfigGenericSta
                         e.preventDefault();
                         e.stopPropagation();
 
-                        if (!disabled) {
+                        if (!disabled && this.props.attr) {
                             const mayByPromise = this.onChange(this.props.attr, !value);
                             if (mayByPromise instanceof Promise) {
                                 void mayByPromise.catch(e => console.error(`Cannot set value: ${e}`));
@@ -38,14 +38,16 @@ class ConfigCheckbox extends ConfigGeneric<ConfigCheckboxProps, ConfigGenericSta
                             indeterminate={isIndeterminate}
                             checked={!!value}
                             onChange={e => {
-                                let mayBePromise: void | Promise<void>;
-                                if (isIndeterminate) {
-                                    mayBePromise = this.onChange(this.props.attr, true);
-                                } else {
-                                    mayBePromise = this.onChange(this.props.attr, e.target.checked);
-                                }
-                                if (mayBePromise instanceof Promise) {
-                                    void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                                if (this.props.attr) {
+                                    let mayBePromise: void | Promise<void>;
+                                    if (isIndeterminate) {
+                                        mayBePromise = this.onChange(this.props.attr, true);
+                                    } else {
+                                        mayBePromise = this.onChange(this.props.attr, e.target.checked);
+                                    }
+                                    if (mayBePromise instanceof Promise) {
+                                        void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                                    }
                                 }
                             }}
                             disabled={disabled || this.props.schema.readOnly}

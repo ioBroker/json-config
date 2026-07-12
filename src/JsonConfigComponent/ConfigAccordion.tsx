@@ -98,21 +98,23 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
 
     onAccordionError =
         (accordionIndex: number) =>
-        (attr: string, error?: string): void => {
+        (attr?: string, error?: string): void => {
             const newAccordionErrors = { ...this.state.accordionErrors };
 
             if (!newAccordionErrors[accordionIndex]) {
                 newAccordionErrors[accordionIndex] = {};
             }
 
-            if (!error) {
-                delete newAccordionErrors[accordionIndex][attr];
-                // Clean up empty accordion error objects
-                if (Object.keys(newAccordionErrors[accordionIndex]).length === 0) {
-                    delete newAccordionErrors[accordionIndex];
+            if (attr) {
+                if (!error) {
+                    delete newAccordionErrors[accordionIndex][attr];
+                    // Clean up empty accordion error objects
+                    if (Object.keys(newAccordionErrors[accordionIndex]).length === 0) {
+                        delete newAccordionErrors[accordionIndex];
+                    }
+                } else {
+                    newAccordionErrors[accordionIndex][attr] = error;
                 }
-            } else {
-                newAccordionErrors[accordionIndex][attr] = error;
             }
 
             this.setState({ accordionErrors: newAccordionErrors });
@@ -122,8 +124,8 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         };
 
     hasAccordionErrors = (accordionIndex: number): boolean => {
-        return !!(
-            this.state.accordionErrors[accordionIndex] &&
+        return (
+            !!this.state.accordionErrors[accordionIndex] &&
             Object.keys(this.state.accordionErrors[accordionIndex]).length > 0
         );
     };
@@ -136,7 +138,9 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
             type: 'panel',
             items: schema.items.reduce(
                 (accumulator: Record<string, ConfigItemIndexed>, currentValue: ConfigItemIndexed) => {
-                    accumulator[currentValue.attr] = currentValue;
+                    if (currentValue.attr) {
+                        accumulator[currentValue.attr] = currentValue;
+                    }
                     return accumulator;
                 },
                 {},
@@ -159,10 +163,12 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                 custom
                 schema={schemaItem}
                 originalData={this.props.originalData}
-                onChange={(attr: string, valueChange: any): void => {
-                    const newObj: Record<string, any> = JSON.parse(JSON.stringify(value));
-                    newObj[idx][attr] = valueChange;
-                    this.setState({ value: newObj } as ConfigAccordionState, () => this.onChangeWrapper(newObj));
+                onChange={(attr: string | Record<string, any> | undefined, valueChange?: any): void => {
+                    if (typeof attr === 'string' && attr) {
+                        const newObj: Record<string, any> = JSON.parse(JSON.stringify(value));
+                        newObj[idx][attr] = valueChange;
+                        this.setState({ value: newObj } as ConfigAccordionState, () => this.onChangeWrapper(newObj));
+                    }
                 }}
                 onError={this.onAccordionError(idx)}
                 onHiddenChanged={this.props.onHiddenChanged}
@@ -220,10 +226,11 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         this.typingTimer = setTimeout(
             value => {
                 this.typingTimer = null;
-
-                const mayByPromise = this.onChange(this.props.attr, value);
-                if (mayByPromise instanceof Promise) {
-                    void mayByPromise.catch(e => this.onError(e));
+                if (this.props.attr) {
+                    const mayByPromise = this.onChange(this.props.attr, value);
+                    if (mayByPromise instanceof Promise) {
+                        void mayByPromise.catch(e => this.onError(e));
+                    }
                 }
             },
             300,
@@ -266,7 +273,9 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                     defaultValue = currentValue.default ?? null;
                 }
 
-                newItem[currentValue.attr] = defaultValue;
+                if (currentValue.attr) {
+                    newItem[currentValue.attr] = defaultValue;
+                }
             }
         }
 
@@ -421,7 +430,9 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                             sx={Utils.getStyle(this.props.oContext.theme, styles.fullWidth, styles.accordionSummary)}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                                <Typography style={styles.accordionTitle}>{idx[schema.titleAttr]}</Typography>
+                                {schema.titleAttr && (
+                                    <Typography style={styles.accordionTitle}>{idx[schema.titleAttr]}</Typography>
+                                )}
                                 {this.hasAccordionErrors(i) && <ErrorIcon sx={{ fontSize: 20, color: 'error.main' }} />}
                             </Box>
                         </AccordionSummary>

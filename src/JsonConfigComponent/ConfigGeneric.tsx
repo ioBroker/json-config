@@ -83,7 +83,7 @@ export interface ConfigGenericProps {
     className?: string;
     expertMode?: boolean;
     commandRunning?: boolean;
-    common: Record<string, any>;
+    common?: Record<string, any>;
     custom?: boolean;
     customObj?: Record<string, any>;
     data: Record<string, any>;
@@ -93,8 +93,13 @@ export interface ConfigGenericProps {
     // filled only by table
     index?: number;
     isParentTab?: boolean;
-    onChange: (attrOrData: string | Record<string, any>, val?: any, cb?: () => void, saveConfig?: boolean) => void;
-    onError: (attr: string, error?: string) => void;
+    onChange: (
+        attrOrData: string | Record<string, any> | undefined,
+        val?: any,
+        cb?: () => void,
+        saveConfig?: boolean,
+    ) => void;
+    onError: (attr: string | undefined, error?: string) => void;
     onHiddenChanged?: (attr: string, hidden?: boolean) => void;
     /** Filled only by table: components with value/label options report their label mappings for table filtering */
     onFilterLabelUpdate?: (attr: string, valueToLabel: Record<string, string>) => void;
@@ -208,35 +213,48 @@ export default class ConfigGeneric<
             }
         }
 
-        this.props.oContext.registerOnForceUpdate?.(this.props.attr, this.onUpdate);
+        if (this.props.attr) {
+            this.props.oContext.registerOnForceUpdate?.(this.props.attr, this.onUpdate);
+        }
         const LIKE_SELECT = ['select', 'autocomplete', 'autocompleteSendTo'];
         // init default value
-        if (this.defaultValue !== undefined) {
+        if (this.defaultValue !== undefined && this.props.attr) {
             const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
             if (
                 value === undefined ||
                 (LIKE_SELECT.includes(this.props.schema.type) && (value === '' || value === null))
             ) {
                 setTimeout(() => {
+                    if (!this.props.attr) {
+                        return;
+                    }
                     if (this.props.custom) {
                         this.props.onChange(this.props.attr, this.defaultValue, () =>
-                            setTimeout(() => this.props.oContext.forceUpdate([this.props.attr], this.props.data), 100),
+                            setTimeout(
+                                () =>
+                                    this.props.attr &&
+                                    this.props.oContext.forceUpdate([this.props.attr], this.props.data),
+                                100,
+                            ),
                         );
                     } else {
                         ConfigGeneric.setValue(this.props.data, this.props.attr, this.defaultValue);
-                        this.props.onChange(this.props.data, undefined, () =>
-                            this.props.oContext.forceUpdate([this.props.attr], this.props.data),
+                        this.props.onChange(
+                            this.props.data,
+                            undefined,
+                            () =>
+                                this.props.attr && this.props.oContext.forceUpdate([this.props.attr], this.props.data),
                         );
                     }
                 }, 100);
             }
         } else if (this.props.schema.defaultSendTo) {
-            this.sendTo().catch(e => console.error(e));
+            this.defaultSendTo().catch(e => console.error(e));
         }
     }
 
-    async sendTo(): Promise<void> {
-        if (this.props.alive) {
+    private async defaultSendTo(): Promise<void> {
+        if (this.props.alive && this.props.schema.defaultSendTo) {
             this.defaultSendToDone = true;
             let data: any = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
@@ -268,22 +286,29 @@ export default class ConfigGeneric<
                     return;
                 }
             }
-            void this.props.oContext.socket
-                .sendTo(instance, this.props.schema.defaultSendTo, data)
-                .then((value: any) => {
-                    if (value !== null && value !== undefined) {
-                        if (this.props.custom) {
-                            this.props.onChange(this.props.attr, value, () =>
-                                this.props.oContext.forceUpdate([this.props.attr], this.props.data),
-                            );
-                        } else {
-                            ConfigGeneric.setValue(this.props.data, this.props.attr, value);
-                            this.props.onChange(this.props.data, undefined, () =>
-                                this.props.oContext.forceUpdate([this.props.attr], this.props.data),
-                            );
-                        }
+            try {
+                const value = await this.props.oContext.socket.sendTo(instance, this.props.schema.defaultSendTo, data);
+                if (value !== null && value !== undefined && this.props.attr) {
+                    if (this.props.custom) {
+                        this.props.onChange(
+                            this.props.attr,
+                            value,
+                            () =>
+                                this.props.attr && this.props.oContext.forceUpdate([this.props.attr], this.props.data),
+                        );
+                    } else {
+                        ConfigGeneric.setValue(this.props.data, this.props.attr, value);
+                        this.props.onChange(
+                            this.props.data,
+                            undefined,
+                            () =>
+                                this.props.attr && this.props.oContext.forceUpdate([this.props.attr], this.props.data),
+                        );
                     }
-                });
+                }
+            } catch (e) {
+                console.error(e);
+            }
         } else {
             this.defaultSendToDone = false;
             if (!this.props.schema.allowSaveWithError) {
@@ -297,8 +322,8 @@ export default class ConfigGeneric<
     }
 
     componentWillUnmount(): void {
-        if (this.props.oContext.registerOnForceUpdate) {
-            this.props.oContext.registerOnForceUpdate(this.props.attr);
+        if (this.props.attr) {
+            this.props.oContext.registerOnForceUpdate?.(this.props.attr);
         }
         if (this.sendToTimeout) {
             clearTimeout(this.sendToTimeout);
@@ -322,7 +347,10 @@ export default class ConfigGeneric<
     /**
      * Extract attribute out of data
      */
-    static getValue(data: Record<string, any>, attr: string | string[]): any {
+    static getValue(data: Record<string, any>, attr: string | string[] | undefined): any {
+        if (!attr) {
+            return undefined;
+        }
         if (typeof attr === 'string') {
             return ConfigGeneric.getValue(data, attr.split('.'));
         }
@@ -337,7 +365,10 @@ export default class ConfigGeneric<
         return undefined;
     }
 
-    static setValue(data: Record<string, any>, attr: string | string[], value: any): void {
+    static setValue(data: Record<string, any>, attr: string | string[] | undefined, value: any): void {
+        if (!attr) {
+            return;
+        }
         if (typeof attr === 'string') {
             ConfigGeneric.setValue(data, attr.split('.'), value);
             return;
@@ -362,7 +393,17 @@ export default class ConfigGeneric<
         }
     }
 
-    getText(text: ioBroker.StringOrTranslated, noTranslation?: boolean): string {
+    getText(
+        text:
+            | ioBroker.StringOrTranslated
+            | undefined
+            | null
+            | {
+                  /** @deprecated */
+                  func: ioBroker.StringOrTranslated;
+              },
+        noTranslation?: boolean,
+    ): string {
         if (!text) {
             return '';
         }
@@ -370,22 +411,30 @@ export default class ConfigGeneric<
         if (typeof text === 'string') {
             const strText = noTranslation ? text : I18n.t(text);
             if (strText.includes('${')) {
-                return this.getPattern(strText, null, noTranslation);
+                return this.getPattern(strText, undefined, noTranslation);
             }
             return strText;
         }
 
-        if (isObject(text)) {
-            // todo
-            if ((text as any).func) {
+        if (text && typeof text === 'object') {
+            const funcText = text as {
+                func: string;
+            };
+            if (funcText.func) {
                 // calculate pattern
-                if (typeof (text as any).func === 'object') {
-                    return this.getPattern((text as any).func[this.lang] || (text as any).func.en || '', null, true);
+                if (typeof funcText.func === 'object') {
+                    return this.getPattern(
+                        (funcText.func as ioBroker.Translated)[this.lang] ||
+                            (funcText.func as ioBroker.Translated).en ||
+                            '',
+                        undefined,
+                        true,
+                    );
                 }
-                return this.getPattern((text as any).func, null, noTranslation);
+                return this.getPattern(funcText.func, undefined, noTranslation);
             }
 
-            return text[this.lang] || text.en || '';
+            return (text as ioBroker.Translated)[this.lang] || (text as ioBroker.Translated).en || '';
         }
 
         return (text as any).toString();
@@ -429,6 +478,9 @@ export default class ConfigGeneric<
             return null;
         }
         const confirm = this.state.confirmData || this.props.schema.confirm;
+        if (!confirm) {
+            return null;
+        }
         let icon: null | JSX.Element = null;
         if (confirm.type === 'warning') {
             icon = <IconWarning />;
@@ -582,7 +634,7 @@ export default class ConfigGeneric<
      * @param newValue new value of the attribute
      * @param cb optional callback function, else returns a Promise
      */
-    async onChange(attr: string, newValue: unknown, cb?: () => void): Promise<void> {
+    async onChange(attr: string | undefined, newValue: unknown, cb?: () => void): Promise<void> {
         // Do not use here deep copy, as it is not JsonConfig
         const data = JSON.parse(JSON.stringify(this.props.data));
         ConfigGeneric.setValue(data, attr, newValue);
@@ -634,6 +686,9 @@ export default class ConfigGeneric<
                         )
                     ) {
                         return new Promise<void>(resolve => {
+                            if (!dep.confirm) {
+                                throw new Error(`Cannot set value: confirm is not defined for ${dep.attr}`);
+                            }
                             this.setState(
                                 {
                                     confirmDialog: true,
@@ -686,7 +741,7 @@ export default class ConfigGeneric<
                         );
                     }
 
-                    if (_newValue !== val) {
+                    if (_newValue !== val && dep.attr) {
                         ConfigGeneric.setValue(data, dep.attr, _newValue);
                         changed.push(dep.attr);
                     }
@@ -697,7 +752,7 @@ export default class ConfigGeneric<
         if (this.props.schema.hiddenDependsOn) {
             for (let z = 0; z < this.props.schema.hiddenDependsOn.length; z++) {
                 const dep = this.props.schema.hiddenDependsOn[z];
-                if (dep.hidden) {
+                if (dep.hidden && dep.attr) {
                     changed.push(dep.attr);
                 }
             }
@@ -706,7 +761,7 @@ export default class ConfigGeneric<
         if (this.props.schema.labelDependsOn) {
             for (let z = 0; z < this.props.schema.labelDependsOn.length; z++) {
                 const dep = this.props.schema.labelDependsOn[z];
-                if (dep.hidden) {
+                if (dep.hidden && dep.attr) {
                     changed.push(dep.attr);
                 }
             }
@@ -715,7 +770,7 @@ export default class ConfigGeneric<
         if (this.props.schema.helpDependsOn) {
             for (let z = 0; z < this.props.schema.helpDependsOn.length; z++) {
                 const dep = this.props.schema.helpDependsOn[z];
-                if (dep.hidden) {
+                if (dep.hidden && dep.attr) {
                     changed.push(dep.attr);
                 }
             }
@@ -748,7 +803,7 @@ export default class ConfigGeneric<
         }
 
         if (this.props.custom) {
-            this.props.onChange(attr, newValue, () => cb && cb());
+            this.props.onChange(attr, newValue, () => cb?.());
 
             if (changed?.length) {
                 changed.forEach((_attr, i) =>
@@ -817,13 +872,13 @@ export default class ConfigGeneric<
     }
 
     async execute(
-        func: string | boolean | Record<string, string>,
-        defaultValue: string | number | boolean,
-        data: Record<string, any>,
-        arrayIndex: number,
-        globalData: Record<string, any>,
+        func: string | boolean | Record<string, string> | undefined,
+        defaultValue: string | number | boolean | undefined,
+        data: Record<string, any> | undefined,
+        arrayIndex: number | undefined,
+        globalData: Record<string, any> | undefined,
         funcName?: string,
-    ): Promise<string | number | boolean> {
+    ): Promise<string | number | boolean | undefined> {
         let fun: string;
 
         if (isObject(func)) {
@@ -858,7 +913,7 @@ export default class ConfigGeneric<
                 fun.includes('return') ? fun : `return ${fun}`,
             );
             const result = await f(
-                data || this.props.data,
+                data || this.props.data || {},
                 this.props.originalData,
                 this.props.oContext.systemConfig,
                 this.props.alive,
@@ -866,7 +921,7 @@ export default class ConfigGeneric<
                 this.props.oContext.socket,
                 this.props.oContext.instance,
                 arrayIndex,
-                globalData,
+                globalData || {},
                 this.props.changed,
                 window.location.href,
                 this.getObject,
@@ -881,14 +936,14 @@ export default class ConfigGeneric<
     }
 
     async executeCustom(
-        func: string | boolean | Record<string, string>,
+        func: string | boolean | Record<string, string> | undefined,
         data: Record<string, any>,
-        customObj: Record<string, any>,
-        instanceObj: ioBroker.InstanceObject,
-        arrayIndex: number,
-        globalData: Record<string, any>,
+        customObj: Record<string, any> | undefined,
+        instanceObj: ioBroker.InstanceObject | undefined,
+        arrayIndex: number | undefined,
+        globalData: Record<string, any> | undefined,
         funcName?: string,
-    ): Promise<string | boolean | number | null> {
+    ): Promise<string | boolean | number | null | undefined> {
         let fun: string;
 
         if (isObject(func)) {
@@ -925,11 +980,11 @@ export default class ConfigGeneric<
                 data || this.props.data,
                 this.props.originalData,
                 this.props.oContext.systemConfig,
-                instanceObj,
-                customObj,
+                instanceObj || {},
+                customObj || {},
                 this.props.oContext.socket,
                 arrayIndex,
-                globalData,
+                globalData || {},
                 this.props.changed,
                 window.location.href,
                 this.getObject,
@@ -1066,16 +1121,16 @@ export default class ConfigGeneric<
         };
     }
 
-    onError(attr: string, error?: string): void {
-        if (!error) {
-            delete this.isError[attr];
-        } else {
-            this.isError[attr] = error;
+    onError(attr: string | undefined, error?: string): void {
+        if (attr) {
+            if (!error) {
+                delete this.isError[attr];
+            } else {
+                this.isError[attr] = error;
+            }
         }
 
-        if (this.props.onError) {
-            this.props.onError(attr, error);
-        }
+        this.props.onError?.(attr, error);
     }
 
     renderItem(_error: unknown, _disabled: boolean, _defaultValue?: unknown): JSX.Element | string | null {
@@ -1084,9 +1139,9 @@ export default class ConfigGeneric<
 
     // eslint-disable-next-line react/no-unused-class-component-methods
     renderHelp(
-        text: ioBroker.StringOrTranslated,
-        link: string,
-        noTranslation: boolean,
+        text: ioBroker.StringOrTranslated | undefined | null,
+        link?: string | null,
+        noTranslation?: boolean,
     ): JSX.Element | JSX.Element[] | string {
         if (!link) {
             text = this.getText(text, noTranslation) || '';
@@ -1172,7 +1227,7 @@ export default class ConfigGeneric<
     /** This function is used in pattern */
     getObject = async (id: string): Promise<ioBroker.Object | null> => {
         try {
-            const obj = await this.props.oContext.getCachedObject(id);
+            const obj = await this.props.oContext.getCachedObject?.(id);
             return obj || null;
         } catch (e) {
             console.error(e);
@@ -1182,7 +1237,7 @@ export default class ConfigGeneric<
 
     async getPatternAsync(
         pattern: string | { func: string },
-        data?: Record<string, any>,
+        data?: Record<string, any> | null,
         noTranslation?: boolean,
     ): Promise<string> {
         data ||= this.props.data;
@@ -1379,7 +1434,7 @@ export default class ConfigGeneric<
             const schema = this.props.schema;
 
             if (!schema) {
-                return null;
+                return;
             }
             const { error, disabled, hidden, defaultValue } = await this.calculate(schema);
             if (
@@ -1411,7 +1466,7 @@ export default class ConfigGeneric<
         if (this.props.alive && this.defaultSendToDone === false) {
             this.sendToTimeout = setTimeout(async () => {
                 this.sendToTimeout = null;
-                await this.sendTo();
+                await this.defaultSendTo();
             }, 200);
         }
 
@@ -1465,16 +1520,16 @@ export default class ConfigGeneric<
             // Used in table to not render hidden elements at all, so we need to inform about it
             if (this.props.onHiddenChanged && !this.reportedHidden) {
                 this.reportedHidden = true;
-                setTimeout(() => this.props.onHiddenChanged(this.props.attr, true), 10);
+                setTimeout(() => this.props.attr && this.props.onHiddenChanged?.(this.props.attr, true), 10);
             }
             return null;
         }
         if (this.props.onHiddenChanged && this.reportedHidden) {
             this.reportedHidden = false;
-            setTimeout(() => this.props.onHiddenChanged(this.props.attr, false), 10);
+            setTimeout(() => this.props.attr && this.props.onHiddenChanged?.(this.props.attr, false), 10);
         }
         // Add error
-        if (schema.validatorNoSaveOnError) {
+        if (schema.validatorNoSaveOnError && this.props.attr) {
             if (this.state.calculatedValues.error && !Object.keys(this.isError).length) {
                 this.isError = {
                     [this.props.attr]: schema.validatorErrorText ? I18n.t(schema.validatorErrorText) : true,
@@ -1496,7 +1551,7 @@ export default class ConfigGeneric<
 
         const renderedItem = this.renderItem(
             this.state.calculatedValues.error,
-            this.state.calculatedValues.disabled || this.props.commandRunning || this.props.disabled,
+            this.state.calculatedValues.disabled || this.props.commandRunning || this.props.disabled || false,
             this.state.calculatedValues.defaultValue,
         );
 
@@ -1532,7 +1587,7 @@ export default class ConfigGeneric<
                             <Button
                                 disabled={this.state.calculatedValues.disabled}
                                 variant="outlined"
-                                onClick={() => this.sendTo()}
+                                onClick={() => this.defaultSendTo()}
                                 title={
                                     this.props.schema.buttonTooltip
                                         ? this.getText(

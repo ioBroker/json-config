@@ -47,7 +47,7 @@ export default class ConfigYamlEditor extends ConfigGeneric<ConfigYamlEditorProp
     validateYaml(value: string | null | undefined): boolean {
         let yamlError = false;
         if (this.props.schema.validateYaml !== false) {
-            if (value || !this.props.schema.allowEmpty) {
+            if (typeof value === 'string' && (value || !this.props.schema.allowEmpty)) {
                 try {
                     parse(value);
                 } catch (err: unknown) {
@@ -100,7 +100,7 @@ export default class ConfigYamlEditor extends ConfigGeneric<ConfigYamlEditorProp
                         onApply={
                             isReadOnly
                                 ? undefined
-                                : () => this.setState({ showSelectId: false }, () => this.onChange(attr, value))
+                                : () => this.setState({ showSelectId: false }, () => attr && this.onChange(attr, value))
                         }
                     >
                         <div

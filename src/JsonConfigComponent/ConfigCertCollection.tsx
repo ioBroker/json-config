@@ -41,7 +41,7 @@ class ConfigCertCollection extends ConfigGeneric<ConfigCertCollectionProps, Conf
         this.setState({ collectionsOptions });
     }
 
-    renderItem(error: unknown, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: unknown, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (!this.state.collectionsOptions) {
             return null;
         }

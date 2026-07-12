@@ -40,7 +40,7 @@ init({
 });
 
 export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, ConfigCustomState> {
-    static runningLoads: Record<string, Promise<{ default: Record<string, React.FC<ConfigGenericProps>> }>> = {};
+    static runningLoads: Record<string, Promise<{ default: Record<string, React.FC<ConfigGenericProps>> } | null>> = {};
 
     constructor(props: ConfigCustomProps) {
         super(props);
@@ -84,7 +84,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
             );
             return;
         }
-        let setPromise: Promise<{ default: Record<string, React.FC<ConfigGenericProps>> }> | undefined =
+        let setPromise: Promise<{ default: Record<string, React.FC<ConfigGenericProps>> } | null> | undefined =
             ConfigCustom.runningLoads[`${url}!${fileToLoad}`];
 
         if (!(setPromise instanceof Promise)) {
@@ -146,9 +146,8 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
                 this.setState({ error: `Cannot import from ${this.props.schema.url}: ${error}` });
             }
         }
-
         try {
-            const component: Record<string, React.FC<ConfigGenericProps>> = (await setPromise).default;
+            const component: Record<string, React.FC<ConfigGenericProps>> | undefined = (await setPromise)?.default;
 
             if (!component?.[componentName]) {
                 const keys = Object.keys(component || {});
@@ -166,7 +165,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
     }
 
     render(): JSX.Element {
-        const CustomComponent: React.FC<ConfigGenericProps> = this.state.Component;
+        const CustomComponent: React.FC<ConfigGenericProps> | null = this.state.Component;
         const schema = this.props.schema || ({} as ConfigItemCustom);
 
         const item = CustomComponent ? (

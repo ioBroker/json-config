@@ -333,7 +333,12 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
         }
     }
 
-    static isVersionValid(version: string, rule: string, invoice: string, adapterName: string): boolean {
+    static isVersionValid(
+        version: string,
+        rule: string | undefined,
+        invoice: string | undefined,
+        adapterName: string,
+    ): boolean {
         if (!rule || !version) {
             return true;
         }
@@ -421,7 +426,10 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
             });
 
             if (useLicense) {
-                errors.find(e => e.id === useLicense.id).used = true;
+                const error = errors.find(e => e.id === useLicense?.id);
+                if (error) {
+                    error.used = true;
+                }
             }
         }
 
@@ -441,7 +449,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
         }
 
         const controller = new AbortController();
-        let timeout = setTimeout(() => {
+        let timeout: ReturnType<typeof setTimeout> | null = setTimeout(() => {
             timeout = null;
             controller.abort();
         }, 5000);
@@ -459,16 +467,18 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                 clearTimeout(timeout);
             }
             const dataStr = await response.text();
-            let data: {
-                error?: string;
-                validTill?: string;
-                /** @deprecated use validTill */
-                valid_till?: string;
-                name?: string;
-                version?: string;
-                uuid?: string;
-                invoice?: string;
-            };
+            let data:
+                | {
+                      error?: string;
+                      validTill?: string;
+                      /** @deprecated use validTill */
+                      valid_till?: string;
+                      name?: string;
+                      version?: string;
+                      uuid?: string;
+                      invoice?: string;
+                  }
+                | undefined;
             try {
                 data = JSON.parse(dataStr);
             } catch {
@@ -478,7 +488,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
             if (data?.error) {
                 try {
                     const data_ = ConfigCheckLicense.parseJwt(license);
-                    const _error = I18n.t(`jc_${data_.error || data.error || 'Unknown error'}`).replace(/^jc_/, '');
+                    const _error = I18n.t(`jc_${data_?.error || data.error || 'Unknown error'}`).replace(/^jc_/, '');
 
                     return this.setState({
                         _error,
@@ -578,10 +588,10 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
             // check offline
             try {
                 const data = ConfigCheckLicense.parseJwt(license);
-                const parts = (data.name || '').split('.');
+                const parts = (data?.name || '').split('.');
 
                 if (
-                    data.valid_till &&
+                    data?.valid_till &&
                     data.valid_till !== '0000-00-00 00:00:00' &&
                     new Date(data.valid_till).getTime() < Date.now()
                 ) {
@@ -595,9 +605,9 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                 }
                 if (parts[1] === adapterName) {
                     // check UUID
-                    if (uuid && data.uuid && data.uuid !== uuid) {
+                    if (uuid && data?.uuid && data.uuid !== uuid) {
                         return this.setState({
-                            _error: I18n.t('jc_Serial number (UUID) "%s" in license is for other device.', data.uuid),
+                            _error: I18n.t('jc_Serial number (UUID) "%s" in license is for other device.', data?.uuid),
                             showLicenseData: data,
                             licenseOfflineCheck: true,
                             result: false,
@@ -605,11 +615,11 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         });
                     }
 
-                    if (!ConfigCheckLicense.isVersionValid(version, data.version, data.invoice, adapterName)) {
+                    if (!ConfigCheckLicense.isVersionValid(version, data?.version, data?.invoice, adapterName)) {
                         return this.setState({
                             _error: I18n.t(
                                 'jc_License is for version %s, but required version is %s',
-                                data.version,
+                                data?.version,
                                 this.props.schema.version,
                             ),
                             licenseOfflineCheck: true,
@@ -627,7 +637,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     });
                 }
                 return this.setState({
-                    _error: I18n.t('jc_License for other product "%s"', data.name),
+                    _error: I18n.t('jc_License for other product "%s"', data?.name),
                     licenseOfflineCheck: true,
                     showLicenseData: data,
                     result: false,
@@ -659,7 +669,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         this.setState({ askForUpdate: false });
                         try {
                             // updateLicense is available only in AdminConnection
-                            await this.props.oContext.socket.updateLicenses(null, null);
+                            await this.props.oContext.socket.updateLicenses('', '');
                         } catch (e) {
                             window.alert(I18n.t('jc_Cannot read licenses: %s', e));
                             return;
@@ -700,7 +710,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                 _error: I18n.t('jc_Suitable license not found in license manager'),
                 result: false,
                 running: false,
-                allLicenses: licenses,
+                allLicenses: licenses || null,
             });
         } else {
             // this case could not happen

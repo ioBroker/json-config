@@ -44,14 +44,19 @@ class ConfigChip extends ConfigGeneric<ConfigChipProps, ConfigGenericState> {
                         const newValue = JSON.parse(JSON.stringify(value));
                         newValue.push(chip);
                         this.setState({ value: newValue }, () => {
-                            let mayBePromise: void | Promise<void>;
-                            if (this.props.schema.delimiter) {
-                                mayBePromise = this.onChange(attr, newValue.join(`${this.props.schema.delimiter} `));
-                            } else {
-                                mayBePromise = this.onChange(attr, newValue);
-                            }
-                            if (mayBePromise instanceof Promise) {
-                                mayBePromise.catch(e => console.error(e));
+                            if (attr) {
+                                let mayBePromise: void | Promise<void>;
+                                if (this.props.schema.delimiter) {
+                                    mayBePromise = this.onChange(
+                                        attr,
+                                        newValue.join(`${this.props.schema.delimiter} `),
+                                    );
+                                } else {
+                                    mayBePromise = this.onChange(attr, newValue);
+                                }
+                                if (mayBePromise instanceof Promise) {
+                                    mayBePromise.catch(e => console.error(e));
+                                }
                             }
                         });
                     }}
@@ -60,14 +65,19 @@ class ConfigChip extends ConfigGeneric<ConfigChipProps, ConfigGenericState> {
                         const newValue = JSON.parse(JSON.stringify(value));
                         newValue.splice(index, 1);
                         this.setState({ value: newValue }, () => {
-                            let mayBePromise: void | Promise<void>;
-                            if (this.props.schema.delimiter) {
-                                mayBePromise = this.onChange(attr, newValue.join(`${this.props.schema.delimiter} `));
-                            } else {
-                                mayBePromise = this.onChange(attr, newValue);
-                            }
-                            if (mayBePromise instanceof Promise) {
-                                mayBePromise.catch(e => console.error(e));
+                            if (attr) {
+                                let mayBePromise: void | Promise<void>;
+                                if (this.props.schema.delimiter) {
+                                    mayBePromise = this.onChange(
+                                        attr,
+                                        newValue.join(`${this.props.schema.delimiter} `),
+                                    );
+                                } else {
+                                    mayBePromise = this.onChange(attr, newValue);
+                                }
+                                if (mayBePromise instanceof Promise) {
+                                    mayBePromise.catch(e => console.error(e));
+                                }
                             }
                         });
                     }}

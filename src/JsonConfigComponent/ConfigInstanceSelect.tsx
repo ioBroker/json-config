@@ -44,7 +44,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                     );
                 } else if (this.props.schema.adapters && Array.isArray(this.props.schema.adapters)) {
                     instances = instances.filter(instance =>
-                        this.props.schema.adapters.includes(instance?.common?.name),
+                        this.props.schema.adapters?.includes(instance?.common?.name),
                     );
                 }
 
@@ -56,7 +56,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                     value: this.props.schema.long
                         ? instance._id
                         : this.props.schema.short
-                          ? instance._id.split('.').pop()
+                          ? instance._id.split('.').pop() || ''
                           : instance._id.replace(/^system\.adapter\./, ''),
                     label: `${instance.common.name} [${instance._id.replace(/^system\.adapter\./, '')}]`,
                     icon: `${this.props.oContext.imagePrefix}/adapter/${instance.common.name}/${instance.common.icon}`,
@@ -103,7 +103,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
             : this.props.schema.short
               ? id.split('.').pop()
               : id.replace(/^system\.adapter\./, '');
-        const index = this.state.selectOptions.findIndex(item => item.value === _id);
+        const index = this.state.selectOptions?.findIndex(item => item.value === _id) ?? -1;
         if (!obj) {
             // deleted
             if (index !== -1) {
@@ -137,7 +137,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                     value: this.props.schema.long
                         ? obj._id
                         : this.props.schema.short
-                          ? obj._id.split('.').pop()
+                          ? obj._id.split('.').pop() || ''
                           : obj._id.replace(/^system\.adapter\./, ''),
                     label: `${name} [${obj._id.replace(/^system\.adapter\./, '')}]`,
                     icon: `${this.props.oContext.imagePrefix}/adapter/${name}/${obj.common.icon}`,
@@ -148,7 +148,7 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
         }
     };
 
-    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (!this.state.selectOptions) {
             return null;
         }
@@ -182,7 +182,10 @@ class ConfigInstanceSelect extends ConfigGeneric<ConfigInstanceSelectProps, Conf
                         </span>
                     )}
                     onChange={e =>
-                        this.setState({ value: e.target.value }, () => this.onChange(this.props.attr, this.state.value))
+                        this.setState(
+                            { value: e.target.value },
+                            () => this.props.attr && this.onChange(this.props.attr, this.state.value),
+                        )
                     }
                 >
                     {this.state.selectOptions.map(it => (

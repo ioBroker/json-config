@@ -39,7 +39,7 @@ export default class ConfigUUID extends ConfigGeneric<ConfigUUIDProps, ConfigUUI
                             <IconButton
                                 tabIndex={-1}
                                 onClick={() => {
-                                    Utils.copyToClipboard(this.state.uuid);
+                                    Utils.copyToClipboard(this.state.uuid || '');
                                     window.alert(I18n.t('jc_Copied %s', this.state.uuid));
                                 }}
                             >

@@ -63,7 +63,7 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                         e.preventDefault();
                         e.stopPropagation();
 
-                        if (!disabled) {
+                        if (!disabled && this.props.attr) {
                             const mayByPromise = this.onChange(this.props.attr, !value);
                             if (mayByPromise instanceof Promise) {
                                 void mayByPromise.catch(e => console.error(`Cannot set value: ${e}`));
@@ -74,7 +74,9 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                         <Checkbox
                             checked={!!value}
                             onChange={e => {
-                                void this.onChange(this.props.attr, e.target.checked);
+                                if (this.props.attr) {
+                                    void this.onChange(this.props.attr, e.target.checked);
+                                }
                             }}
                             disabled={disabled || (!!this.state.errorDocker && !value)}
                         />

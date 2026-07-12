@@ -6,6 +6,8 @@
         "resolveJsonModule": true,
         "useUnknownInCatchVariables": false,
         "target": "ES2022",
+        "strict": true,
+        "strictNullChecks": true,
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "checkJs": false,

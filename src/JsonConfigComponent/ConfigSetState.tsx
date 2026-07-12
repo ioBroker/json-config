@@ -53,7 +53,10 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
             return null;
         }
         const confirm = this.state.confirmData || this.props.schema.confirm;
-        let icon = null;
+        if (!confirm) {
+            return null;
+        }
+        let icon = undefined;
         if (confirm.type === 'warning') {
             icon = <IconWarning />;
         } else if (confirm.type === 'error') {

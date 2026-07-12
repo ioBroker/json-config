@@ -32,8 +32,10 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
         const instance = await this.getInstance();
         this.aliveId = `${instance}.alive`;
         const state = await this.props.oContext.socket.getState(this.aliveId);
-        this.setState({ alive: !!(state && state.val), instance }, async (): Promise<void> => {
-            await this.props.oContext.socket.subscribeState(this.aliveId, this.onAliveChanged);
+        this.setState({ alive: !!state?.val, instance }, async (): Promise<void> => {
+            if (this.aliveId) {
+                await this.props.oContext.socket.subscribeState(this.aliveId, this.onAliveChanged);
+            }
         });
     }
 
@@ -42,7 +44,9 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
             clearTimeout(this.checkTimeout);
             this.checkTimeout = null;
         }
-        this.props.oContext.socket.unsubscribeState(this.aliveId, this.onAliveChanged);
+        if (this.aliveId) {
+            this.props.oContext.socket.unsubscribeState(this.aliveId, this.onAliveChanged);
+        }
     }
 
     onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
@@ -89,7 +93,7 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
             return null;
         }
 
-        const instance = this.state.instance.replace(/^system\.adapter\./, '');
+        const instance = this.state.instance?.replace(/^system\.adapter\./, '');
         return (
             <div style={{ ...styles.root, ...(!this.state.alive ? styles.notAlive : undefined) }}>
                 {this.state.alive

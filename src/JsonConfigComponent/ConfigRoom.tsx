@@ -40,7 +40,7 @@ class ConfigRoom extends ConfigGeneric<ConfigRoomProps, ConfigRoomState> {
             .catch(e => console.error(`Cannot get enums: ${e}`));
     }
 
-    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (!this.state.selectOptions) {
             return null;
         }

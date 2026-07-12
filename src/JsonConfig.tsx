@@ -162,7 +162,10 @@ function encrypt(key: string, value: string, _iv?: string): string {
     return `$/aes-192-cbc:${window.CryptoJS.enc.Hex.stringify(iv)}:${encrypted}`;
 }
 
-function loadScript(src: string, id: string): ((this: GlobalEventHandlers, ev: Event) => any) | null | Promise<void> {
+function loadScript(
+    src: string,
+    id: string,
+): ((this: GlobalEventHandlers, ev: Event) => any) | null | undefined | Promise<void> {
     if (!id || !document.getElementById(id)) {
         return new Promise(resolve => {
             const script = document.createElement('script');
@@ -253,7 +256,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
 
                         if (obj) {
                             this.setState({
-                                schema,
+                                schema: schema || undefined,
                                 data: obj.native,
                                 common: obj.common,
                                 hash: MD5(JSON.stringify(schema)).toString(),
@@ -360,7 +363,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         );
     }
 
-    onFileChange = async (id: string, fileName: string, size: number): Promise<void> => {
+    onFileChange = async (id: string, fileName: string, size: number | null): Promise<void> => {
         if (id === `${this.props.adapterName}.admin` && size) {
             if (fileName === this.fileLangSubscribed) {
                 try {
@@ -376,7 +379,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
             } else if (this.fileSubscribed.includes(fileName)) {
                 try {
                     const schema = await this.getConfigFile(this.fileSubscribed[0]);
-                    this.setState({ schema, hash: MD5(JSON.stringify(schema)).toString() });
+                    this.setState({ schema: schema || undefined, hash: MD5(JSON.stringify(schema)).toString() });
                 } catch {
                     // ignore errors
                 }
@@ -390,7 +393,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 `system.adapter.${this.props.adapterName}.${this.props.instance}`,
             );
             // decode all native attributes listed in obj.encryptedNative
-            if (Array.isArray(obj.encryptedNative)) {
+            if (Array.isArray(obj?.encryptedNative)) {
                 if (!this.secret) {
                     const systemConfig = await this.props.socket.getSystemConfig();
                     await loadScript('../../lib/js/crypto-js/crypto-js.js', 'crypto-js');
@@ -403,7 +406,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 });
                 return obj;
             }
-            return obj;
+            return obj || null;
         } catch (e) {
             window.alert(`[JsonConfig] Cannot read instance object: ${e}`);
         }
@@ -447,11 +450,11 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         return json;
     }
 
-    async getConfigFile(fileName?: string): Promise<ConfigItemPanel | ConfigItemTabs> {
+    async getConfigFile(fileName?: string): Promise<ConfigItemPanel | ConfigItemTabs | null> {
         return this._getConfigFile(fileName);
     }
 
-    async _getConfigFile(fileName?: string, _filePaths?: string[]): Promise<ConfigItemPanel | ConfigItemTabs> {
+    async _getConfigFile(fileName?: string, _filePaths?: string[]): Promise<ConfigItemPanel | ConfigItemTabs | null> {
         fileName = fileName || 'jsonConfig.json5';
         _filePaths = _filePaths || [];
 
@@ -568,8 +571,12 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 }
 
                 for (const entry of table) {
-                    for (const tItem of schema.items) {
-                        this.postProcessing(entry, tItem.attr, tItem as ConfigItemAny);
+                    if (schema.items) {
+                        for (const tItem of schema.items) {
+                            if (tItem.attr) {
+                                this.postProcessing(entry, tItem.attr, tItem as ConfigItemAny);
+                            }
+                        }
                     }
                 }
             } else {
@@ -743,7 +750,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                             saveConfigDialog = false;
                         }
                         if (data) {
-                            this.setState({ data, changed, saveConfigDialog });
+                            this.setState({ data, changed: !!changed, saveConfigDialog });
                         } else if (saveConfigDialog !== undefined) {
                             this.setState({ saveConfigDialog });
                         }

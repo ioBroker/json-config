@@ -12,7 +12,7 @@ export interface ConfigAutocompleteProps extends ConfigGenericProps {
 }
 
 export interface ConfigAutocompleteState extends ConfigGenericState {
-    selectOptions: { value: string; label: string }[];
+    selectOptions: { value: string | number; label: ioBroker.StringOrTranslated }[];
 }
 
 class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAutocompleteState> {
@@ -20,17 +20,18 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
         await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
-        const selectOptions: { label: string; value: string }[] = this.props.schema.options.map(
-            (item: { label: string; value: string } | string) =>
-                typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
-        );
+        const selectOptions: { label: ioBroker.StringOrTranslated; value: string | number }[] =
+            this.props.schema.options.map(
+                (item: { label: ioBroker.StringOrTranslated; value: string | number } | string) =>
+                    typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
+            );
 
         // Report value-to-label mapping to parent table for filtering
-        if (this.props.onFilterLabelUpdate && this.props.table) {
+        if (this.props.onFilterLabelUpdate && this.props.table && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of selectOptions) {
                 if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
-                    valueToLabel[opt.value] = opt.label;
+                    valueToLabel[opt.value] = this.getText(opt.label);
                 }
             }
             this.props.onFilterLabelUpdate(this.props.attr, valueToLabel);
@@ -87,7 +88,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 value={item}
                 options={options}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
-                filterOptions={(options: { value: string; label: string }[], params) => {
+                filterOptions={(options: { value: string | number; label: ioBroker.StringOrTranslated }[], params) => {
                     const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
                         if (params.inputValue === '') {
@@ -96,7 +97,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                         // label/value may be numbers (or null/undefined), so coerce to string before comparing
                         // see https://github.com/ioBroker/ioBroker.admin/issues/3507
                         return (
-                            String(option.label ?? '')
+                            this.getText(option.label ?? '')
                                 .toLowerCase()
                                 .includes(inputValue) ||
                             String(option.value ?? '')
@@ -122,16 +123,16 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
 
                     const val = (e.target as HTMLInputElement).value;
                     if (val !== this.state.value) {
-                        this.setState({ value: val }, () => this.onChange(this.props.attr, val));
+                        this.setState({ value: val }, () => this.props.attr && this.onChange(this.props.attr, val));
                     }
                 }}
                 onChange={(_, value) => {
                     const val = typeof value === 'object' ? (value ? value.value : '') : value;
                     if (val !== this.state.value) {
-                        this.setState({ value: val }, () => this.onChange(this.props.attr, val));
+                        this.setState({ value: val }, () => this.props.attr && this.onChange(this.props.attr, val));
                     }
                 }}
-                getOptionLabel={option => (typeof option === 'object' ? (option?.label ?? '') : '')}
+                getOptionLabel={option => (typeof option === 'object' ? this.getText(option?.label ?? '') : '')}
                 renderInput={params => (
                     <TextField
                         variant="standard"

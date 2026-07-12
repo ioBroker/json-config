@@ -161,9 +161,11 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
                         }
                         onClick={() => {
                             this.setState({ showLicenseDialog: false });
-                            const mayBePromise = this.onChange(this.props.attr, true);
-                            if (mayBePromise instanceof Promise) {
-                                mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                            if (this.props.attr) {
+                                const mayBePromise = this.onChange(this.props.attr, true);
+                                if (mayBePromise instanceof Promise) {
+                                    mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                                }
                             }
                         }}
                         color="primary"

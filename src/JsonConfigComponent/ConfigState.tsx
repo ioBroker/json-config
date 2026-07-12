@@ -131,7 +131,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
             this.controlTimeout = null;
             if (this.state.objId) {
                 this.props.oContext.socket
-                    .setState(this.state.objId, this.state.stateValue, false)
+                    .setState(this.state.objId, this.state.stateValue as ioBroker.StateValue, false)
                     .catch((e: Error) => console.error(`Cannot control value: ${e.toString()}`));
             }
         }
@@ -236,12 +236,12 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                     color: state.color,
                 };
             });
-        } else if (this.state.obj.common.states) {
+        } else if (this.state.obj?.common.states) {
             states = [];
             Object.keys(this.state.obj.common.states).forEach(key => {
                 states.push({
                     value: key,
-                    label: this.getText(this.state.obj.common.states[key], this.props.schema.noTranslation),
+                    label: this.getText(this.state.obj!.common.states[key], this.props.schema.noTranslation),
                 });
             });
         } else {
@@ -251,7 +251,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
         return states;
     }
 
-    renderItem(_error: string, disabled: boolean /*, defaultValue */): JSX.Element {
+    renderItem(_error: string, disabled: boolean /*, defaultValue */): JSX.Element | null {
         if (!this.state.obj) {
             return null;
         }
@@ -272,15 +272,17 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 <FormControl fullWidth>
                     <InputLabel>{this.getText(this.props.schema.label)}</InputLabel>
                     <Select
-                        value={this.state.stateValue}
+                        value={(this.state.stateValue as string) ?? ''}
                         disabled={!!this.props.schema.readOnly || disabled}
                         onChange={e => {
                             this.setState({ stateValue: e.target.value }, (): void => {
                                 let value: string | number = this.state.stateValue as string | number;
-                                if (this.state.obj.common.type === 'number') {
+                                if (this.state.obj?.common.type === 'number') {
                                     value = parseFloat((value as unknown as string).toString().replace(',', '.'));
                                 }
-                                void this.props.oContext.socket.setState(this.state.objId, value, false);
+                                if (this.state.objId) {
+                                    void this.props.oContext.socket.setState(this.state.objId, value, false);
+                                }
                             });
                         }}
                         renderValue={(val: string) =>
@@ -326,7 +328,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 this.setState({
                                     confirmDialog: true,
                                     confirmCallback: async (result: boolean) => {
-                                        if (result) {
+                                        if (result && this.state.objId) {
                                             await this.props.oContext.socket.setState(
                                                 this.state.objId,
                                                 this.props.schema.buttonValue !== undefined
@@ -337,7 +339,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                         }
                                     },
                                 });
-                            } else {
+                            } else if (this.state.objId) {
                                 await this.props.oContext.socket.setState(
                                     this.state.objId,
                                     this.props.schema.buttonValue !== undefined ? this.props.schema.buttonValue : true,
@@ -361,7 +363,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 this.setState({
                                     confirmDialog: true,
                                     confirmCallback: async (result: boolean) => {
-                                        if (result) {
+                                        if (result && this.state.objId) {
                                             await this.props.oContext.socket.setState(
                                                 this.state.objId,
                                                 this.props.schema.buttonValue !== undefined
@@ -372,7 +374,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                         }
                                     },
                                 });
-                            } else {
+                            } else if (this.state.objId) {
                                 await this.props.oContext.socket.setState(
                                     this.state.objId,
                                     this.props.schema.buttonValue !== undefined ? this.props.schema.buttonValue : true,
@@ -408,10 +410,10 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             },
                         }}
                         onKeyUp={e => {
-                            if (this.props.schema.setOnEnterKey && e.key === 'Enter') {
+                            if (this.props.schema.setOnEnterKey && e.key === 'Enter' && this.state.objId) {
                                 void this.props.oContext.socket.setState(
                                     this.state.objId,
-                                    this.state.stateValue,
+                                    this.state.stateValue as ioBroker.StateValue,
                                     false,
                                 );
                             }
@@ -427,11 +429,13 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 this.controlTimeout = setTimeout(async () => {
                                     this.controlTimeout = null;
                                     let value: string | number = this.state.stateValue as string | number;
-                                    if (this.state.obj.common.type === 'number') {
+                                    if (this.state.obj?.common.type === 'number') {
                                         value = parseFloat((value as unknown as string).toString().replace(',', '.'));
                                     }
 
-                                    await this.props.oContext.socket.setState(this.state.objId, value, false);
+                                    if (this.state.objId) {
+                                        await this.props.oContext.socket.setState(this.state.objId, value, false);
+                                    }
                                 }, this.props.schema.controlDelay || 0);
                             });
                         }}
@@ -447,11 +451,13 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             variant="outlined"
                             disabled={disabled}
                             onClick={() => {
-                                void this.props.oContext.socket.setState(
-                                    this.state.objId,
-                                    this.state.stateValue,
-                                    false,
-                                );
+                                if (this.state.objId) {
+                                    void this.props.oContext.socket.setState(
+                                        this.state.objId,
+                                        this.state.stateValue as ioBroker.StateValue,
+                                        false,
+                                    );
+                                }
                             }}
                         >
                             {this.getText(
@@ -548,7 +554,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 this.setState({
                                     confirmDialog: true,
                                     confirmCallback: async (result: boolean) => {
-                                        if (result) {
+                                        if (result && this.state.objId) {
                                             await this.props.oContext.socket.setState(
                                                 this.state.objId,
                                                 !this.state.stateValue,
@@ -557,7 +563,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                         }
                                     },
                                 });
-                            } else {
+                            } else if (this.state.objId) {
                                 await this.props.oContext.socket.setState(
                                     this.state.objId,
                                     !this.state.stateValue,
@@ -634,9 +640,12 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             if (this.props.oContext.isFloatComma) {
                                 displayValue = displayValue.replace('.', ',');
                             }
-                            return `${displayValue}${this.getText(this.props.schema.unit, this.props.schema.noTranslation) || this.state.obj.common.unit || ''}`;
+                            return `${displayValue}${this.getText(this.props.schema.unit, this.props.schema.noTranslation) || this.state.obj?.common.unit || ''}`;
                         }}
-                        onChange={(_e: Event, value: number) => {
+                        onChange={(_e: Event, value: number | number[]) => {
+                            if (Array.isArray(value)) {
+                                value = value[0];
+                            }
                             this.setState({ stateValue: value }, (): void => {
                                 if (this.controlTimeout) {
                                     clearTimeout(this.controlTimeout);
@@ -644,11 +653,13 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 this.controlTimeout = setTimeout(async () => {
                                     console.log(`${Date.now()} Send new value: ${this.state.stateValue}`);
                                     this.controlTimeout = null;
-                                    await this.props.oContext.socket.setState(
-                                        this.state.objId,
-                                        this.state.stateValue,
-                                        false,
-                                    );
+                                    if (this.state.objId) {
+                                        await this.props.oContext.socket.setState(
+                                            this.state.objId,
+                                            this.state.stateValue as ioBroker.StateValue,
+                                            false,
+                                        );
+                                    }
                                 }, this.props.schema.controlDelay || 0);
                             });
                         }}
@@ -718,8 +729,10 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 }
                                 this.controlTimeout = setTimeout(async () => {
                                     this.controlTimeout = null;
-                                    const val = parseFloat(this.state.stateValue as unknown as string);
-                                    await this.props.oContext.socket.setState(this.state.objId, val, false);
+                                    if (this.state.objId) {
+                                        const val = parseFloat(this.state.stateValue as unknown as string);
+                                        await this.props.oContext.socket.setState(this.state.objId, val, false);
+                                    }
                                 }, this.props.schema.controlDelay || 0);
                             });
                         }}
@@ -771,13 +784,9 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 let mappedValue = this.state.stateValue;
 
                 // if options or states are defined, map the value to the label
-                if (
-                    mappedValue !== null &&
-                    mappedValue !== undefined &&
-                    (this.props.schema.options || this.state.obj.common.states)
-                ) {
+                if (mappedValue != null && (this.props.schema.options || this.state.obj.common.states)) {
                     const states = this.getNormalizedStates();
-                    const state = states.find(s => s.value.toString() === mappedValue.toString());
+                    const state = states.find(s => s.value.toString() === mappedValue!.toString());
                     if (state) {
                         mappedValue = state.label;
                     }
@@ -801,7 +810,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             value = value.replace('.', ',');
                         }
                     } else {
-                        value = mappedValue.toString();
+                        value = (mappedValue || '').toString();
                     }
                     key = value;
                 }

@@ -93,7 +93,7 @@ class ConfigStaticImage extends ConfigGeneric<ConfigStaticImageProps, ConfigStat
             <img
                 src={src}
                 style={{ cursor: schema.href ? 'pointer' : undefined, width: '100%', height: '100%' }}
-                onClick={schema.href ? () => schema.href && window.open(schema.href, '_blank') : null}
+                onClick={schema.href ? () => schema.href && window.open(schema.href, '_blank') : undefined}
                 alt=""
             />
         );

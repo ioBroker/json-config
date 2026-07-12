@@ -59,7 +59,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
         if (this.props.schema.validateJson) {
             if (value || !this.props.schema.allowEmpty) {
                 try {
-                    JSON.parse(value);
+                    JSON.parse(value as string);
                 } catch (err: unknown) {
                     console.log('Error in JSON', err);
                     jsonError = true;
@@ -130,13 +130,13 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
             );
         }
 
-        if (this.state.oldValue !== null && this.state.oldValue !== undefined) {
+        if (this.state.oldValue != null) {
             if (this.updateTimeout) {
                 clearTimeout(this.updateTimeout);
             }
             this.updateTimeout = setTimeout(() => {
                 this.updateTimeout = null;
-                this.setState({ oldValue: null });
+                this.setState({ oldValue: undefined });
             }, 30);
         } else if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
@@ -198,7 +198,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
         let actionButton: React.JSX.Element | undefined;
         let actionButtonStyle: React.CSSProperties | undefined;
         if ((this.props.schema.readOnly || disabled) && this.props.schema.copyToClipboard) {
-            if (this.props.schema.minRows > 1) {
+            if ((this.props.schema.minRows || 0) > 1) {
                 actionButtonStyle = {
                     position: 'absolute',
                     right: 3,
@@ -220,7 +220,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                 </IconButton>
             );
         } else if (!this.props.schema.readOnly && !disabled && this.state.value && !this.props.schema.noClearButton) {
-            if (this.props.schema.minRows > 1) {
+            if ((this.props.schema.minRows || 0) > 1) {
                 actionButtonStyle = {
                     position: 'absolute',
                     right: 3,
@@ -242,12 +242,12 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                     <CloseIcon />
                 </IconButton>
             );
-            if (this.props.schema.minRows <= 1) {
+            if ((this.props.schema.minRows || 0) <= 1) {
                 actionButton = <InputAdornment position="end">{actionButton}</InputAdornment>;
             }
         }
 
-        if (this.props.schema.minRows > 1) {
+        if ((this.props.schema.minRows || 0) > 1) {
             const helper = this.renderHelp(
                 this.props.schema.help,
                 this.props.schema.helpLink,

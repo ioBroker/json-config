@@ -167,7 +167,7 @@ class ConfigStaticInfo extends ConfigGeneric<ConfigStaticInfoProps, ConfigGeneri
             if (this.props.oContext.isFloatComma) {
                 valueTxt = valueTxt.replace('.', ',');
             }
-        } else if (!this.props.schema.booleanAsCheckbox || typeof this.props.schema.data !== 'boolean') {
+        } else {
             valueTxt = this.props.schema.data.toString();
         }
         let multiLine = false;
@@ -175,7 +175,7 @@ class ConfigStaticInfo extends ConfigGeneric<ConfigStaticInfoProps, ConfigGeneri
         if (this.props.schema.booleanAsCheckbox && typeof this.props.schema.data === 'boolean') {
             value = (
                 <Checkbox
-                    checked={!!value}
+                    checked={this.props.schema.data}
                     disabled
                     size={
                         this.props.schema.size === 'small'

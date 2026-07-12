@@ -21,31 +21,28 @@ interface ConfigColorState extends ConfigGenericState {
 
 class ConfigColor extends ConfigGeneric<ConfigColorProps, ConfigColorState> {
     renderColorDialog(): JSX.Element | null {
-        return (
-            !!this.state.showColorDialog && (
-                <Dialog
-                    onClose={() => this.setState({ showColorDialog: false })}
-                    open={this.state.showColorDialog}
-                >
-                    <ChromePicker
-                        color={this.state.colorDialogValue}
-                        onChange={(color: ColorResult) =>
-                            this.setState({ colorDialogValue: color.hex }, () =>
-                                this.onChange(this.props.attr, this.state.colorDialogValue),
-                            )
-                        }
-                    />
-                </Dialog>
-            )
-        );
+        return this.state.showColorDialog ? (
+            <Dialog
+                onClose={() => this.setState({ showColorDialog: false })}
+                open={this.state.showColorDialog}
+            >
+                <ChromePicker
+                    color={this.state.colorDialogValue}
+                    onChange={(color: ColorResult) =>
+                        this.setState(
+                            { colorDialogValue: color.hex },
+                            () => this.props.attr && this.onChange(this.props.attr, this.state.colorDialogValue),
+                        )
+                    }
+                />
+            </Dialog>
+        ) : null;
     }
 
     renderItem(_error: unknown, disabled: boolean /* , defaultValue */): JSX.Element {
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
-        let textColor = Utils.isUseBright(value, null);
-        if (textColor === null) {
-            textColor = undefined;
-        }
+        const textColor = Utils.isUseBright(value);
+
         return (
             <>
                 {this.renderColorDialog()}
@@ -61,7 +58,7 @@ class ConfigColor extends ConfigGeneric<ConfigColorProps, ConfigColorState> {
                     }
                     onChange={e => {
                         const color = e.target.value;
-                        const mayBePromise = this.onChange(this.props.attr, color);
+                        const mayBePromise = this.props.attr && this.onChange(this.props.attr, color);
                         if (mayBePromise instanceof Promise) {
                             void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
                         }
@@ -83,7 +80,7 @@ class ConfigColor extends ConfigGeneric<ConfigColorProps, ConfigColorState> {
                                         size="small"
                                         onClick={e => {
                                             e.stopPropagation();
-                                            const mayBePromise = this.onChange(this.props.attr, '');
+                                            const mayBePromise = this.props.attr && this.onChange(this.props.attr, '');
                                             if (mayBePromise instanceof Promise) {
                                                 void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
                                             }

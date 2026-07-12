@@ -70,7 +70,7 @@ class ConfigPassword extends ConfigGeneric<ConfigPasswordProps, ConfigPasswordSt
         });
     }
 
-    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (this.state._notEqual === undefined) {
             return null;
         }

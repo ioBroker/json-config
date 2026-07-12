@@ -58,19 +58,21 @@ export default class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, C
         this.setState({ value, initialized: true });
     }
 
-    onObjectChanged = async (attr: string, value: string): Promise<void> => {
+    onObjectChanged = async (attr: string | undefined, value: string | undefined): Promise<void> => {
         await this.onChange(attr, value);
         if (this.fillOnSelect.length) {
             try {
-                const obj = await this.getCachedObject(value);
-                for (const item of this.fillOnSelect) {
-                    if (item.overwrite || !ConfigGeneric.getValue(this.props.data, item.attr)) {
-                        let objVal = ConfigGeneric.getValue(obj, item.pathInObject);
-                        // Special case for translated name
-                        if (typeof objVal === 'object') {
-                            objVal = this.getText(objVal, true);
+                const obj = value && (await this.getCachedObject(value));
+                if (obj) {
+                    for (const item of this.fillOnSelect) {
+                        if (item.overwrite || !ConfigGeneric.getValue(this.props.data, item.attr)) {
+                            let objVal = ConfigGeneric.getValue(obj, item.pathInObject);
+                            // Special case for translated name
+                            if (typeof objVal === 'object') {
+                                objVal = this.getText(objVal, true);
+                            }
+                            await this.onChange(item.attr, objVal);
                         }
-                        await this.onChange(item.attr, objVal);
                     }
                 }
             } catch (e) {
@@ -79,7 +81,7 @@ export default class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, C
         }
     };
 
-    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
+    renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (!this.state.initialized) {
             return null;
         }
@@ -106,7 +108,7 @@ export default class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, C
                         onChange={e => {
                             // Store it to have the possibility to access it in onObjectChanged
                             const value = Array.isArray(e.target.value) ? e.target.value[0] : e.target.value;
-                            this.setState({ value }, () => void this.onObjectChanged(attr, value));
+                            this.setState({ value }, () => attr && void this.onObjectChanged(attr, value));
                         }}
                     />
                     <Button
@@ -138,7 +140,7 @@ export default class ConfigObjectId extends ConfigGeneric<ConfigObjectIdProps, C
                             const val = Array.isArray(value_) ? value_[0] : value_;
                             this.setState(
                                 { showSelectId: false, value: val },
-                                () => void this.onObjectChanged(attr, val),
+                                () => attr && void this.onObjectChanged(attr, val),
                             );
                         }}
                     />

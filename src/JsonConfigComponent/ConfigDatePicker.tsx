@@ -47,13 +47,15 @@ export default class ConfigDatePicker extends ConfigGeneric<ConfigDatePickerProp
                 format={this.props.oContext.systemConfig.dateFormat.toLowerCase().replace('mm', 'MM')}
                 disabled={!!disabled}
                 value={(this.state.value as never) || null}
-                onChange={(value: Date): void =>
+                onChange={(value: Date | null): void =>
                     this.setState({ value }, () => {
                         try {
-                            const dateStr = this.state.value.toISOString();
-                            this.onChange(this.props.attr, dateStr).catch(e =>
-                                console.warn(`Error saving value for ${this.props.attr}:`, e),
-                            );
+                            if (this.props.attr) {
+                                const dateStr = this.state.value.toISOString();
+                                this.onChange(this.props.attr, dateStr).catch(e =>
+                                    console.warn(`Error saving value for ${this.props.attr}:`, e),
+                                );
+                            }
                         } catch {
                             // ignore
                         }

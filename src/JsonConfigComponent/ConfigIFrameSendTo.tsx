@@ -47,7 +47,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
 
     async askInstance(): Promise<void> {
         if (this.props.alive) {
-            let data = this.props.schema.data;
+            let data: Record<string, any> | undefined | null = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
                 const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 if (dataStr) {
@@ -59,9 +59,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
                 }
             }
 
-            if (data === undefined) {
-                data = null;
-            }
+            data ??= null;
             const instance = await this.getPatternAsync(
                 this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
             );
@@ -91,7 +89,7 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
         return JSON.stringify(localContext);
     }
 
-    renderItem(error: boolean, disabled: boolean /*, defaultValue */): JSX.Element {
+    renderItem(error: boolean, disabled: boolean /*, defaultValue */): JSX.Element | null {
         if (this.props.alive) {
             const localContext = this.getContext();
             if (localContext !== this.localContext || !this.initialized) {

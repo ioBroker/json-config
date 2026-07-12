@@ -74,7 +74,7 @@ class ConfigUser extends ConfigGeneric<ConfigUserProps, ConfigUserState> {
                         error={!!error}
                         disabled={!!disabled}
                         value={value}
-                        onChange={e => this.onChange(this.props.attr, e.target.value)}
+                        onChange={e => this.props.attr && this.onChange(this.props.attr, e.target.value)}
                         label={this.getText(this.props.schema.label)}
                     />
                 ) : (
@@ -97,7 +97,7 @@ class ConfigUser extends ConfigGeneric<ConfigUserProps, ConfigUserState> {
                         style={{
                             color: (this.state.users && this.state.users[value]?.color) || undefined,
                             backgroundColor: Utils.getInvertedColor(
-                                this.state.users && this.state.users[value]?.color,
+                                this.state.users?.[value]?.color,
                                 this.props.oContext.themeType,
                             ),
                         }}

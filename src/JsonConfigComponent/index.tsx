@@ -43,7 +43,7 @@ interface JsonConfigComponentProps {
     data: Record<string, any>;
     updateData?: number;
     onError: (error: boolean) => void;
-    onChange?: (data: Record<string, any>, changed: boolean, saveConfig: boolean) => void;
+    onChange?: (data: Record<string, any> | null, changed: boolean | undefined, saveConfig: boolean) => void;
     /** Backend request to refresh data */
     onBackEndCommand?: (command?: BackEndCommand) => void;
     custom?: boolean;
@@ -77,7 +77,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
     private readonly forceUpdateHandlers: Record<string, (data: any) => void>;
     private errorTimeout: ReturnType<typeof setTimeout> | null = null;
     private errorCached: Record<string, string> | null = null;
-    private oContext: JsonConfigContext;
+    private oContext: JsonConfigContext | undefined;
     private cachedObjects: Record<string, ioBroker.Object | null> = {};
     static i18nInitialized = false;
 
@@ -135,7 +135,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
 
     static async loadI18n(
         socket: AdminConnection,
-        i18n: boolean | string | Record<string, Record<ioBroker.Languages, string>>,
+        i18n: boolean | string | Record<string, Record<ioBroker.Languages, string>> | undefined,
         adapterName: string,
     ): Promise<string> {
         if (i18n === true || (i18n && typeof i18n === 'string')) {
@@ -208,15 +208,21 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             const state = await this.props.socket.getState(
                 `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
             );
-            this.setState({ systemConfig: systemConfig.common, alive: !!(state && state.val) }, () => {
-                this.updateContext(true);
-                if (!this.props.custom) {
-                    void this.props.socket.subscribeState(
-                        `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
-                        this.onAlive,
-                    );
-                }
-            });
+            this.setState(
+                {
+                    systemConfig: systemConfig?.common || ({} as ioBroker.SystemConfigCommon),
+                    alive: !!state?.val,
+                },
+                () => {
+                    this.updateContext(true);
+                    if (!this.props.custom) {
+                        void this.props.socket.subscribeState(
+                            `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
+                            this.onAlive,
+                        );
+                    }
+                },
+            );
         } catch (error) {
             console.error(`Cannot read system config: ${error}`);
         }
@@ -228,44 +234,48 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
         }
     };
 
-    onChange = (attrOrData: string | Record<string, any>, value: any, cb?: () => void, saveConfig?: boolean): void => {
+    onChange = (
+        attrOrData: string | Record<string, any> | undefined,
+        value: any,
+        cb?: () => void,
+        saveConfig?: boolean,
+    ): void => {
         if (this.props.onValueChange) {
-            this.props.onValueChange(attrOrData as string, value, saveConfig);
-            if (cb) {
-                cb();
-            }
+            this.props.onValueChange(attrOrData as string, value, !!saveConfig);
+            cb?.();
         } else if (attrOrData && this.props.onChange) {
             const newState: Partial<JsonConfigComponentState> = {
                 changed: JSON.stringify(attrOrData) !== this.state.originalData,
             };
 
             this.setState(newState as JsonConfigComponentState, () => {
-                this.props.onChange(attrOrData as Record<string, any>, newState.changed, saveConfig);
-                if (cb) {
-                    cb();
-                }
+                this.props.onChange?.(attrOrData as Record<string, any>, !!newState.changed, !!saveConfig);
+                cb?.();
             });
         } else if (saveConfig) {
-            this.props.onChange(null, null, saveConfig);
+            this.props.onChange?.(null, undefined, saveConfig);
         }
     };
 
-    onError = (attr: string, error?: string): void => {
+    onError = (attr?: string, error?: string): void => {
         this.errorCached = this.errorCached || JSON.parse(JSON.stringify(this.state.errors));
         const errors = this.errorCached;
-        if (error) {
-            errors[attr] = error;
-        } else {
-            delete errors[attr];
+        if (errors && attr) {
+            if (error) {
+                errors[attr] = error;
+            } else {
+                delete errors[attr];
+            }
         }
 
         if (this.errorTimeout) {
             clearTimeout(this.errorTimeout);
+            this.errorTimeout = null;
         }
         if (JSON.stringify(errors) !== JSON.stringify(this.state.errors)) {
             this.errorTimeout = setTimeout(
                 () =>
-                    this.setState({ errors: this.errorCached }, () => {
+                    this.setState({ errors: this.errorCached || {} }, () => {
                         this.errorTimeout = null;
                         this.errorCached = null;
                         this.props.onError(!!Object.keys(this.state.errors).length);
@@ -440,6 +450,9 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
     }
 
     renderItem(item: ConfigItemTabs | ConfigItemPanel): JSX.Element | null {
+        if (!this.oContext) {
+            return null;
+        }
         if (item.type === 'tabs') {
             return (
                 <ConfigTabs

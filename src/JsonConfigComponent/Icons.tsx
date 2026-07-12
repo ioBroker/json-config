@@ -27,7 +27,7 @@ import {
     QrCode,
 } from '@mui/icons-material';
 
-export default function getIconByName(name: string, style?: React.CSSProperties): JSX.Element | null {
+export default function getIconByName(name: string | undefined, style?: React.CSSProperties): JSX.Element | null {
     if (name === 'edit' || name === 'rename') {
         return <Edit style={style} />;
     }

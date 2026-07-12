@@ -94,7 +94,7 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
 
     async askInstance(): Promise<void> {
         if (this.props.alive) {
-            let data: Record<string, any> | undefined = this.props.schema.data;
+            let data: Record<string, any> | undefined | null = this.props.schema.data;
             if (data === undefined && this.props.schema.jsonData) {
                 const dataStr: string = await this.getPatternAsync(this.props.schema.jsonData, null, true);
                 try {
@@ -104,9 +104,7 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                 }
             }
 
-            if (data === undefined) {
-                data = null;
-            }
+            data ??= null;
             this.setState({ running: true }, async () => {
                 const instance = await this.getPatternAsync(
                     this.props.schema.instance || `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
@@ -144,7 +142,7 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
 
     /** Report value-to-label mapping to parent table for filtering */
     reportFilterLabels(list: { label: string; value: string | number }[] | undefined): void {
-        if (this.props.onFilterLabelUpdate && this.props.table && Array.isArray(list)) {
+        if (this.props.onFilterLabelUpdate && this.props.table && Array.isArray(list) && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of list) {
                 if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
@@ -167,11 +165,9 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
         return JSON.stringify(localContext);
     }
 
-    _getValue(): string | string[] {
+    _getValue(): string | string[] | null | undefined {
         let value: string | string[] | null | undefined =
-            this.state.value === null || this.state.value === undefined
-                ? ConfigGeneric.getValue(this.props.data, this.props.attr)
-                : this.state.value;
+            this.state.value == null ? ConfigGeneric.getValue(this.props.data, this.props.attr) : this.state.value;
 
         if (this.props.schema.multiple) {
             if (typeof value === 'string') {
@@ -269,9 +265,9 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
             return <CircularProgress size="24" />;
         }
 
-        const selectOptions = this.state.list.filter(item => !item.hiddenValue);
+        const selectOptions = this.state.list?.filter(item => !item.hiddenValue);
 
-        const item = selectOptions.find(it => it.value === value);
+        const item = selectOptions?.find(it => it.value === value);
 
         return (
             <FormControl
@@ -285,15 +281,19 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                     multiple={this.props.schema.multiple}
                     disabled={!!disabled}
                     // MenuProps={this.props.schema.multiple ? { classes: { paper: this.props.classes.menuPaper } } : undefined}
-                    sx={{
-                        '&.MuiSelect-paper': this.props.schema.multiple ? styles.menuPaper : undefined,
-                    }}
-                    value={value}
+                    sx={
+                        this.props.schema.multiple
+                            ? {
+                                  '&.MuiSelect-paper': styles.menuPaper,
+                              }
+                            : undefined
+                    }
+                    value={value || ''}
                     renderValue={(val: string | string[]) =>
                         this.props.schema.multiple ? (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {(val as string[]).map((v: string) => {
-                                    const it = selectOptions.find(_item => _item.value === v);
+                                    const it = selectOptions?.find(_item => _item.value === v);
                                     if (it || this.props.schema.showAllValues !== false) {
                                         const label = it?.label || v;
                                         return (
@@ -317,7 +317,7 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                         }
                     }}
                 >
-                    {selectOptions.map((it, i) => {
+                    {selectOptions?.map((it, i) => {
                         if (it.group) {
                             return (
                                 <ListSubheader key={i}>
@@ -337,10 +337,10 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                             >
                                 {this.props.schema.multiple ? (
                                     <Checkbox
-                                        checked={value.includes(it.value.toString())}
+                                        checked={value?.includes(it.value.toString())}
                                         onClick={() => {
                                             const _value = JSON.parse(JSON.stringify(this._getValue()));
-                                            const pos = value.indexOf(it.value.toString());
+                                            const pos = value?.indexOf(it.value.toString());
                                             if (pos !== -1) {
                                                 _value.splice(pos, 1);
                                             } else {

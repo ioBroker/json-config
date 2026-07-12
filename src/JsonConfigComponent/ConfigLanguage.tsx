@@ -114,9 +114,11 @@ class ConfigLanguage extends ConfigGeneric<ConfigLanguageProps, ConfigLanguageSt
                         }
 
                         this.setState({ value }, () => {
-                            const mayBePromise = this.onChange(this.props.attr, value);
-                            if (mayBePromise instanceof Promise) {
-                                void mayBePromise.catch(err => console.error(err));
+                            if (this.props.attr) {
+                                const mayBePromise = this.onChange(this.props.attr, value);
+                                if (mayBePromise instanceof Promise) {
+                                    void mayBePromise.catch(err => console.error(err));
+                                }
                             }
                             if (this.props.schema.changeGuiLanguage) {
                                 if (value) {
@@ -124,9 +126,7 @@ class ConfigLanguage extends ConfigGeneric<ConfigLanguageProps, ConfigLanguageSt
                                         return;
                                     }
                                     I18n.setLanguage(value);
-                                    if (this.props.oContext.changeLanguage) {
-                                        this.props.oContext.changeLanguage();
-                                    }
+                                    this.props.oContext.changeLanguage?.();
                                 } else {
                                     void this.props.oContext.socket
                                         .getSystemConfig()
@@ -136,9 +136,7 @@ class ConfigLanguage extends ConfigGeneric<ConfigLanguageProps, ConfigLanguageSt
                                             }
                                             if (systemConfig.common.language) {
                                                 I18n.setLanguage(systemConfig.common.language);
-                                                if (this.props.oContext.changeLanguage) {
-                                                    this.props.oContext.changeLanguage();
-                                                }
+                                                this.props.oContext.changeLanguage?.();
                                             }
                                         })
                                         .catch(e => console.error(`Cannot read system config: ${e}`));

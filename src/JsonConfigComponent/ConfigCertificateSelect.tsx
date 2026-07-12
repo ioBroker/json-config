@@ -7,6 +7,7 @@ import type { ConfigItemCertificateSelect } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
 interface ConfigCertificateSelectProps extends ConfigGenericProps {
+    attr: string;
     schema: ConfigItemCertificateSelect;
 }
 

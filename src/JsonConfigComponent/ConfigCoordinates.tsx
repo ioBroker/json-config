@@ -89,7 +89,7 @@ class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesProps, ConfigCoor
                         value,
                     },
                     () => {
-                        const mayByPromise = this.onChange(this.props.attr, value);
+                        const mayByPromise = this.props.attr && this.onChange(this.props.attr, value);
                         if (mayByPromise instanceof Promise) {
                             mayByPromise.catch(e => console.error(`Cannot set value: ${e}`));
                         }

@@ -311,7 +311,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         this.filterRefs = {};
         this.props.schema.items ||= [];
         this.props.schema.items.forEach((el: ConfigItemTableIndexed) => {
-            if (el.filter) {
+            if (el.filter && el.attr) {
                 this.filterRefs[el.attr] = createRef();
             }
         });
@@ -359,10 +359,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             this.secret = systemConfig?.native?.secret || this.secret;
 
             _value.forEach((el: Record<string, any>) => {
-                this.props.schema.encryptedAttributes.forEach((attr: string) => {
-                    if (el[attr]) {
-                        el[attr] = decrypt(this.secret, el[attr]);
-                    }
+                this.props.schema.encryptedAttributes?.forEach((attr: string) => {
+                    el[attr] ||= decrypt(this.secret, el[attr]);
                 });
             });
         }
@@ -438,9 +436,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 data={data}
                 globalData={this.props.data}
                 index={idx + this.state.iteration}
-                onChange={(attr: string, valueChange: any) => {
+                onChange={(attr: string | Record<string, any> | undefined, valueChange: any) => {
                     const newObj: Record<string, any>[] = JSON.parse(JSON.stringify(this.state.value));
-                    newObj[idx][attr] = valueChange;
+                    newObj[idx][attr as string] = valueChange;
                     this.setState({ value: newObj }, () => {
                         this.validateUniqueProps();
                         this.onChangeWrapper(newObj, true);
@@ -463,7 +461,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 customComponents={this.props.customComponents}
                 onHiddenChanged={
                     asCard
-                        ? (attr: string, hidden: boolean): void => {
+                        ? (attr: string, hidden?: boolean): void => {
                               // if element is hidden, so hide
                               if (hidden) {
                                   this.listOfHiddenElements[idx] ||= [];
@@ -527,7 +525,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
             // Clear error for this column if no duplicates found
             if (!found) {
-                this.onError(uniqueCol, null);
+                this.onError(uniqueCol);
             }
         }
 
@@ -550,21 +548,21 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
      */
     onTableRowError =
         (rowIndex: number) =>
-        (attr: string, error?: string): void => {
+        (attr: string | undefined, error?: string): void => {
             const newTableErrors = { ...this.state.tableErrors };
 
-            if (!newTableErrors[rowIndex]) {
-                newTableErrors[rowIndex] = {};
-            }
+            newTableErrors[rowIndex] ||= {};
 
-            if (!error) {
-                delete newTableErrors[rowIndex][attr];
-                // Clean up empty row error objects
-                if (Object.keys(newTableErrors[rowIndex]).length === 0) {
-                    delete newTableErrors[rowIndex];
+            if (attr) {
+                if (!error) {
+                    delete newTableErrors[rowIndex][attr];
+                    // Clean up empty row error objects
+                    if (Object.keys(newTableErrors[rowIndex]).length === 0) {
+                        delete newTableErrors[rowIndex];
+                    }
+                } else {
+                    newTableErrors[rowIndex][attr] = error;
                 }
-            } else {
-                newTableErrors[rowIndex][attr] = error;
             }
 
             this.setState({ tableErrors: newTableErrors });
@@ -596,8 +594,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         return (el?.current?.children[0]?.children[0] as HTMLInputElement)?.value;
     }
 
-    static setFilterValue(el: React.RefObject<HTMLInputElement>, filterValue: string): string {
-        return ((el.current.children[0].children[0] as HTMLInputElement).value = filterValue);
+    static setFilterValue(el: React.RefObject<HTMLInputElement>, filterValue: string): void {
+        if (el.current) {
+            (el.current.children[0].children[0] as HTMLInputElement).value = filterValue;
+        }
     }
 
     handleRequestSort = (property: string, orderCheck: boolean = false): void => {
@@ -633,7 +633,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
     };
 
     renderShowHideFilter(headCell: ConfigItemTableIndexed): React.JSX.Element | null {
-        if (!headCell.filter) {
+        if (!headCell.filter || !headCell.attr) {
             return null;
         }
         return (
@@ -642,18 +642,20 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 size="small"
                 onClick={() => {
                     const filterOn = [...this.state.filterOn];
-                    const pos = this.state.filterOn.indexOf(headCell.attr);
-                    if (pos === -1) {
-                        filterOn.push(headCell.attr);
-                    } else {
-                        filterOn.splice(pos, 1);
-                    }
-                    this.setState({ filterOn }, () => {
-                        if (pos && ConfigTable.getFilterValue(this.filterRefs[headCell.attr])) {
-                            ConfigTable.setFilterValue(this.filterRefs[headCell.attr], '');
-                            this.applyFilter();
+                    if (headCell.attr) {
+                        const pos = this.state.filterOn.indexOf(headCell.attr);
+                        if (pos === -1) {
+                            filterOn.push(headCell.attr);
+                        } else {
+                            filterOn.splice(pos, 1);
                         }
-                    });
+                        this.setState({ filterOn }, () => {
+                            if (pos && ConfigTable.getFilterValue(this.filterRefs[headCell.attr!])) {
+                                ConfigTable.setFilterValue(this.filterRefs[headCell.attr!], '');
+                                this.applyFilter();
+                            }
+                        });
+                    }
                 }}
             >
                 {this.state.filterOn.includes(headCell.attr) ? <IconFilterOff /> : <IconFilterOn />}
@@ -793,22 +795,24 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 iteration: this.state.iteration + 10_000,
                 tableErrors: shiftedErrors,
             },
-            () => this.applyFilter(false, null, () => this.onChangeWrapper(newValue)),
+            () => this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
         );
     };
 
     onExport(): void {
         const { schema } = this.props;
         const { value } = this.state;
-        const cols = schema.items.map((it: ConfigItemTableIndexed) => it.attr);
-        const lines = [cols.join(';')];
+        const cols = schema.items?.map((it: ConfigItemTableIndexed) => it.attr);
+        const lines = cols ? [cols.join(';')] : [];
         value.forEach(row => {
             const line: string[] = [];
-            schema.items.forEach((it: ConfigItemTableIndexed) => {
-                if (row[it.attr] && typeof row[it.attr] === 'string' && row[it.attr].includes(';')) {
-                    line.push(`"${row[it.attr]}"`);
-                } else {
-                    line.push(row[it.attr] ?? '');
+            schema.items?.forEach((it: ConfigItemTableIndexed) => {
+                if (it.attr) {
+                    if (row[it.attr] && typeof row[it.attr] === 'string' && row[it.attr].includes(';')) {
+                        line.push(`"${row[it.attr]}"`);
+                    } else {
+                        line.push(row[it.attr] ?? '');
+                    }
                 }
             });
             lines.push(line.join(';'));
@@ -834,10 +838,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         // the first line is header
         const { schema } = this.props;
 
-        const header = lines
-            .shift()
+        const header = (lines?.shift() || '')
             .split(';')
-            .filter(it => it && schema.items.find((it2: ConfigItemTableIndexed) => it2.attr === it));
+            .filter(it => it && schema.items?.find((it2: ConfigItemTableIndexed) => it2.attr === it));
 
         const values: Record<string, any>[] = [];
         lines.forEach((line: string) => {
@@ -860,7 +863,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 } else if (value === 'false') {
                     val = false;
                 } else if (window.isFinite(value as any as number)) {
-                    const attr = this.props.schema.items.find((it: ConfigItemTableIndexed) => it.attr === header[p]);
+                    const attr = this.props.schema.items?.find((it: ConfigItemTableIndexed) => it.attr === header[p]);
                     if (attr && attr.type === 'number') {
                         // if a type of attribute is a "number"
                         val = parseFloat(value);
@@ -913,7 +916,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         newValue.splice(index, 0, cloned);
 
         this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.applyFilter(false, null, () => this.onChangeWrapper(newValue)),
+            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
         );
     };
 
@@ -930,7 +933,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 if (this.props.schema.encryptedAttributes) {
                     const _value = JSON.parse(JSON.stringify(value));
                     _value.forEach((el: Record<string, any>) => {
-                        this.props.schema.encryptedAttributes.forEach((attr: string) => {
+                        this.props.schema.encryptedAttributes!.forEach((attr: string) => {
                             if (el[attr]) {
                                 el[attr] = encrypt(this.secret, el[attr]);
                             }
@@ -1006,13 +1009,17 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     defaultValue = currentValue.default ?? null;
                 }
 
-                newItem[currentValue.attr] = defaultValue;
+                if (currentValue.attr) {
+                    newItem[currentValue.attr] = defaultValue;
+                }
             }
         }
 
         newValue.push(newItem);
 
-        this.setState({ value: newValue }, () => this.applyFilter(false, null, () => this.onChangeWrapper(newValue)));
+        this.setState({ value: newValue }, () =>
+            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+        );
     };
 
     isAnyFilterSet(): boolean {
@@ -1020,14 +1027,14 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
     }
 
     applyFilter = (clear?: boolean, value?: Record<string, any>[], cb?: () => void): void => {
-        value = value || this.state.value;
-        let visibleValue = value.map((_, i) => i);
+        value ||= this.state.value;
+        let visibleValue: number[] | null | undefined = value.map((_, i) => i);
         Object.keys(this.filterRefs).forEach(attr => {
             let valueInputRef = ConfigTable.getFilterValue(this.filterRefs[attr]);
             if (!clear && valueInputRef) {
                 valueInputRef = valueInputRef.toLowerCase();
                 const labelMap = this.state.filterLabelMap?.[attr];
-                visibleValue = visibleValue.filter(idx => {
+                visibleValue = visibleValue?.filter(idx => {
                     if (!value[idx] || value[idx][attr] == null) {
                         return false;
                     }
@@ -1038,7 +1045,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     // Also check against the display label
                     if (labelMap) {
                         const label = labelMap[value[idx][attr]];
-                        if (label && label.toLowerCase().includes(valueInputRef)) {
+                        if (label?.toLowerCase().includes(valueInputRef)) {
                             return true;
                         }
                     }
@@ -1049,14 +1056,12 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             }
         });
 
-        if (visibleValue.length === value.length) {
+        if (visibleValue && visibleValue.length === value.length) {
             visibleValue = null;
         }
 
-        if (visibleValue === null && this.state.visibleValue === null) {
-            if (cb) {
-                cb();
-            }
+        if (visibleValue == null && this.state.visibleValue === null) {
+            cb?.();
             return;
         }
 
@@ -1073,7 +1078,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         newValue.splice(idx, 1);
         newValue.splice(idx - 1, 0, item);
         this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.applyFilter(false, null, () => this.onChangeWrapper(newValue)),
+            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
         );
     }
 
@@ -1083,7 +1088,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         newValue.splice(idx, 1);
         newValue.splice(idx + 1, 0, item);
         this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.applyFilter(false, null, () => this.onChangeWrapper(newValue)),
+            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
         );
     }
 
@@ -1140,7 +1145,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                     iteration: this.state.iteration + 10000,
                                     showTypeOfImportDialog: false,
                                 },
-                                () => this.applyFilter(false, null, () => this.onChangeWrapper(value)),
+                                () => this.applyFilter(false, undefined, () => this.onChangeWrapper(value)),
                             );
                         }}
                     >
@@ -1161,7 +1166,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                     iteration: this.state.iteration + 10000,
                                     showTypeOfImportDialog: false,
                                 },
-                                () => this.applyFilter(false, null, () => this.onChangeWrapper(value)),
+                                () => this.applyFilter(false, undefined, () => this.onChangeWrapper(value)),
                             );
                         }}
                     >
@@ -1199,14 +1204,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         onDrop={(acceptedFiles, errors) => {
                             this.setState({ uploadFile: false });
                             if (!acceptedFiles.length) {
-                                window.alert(
-                                    (errors &&
-                                        errors[0] &&
-                                        errors[0].errors &&
-                                        errors[0].errors[0] &&
-                                        errors[0].errors[0].message) ||
-                                        I18n.t('jc_Cannot upload'),
-                                );
+                                window.alert(errors?.[0]?.errors?.[0]?.message || I18n.t('jc_Cannot upload'));
                             } else {
                                 this.onDrop(acceptedFiles);
                             }
@@ -1261,7 +1259,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         orderBy: string;
         order: 'asc' | 'desc';
         showAddButton: boolean;
-        style: React.CSSProperties;
+        style?: React.CSSProperties;
     }): React.JSX.Element {
         return (
             <TableCell
@@ -1282,10 +1280,12 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             active
                             style={props.orderBy !== props.headCell.attr ? styles.silver : undefined}
                             direction={props.orderBy === props.headCell.attr ? props.order : 'asc'}
-                            onClick={() => this.handleRequestSort(props.headCell.attr)}
+                            onClick={() => props.headCell.attr && this.handleRequestSort(props.headCell.attr)}
                         />
                     )}
-                    {props.headCell.filter && this.state.filterOn.includes(props.headCell.attr) ? (
+                    {props.headCell.filter &&
+                    props.headCell.attr &&
+                    this.state.filterOn.includes(props.headCell.attr) ? (
                         <TextField
                             variant="standard"
                             ref={this.filterRefs[props.headCell.attr]}
@@ -1300,7 +1300,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                 tabIndex={-1}
                                                 onClick={() => {
                                                     ConfigTable.setFilterValue(
-                                                        this.filterRefs[props.headCell.attr],
+                                                        this.filterRefs[props.headCell.attr!],
                                                         '',
                                                     );
                                                     this.applyFilter();
@@ -1324,7 +1324,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         );
     }
 
-    enhancedFilterCard(): JSX.Element {
+    enhancedFilterCard(): JSX.Element | null {
         const { schema } = this.props;
         const { order, orderBy } = this.state;
         let tdStyle: React.CSSProperties | undefined;
@@ -1334,7 +1334,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
         const importExportVisible = (!schema.noDelete && schema.import) || schema.export;
 
-        if (importExportVisible || schema.items.find(item => item.sort || item.filter)) {
+        if (importExportVisible || schema.items?.find(item => item.sort || item.filter)) {
             return (
                 <Grid2
                     size={{
@@ -1423,7 +1423,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             <TableBody>
                                 <TableRow>
                                     <TableCell
-                                        colSpan={schema.items.length + 1}
+                                        colSpan={(schema.items?.length || 0) + 1}
                                         style={tdStyle}
                                     >
                                         {this.renderAddButton(doAnyFilterSet)}
@@ -1570,9 +1570,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                     <Table>
                                         <TableBody>
                                             {schema.items?.map((headCell: ConfigItemTableIndexed) => {
-                                                const hidden = this.listOfHiddenElements?.[idx]?.includes(
-                                                    headCell.attr,
-                                                );
+                                                const hidden =
+                                                    headCell.attr &&
+                                                    this.listOfHiddenElements?.[idx]?.includes(headCell.attr);
                                                 return (
                                                     <TableRow key={`${headCell.attr}_${idx}`}>
                                                         <TableCell
@@ -1589,12 +1589,13 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                             align="left"
                                                             style={hidden ? tdStyleHidden : tdStyle}
                                                         >
-                                                            {this.itemTable(
-                                                                headCell.attr,
-                                                                this.state.value[idx],
-                                                                idx,
-                                                                true,
-                                                            )}
+                                                            {headCell.attr &&
+                                                                this.itemTable(
+                                                                    headCell.attr,
+                                                                    this.state.value[idx],
+                                                                    idx,
+                                                                    true,
+                                                                )}
                                                         </TableCell>
                                                     </TableRow>
                                                 );
@@ -1735,7 +1736,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                             align="left"
                                             style={tdStyle}
                                         >
-                                            {this.itemTable(headCell.attr, this.state.value[idx], idx, false)}
+                                            {headCell.attr &&
+                                                this.itemTable(headCell.attr, this.state.value[idx], idx, false)}
                                         </TableCell>
                                     ))}
                                     {!schema.noDelete && (
@@ -1808,7 +1810,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             {!schema.noDelete && visibleValue.length >= (schema.showSecondAddAt || 5) ? (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={schema.items.length + 1}
+                                        colSpan={(schema.items?.length || 0) + 1}
                                         style={{ ...tdStyle }}
                                     >
                                         {this.renderAddButton(doAnyFilterSet)}
@@ -1862,7 +1864,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             }
             this.resizeTimeout = setTimeout(() => {
                 this.resizeTimeout = null;
-                this.setState({ width: this.refDiv.current?.clientWidth });
+                if (this.refDiv.current?.clientWidth) {
+                    this.setState({ width: this.refDiv.current.clientWidth });
+                }
             }, 50);
         }
     }
@@ -1894,7 +1898,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         }
 
         const currentBreakpoint = this.getCurrentBreakpoint();
-        let content: React.JSX.Element;
+        let content: React.JSX.Element | null = null;
 
         if (currentBreakpoint && (schema.useCardFor || ['xs']).includes(currentBreakpoint)) {
             content = this.renderCards();
