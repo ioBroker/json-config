@@ -69,8 +69,9 @@ class ConfigFunc extends ConfigGeneric<ConfigFuncProps, ConfigFuncState> {
                         )
                     }
                     onChange={e => {
-                        this.setState({ value: e.target.value === '_' ? '' : e.target.value }, () =>
-                            this.props.attr && this.onChange(this.props.attr, this.state.value),
+                        this.setState(
+                            { value: e.target.value === '_' ? '' : e.target.value },
+                            () => this.props.attr && this.onChange(this.props.attr, this.state.value),
                         );
                     }}
                 >

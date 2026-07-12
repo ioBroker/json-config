@@ -191,11 +191,14 @@ export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFil
                     }}
                     onChange={e => {
                         const value = e.target.value;
-                        this.setState({ value }, () =>
-                            this.props.attr && this.onChange(
-                                this.props.attr,
-                                this.props.schema.trim === false ? value : (value || '').trim(),
-                            ),
+                        this.setState(
+                            { value },
+                            () =>
+                                this.props.attr &&
+                                this.onChange(
+                                    this.props.attr,
+                                    this.props.schema.trim === false ? value : (value || '').trim(),
+                                ),
                         );
                     }}
                     placeholder={this.getText(this.props.schema.placeholder)}
