@@ -1822,7 +1822,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 8.5.2 (2026-07-20)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Changed the handling of Tabs
 
 ### 8.5.0 (2026-07-12)

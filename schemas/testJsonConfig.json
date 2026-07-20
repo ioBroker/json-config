@@ -36,7 +36,7 @@
                 "fileSelector": {
                     "type": "fileSelector",
                     "pattern": "*.jsx",
-                    "maxSize": "2MB",
+                    "maxSize": 2097152,
                     "noSize": true
                 },
                 "bind": {
