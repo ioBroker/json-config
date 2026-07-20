@@ -34,13 +34,12 @@ interface ConfigTabsState extends ConfigGenericState {
     tab?: string;
     width: number;
     openMenu: HTMLButtonElement | null;
-    initialBreakpoint?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     tabErrors: Record<string, Record<string, string>>; // tab -> attr -> error
     calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> | null;
 }
 
 export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
-    private resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+    private resizeObserver: ResizeObserver | null = null;
     private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
 
     private readonly refDiv: React.RefObject<HTMLDivElement>;
@@ -119,10 +118,24 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
         return !!this.state.tabErrors[tabName] && Object.keys(this.state.tabErrors[tabName]).length > 0;
     };
 
+    async componentDidMount(): Promise<void> {
+        await super.componentDidMount();
+        // Measure the real width synchronously so the first painted frame already
+        // uses the correct breakpoint (no visible tabs -> menu switch).
+        this.measureWidth();
+        // Keep the width up to date on later layout changes (dialog open animation,
+        // async detail loading, window/dialog resize) instead of freezing a
+        // transient - possibly too narrow - initial measurement.
+        if (this.refDiv.current && typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.measureWidth());
+            this.resizeObserver.observe(this.refDiv.current);
+        }
+    }
+
     componentWillUnmount(): void {
-        if (this.resizeTimeout) {
-            clearTimeout(this.resizeTimeout);
-            this.resizeTimeout = null;
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
         }
         if (this.calculateTimeoutTable) {
             clearTimeout(this.calculateTimeoutTable);
@@ -131,6 +144,13 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
         window.removeEventListener('hashchange', this.onHashTabsChanged, false);
         super.componentWillUnmount();
     }
+
+    measureWidth = (): void => {
+        const width = this.refDiv.current?.clientWidth;
+        if (width && width !== this.state.width) {
+            this.setState({ width });
+        }
+    };
 
     onHashTabsChanged = (): void => {
         const hash = (window.location.hash || '').replace(/^#/, '').split('/');
@@ -156,50 +176,27 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
     };
 
     getCurrentBreakpoint(): 'xs' | 'sm' | 'md' | 'lg' | 'xl' {
+        // Until the real width is measured (before the first paint in
+        // componentDidMount) fall back to a wide breakpoint so tabs - not the
+        // menu - are the default. The breakpoint is always derived from the
+        // current width and never frozen, so a transient narrow measurement can
+        // no longer lock the component into the burger menu.
         if (!this.state.width) {
             return 'md';
         }
-        if (!this.state.initialBreakpoint) {
-            let initialBreakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-            if (this.state.width < 600) {
-                initialBreakpoint = 'xs';
-            } else if (this.state.width < 900) {
-                initialBreakpoint = 'sm';
-            } else if (this.state.width < 1200) {
-                initialBreakpoint = 'md';
-            } else if (this.state.width < 1536) {
-                initialBreakpoint = 'lg';
-            } else {
-                initialBreakpoint = 'xl';
-            }
-            // Remember initial breakpoint and do not change it anymore
-            setTimeout(() => {
-                this.setState({ initialBreakpoint });
-            }, 50);
-
-            return initialBreakpoint;
+        if (this.state.width < 600) {
+            return 'xs';
         }
-
-        return this.state.initialBreakpoint;
-    }
-
-    componentDidUpdate(): void {
-        if (
-            !this.state.initialBreakpoint &&
-            this.refDiv.current?.clientWidth &&
-            this.refDiv.current.clientWidth !== this.state.width
-        ) {
-            if (this.resizeTimeout) {
-                clearTimeout(this.resizeTimeout);
-            }
-            this.resizeTimeout = setTimeout(() => {
-                this.resizeTimeout = null;
-                const width = this.refDiv.current?.clientWidth;
-                if (width) {
-                    this.setState({ width });
-                }
-            }, 50);
+        if (this.state.width < 900) {
+            return 'sm';
         }
+        if (this.state.width < 1200) {
+            return 'md';
+        }
+        if (this.state.width < 1536) {
+            return 'lg';
+        }
+        return 'xl';
     }
 
     onMenuChange(tab: string): void {
