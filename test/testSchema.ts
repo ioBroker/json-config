@@ -19,7 +19,7 @@ function positiveTests(): void {
         const valid = validate(config);
 
         if (!valid) {
-            const errors = validate.errors.map(entry => JSON.stringify(entry, null, 2));
+            const errors = validate.errors!.map(entry => JSON.stringify(entry, null, 2));
             console.error(errors.join('\n'));
             console.error(`${errors.length} errors occurred on ${fileName}`);
             process.exit(1);
