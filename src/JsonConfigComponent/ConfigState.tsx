@@ -795,7 +795,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 let value;
                 let key: string;
                 if (this.state.controlType === 'html') {
-                    key = (mappedValue || '').toString();
+                    key = (mappedValue ?? '').toString();
                     value = <span dangerouslySetInnerHTML={{ __html: mappedValue as string }} />;
                 } else if (this.state.stateValue === null) {
                     value = 'null';
@@ -810,7 +810,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             value = value.replace('.', ',');
                         }
                     } else {
-                        value = (mappedValue || '').toString();
+                        value = (mappedValue ?? '').toString();
                     }
                     key = value;
                 }

@@ -32,14 +32,24 @@ interface ConfigTabsProps extends ConfigGenericProps {
 
 interface ConfigTabsState extends ConfigGenericState {
     tab?: string;
-    width: number;
+    /** Show the burger menu instead of the tab bar (true only for very narrow widths). Decided with hysteresis. */
+    useMenu: boolean;
     openMenu: HTMLButtonElement | null;
     tabErrors: Record<string, Record<string, string>>; // tab -> attr -> error
     calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> | null;
 }
 
 export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
+    /** Below this width the tabs collapse into a burger menu */
+    private static readonly MENU_WIDTH = 600;
+    /**
+     * Dead-band around MENU_WIDTH. A scrollbar appearing/disappearing on a tab change shifts
+     * clientWidth by ~15px; without this dead-band that would toggle bar<->menu and flicker.
+     */
+    private static readonly MENU_HYSTERESIS = 40;
+
     private resizeObserver: ResizeObserver | null = null;
+    private resizeRaf: number | null = null;
     private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
 
     private readonly refDiv: React.RefObject<HTMLDivElement>;
@@ -79,7 +89,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
         }
         this.refDiv = React.createRef();
 
-        Object.assign(this.state, { tab, width: 0, openMenu: null, tabErrors: {} });
+        Object.assign(this.state, { tab, useMenu: false, openMenu: null, tabErrors: {} });
     }
 
     onTabError = (attr?: string, error?: string): void => {
@@ -127,12 +137,27 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
         // async detail loading, window/dialog resize) instead of freezing a
         // transient - possibly too narrow - initial measurement.
         if (this.refDiv.current && typeof ResizeObserver !== 'undefined') {
-            this.resizeObserver = new ResizeObserver(() => this.measureWidth());
+            this.resizeObserver = new ResizeObserver(() => {
+                // Coalesce bursts into a single measurement per frame. This also breaks the
+                // ResizeObserver feedback loop: switching bar<->menu changes the layout, which
+                // would otherwise notify the observer again immediately and cause flickering.
+                if (this.resizeRaf !== null) {
+                    return;
+                }
+                this.resizeRaf = window.requestAnimationFrame(() => {
+                    this.resizeRaf = null;
+                    this.measureWidth();
+                });
+            });
             this.resizeObserver.observe(this.refDiv.current);
         }
     }
 
     componentWillUnmount(): void {
+        if (this.resizeRaf !== null) {
+            window.cancelAnimationFrame(this.resizeRaf);
+            this.resizeRaf = null;
+        }
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = null;
@@ -147,8 +172,22 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
 
     measureWidth = (): void => {
         const width = this.refDiv.current?.clientWidth;
-        if (width && width !== this.state.width) {
-            this.setState({ width });
+        if (!width) {
+            return;
+        }
+        // Decide with hysteresis whether to collapse the tabs into the burger menu. Switch to the
+        // menu once the width drops below MENU_WIDTH, but only switch back to the tab bar once it
+        // grows past MENU_WIDTH + MENU_HYSTERESIS. The dead-band in between prevents a scrollbar
+        // that appears/disappears on a tab change (shifting the width by ~15px) from toggling the
+        // layout back and forth, which is what caused the flickering.
+        let useMenu = this.state.useMenu;
+        if (!useMenu && width < ConfigTabs.MENU_WIDTH) {
+            useMenu = true;
+        } else if (useMenu && width > ConfigTabs.MENU_WIDTH + ConfigTabs.MENU_HYSTERESIS) {
+            useMenu = false;
+        }
+        if (useMenu !== this.state.useMenu) {
+            this.setState({ useMenu });
         }
     };
 
@@ -174,30 +213,6 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
             }
         }
     };
-
-    getCurrentBreakpoint(): 'xs' | 'sm' | 'md' | 'lg' | 'xl' {
-        // Until the real width is measured (before the first paint in
-        // componentDidMount) fall back to a wide breakpoint so tabs - not the
-        // menu - are the default. The breakpoint is always derived from the
-        // current width and never frozen, so a transient narrow measurement can
-        // no longer lock the component into the burger menu.
-        if (!this.state.width) {
-            return 'md';
-        }
-        if (this.state.width < 600) {
-            return 'xs';
-        }
-        if (this.state.width < 900) {
-            return 'sm';
-        }
-        if (this.state.width < 1200) {
-            return 'md';
-        }
-        if (this.state.width < 1536) {
-            return 'lg';
-        }
-        return 'xl';
-    }
 
     onMenuChange(tab: string): void {
         (((window as any)._localStorage as Storage) || window.localStorage).setItem(
@@ -309,9 +324,8 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
             setTimeout(() => this.setState({ tab: elements[0].name }), 50);
         }
 
-        const currentBreakpoint = this.getCurrentBreakpoint();
         let tabs: React.JSX.Element;
-        if (currentBreakpoint === 'xs' && elements.length > 2) {
+        if (this.state.useMenu && elements.length > 2) {
             tabs = (
                 <Toolbar
                     style={{
