@@ -37,6 +37,12 @@ interface ConfigTabsState extends ConfigGenericState {
     openMenu: HTMLButtonElement | null;
     tabErrors: Record<string, Record<string, string>>; // tab -> attr -> error
     calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> | null;
+    /**
+     * Width (px) reserved on the container while a tab switch is in progress, or undefined when
+     * no switch is pending. Prevents the shrink-to-fit dialog from collapsing during the frame
+     * where the freshly-mounted panel still renders no content. See pinWidthForTransition().
+     */
+    contentMinWidth?: number;
 }
 
 export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTabsState> {
@@ -51,6 +57,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
     private resizeObserver: ResizeObserver | null = null;
     private resizeRaf: number | null = null;
     private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
+    private pinTimeout: ReturnType<typeof setTimeout> | null = null;
 
     private readonly refDiv: React.RefObject<HTMLDivElement>;
 
@@ -166,8 +173,38 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
             clearTimeout(this.calculateTimeoutTable);
             this.calculateTimeoutTable = null;
         }
+        if (this.pinTimeout) {
+            clearTimeout(this.pinTimeout);
+            this.pinTimeout = null;
+        }
         window.removeEventListener('hashchange', this.onHashTabsChanged, false);
         super.componentWillUnmount();
+    }
+
+    /**
+     * Freeze the current container width for the duration of a tab switch. Switching tabs remounts
+     * the panel (key={tab}), and a freshly-mounted ConfigPanel renders `null` for a frame or two
+     * while it computes its calculated values. In that gap the widest content is just the tab bar,
+     * so the shrink-to-fit dialog collapses and then grows back - the visible width "jump".
+     *
+     * We capture the width shown by the outgoing tab and apply it as a temporary minWidth floor, then
+     * release it shortly after so genuine resizes (window/dialog) keep working normally afterwards.
+     */
+    private pinWidthForTransition(): void {
+        const width = this.refDiv.current?.clientWidth;
+        if (!width) {
+            return;
+        }
+        if (this.pinTimeout) {
+            clearTimeout(this.pinTimeout);
+        }
+        if (this.state.contentMinWidth !== width) {
+            this.setState({ contentMinWidth: width });
+        }
+        this.pinTimeout = setTimeout(() => {
+            this.pinTimeout = null;
+            this.setState({ contentMinWidth: undefined });
+        }, 500);
     }
 
     measureWidth = (): void => {
@@ -209,6 +246,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     `${this.props.dialogName || 'App'}.${this.props.oContext.adapterName}`,
                     tab,
                 );
+                this.pinWidthForTransition();
                 this.setState({ tab });
             }
         }
@@ -219,6 +257,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
             `${this.props.dialogName || 'App'}.${this.props.oContext.adapterName}`,
             tab,
         );
+        this.pinWidthForTransition();
         this.setState({ tab }, () => {
             if (this.props.root) {
                 const hash = (window.location.hash || '').split('/');
@@ -413,7 +452,11 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
         }
         return (
             <div
-                style={styles.tabs}
+                style={
+                    this.state.contentMinWidth !== undefined
+                        ? { ...styles.tabs, minWidth: this.state.contentMinWidth }
+                        : styles.tabs
+                }
                 ref={this.refDiv}
             >
                 {tabs}
