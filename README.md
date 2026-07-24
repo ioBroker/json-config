@@ -45,13 +45,13 @@ This guide explains how to define configuration options for your ioBroker adapte
 
 ```json5
 {
-  options1: {
-    myPort: 1234,
-    options: {
-      myType: 1,
-    },
-    myBool: false,
-  },
+   "options1": {
+      "myPort": 1234,
+      "options": {
+         "myType": 1,
+      },
+      "myBool": false,
+   },
 }
 ```
 
