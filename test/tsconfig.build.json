@@ -6,7 +6,8 @@
         "noEmit": false,
         "declaration": false,
         "skipLibCheck": true,
-        "module": "commonjs"
+        "module": "nodenext",
+        "moduleResolution": "nodenext"
     },
     "include": ["./**/*.ts"]
 }

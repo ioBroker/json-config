@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import type { ConfigItemIFrameSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 interface ConfigIFrameSendToProps extends ConfigGenericProps {
     schema: ConfigItemIFrameSendTo;
@@ -99,7 +99,9 @@ export default class ConfigIFrameSendTo extends ConfigGeneric<ConfigIFrameSendTo
             }
         }
 
-        if (this.state.url === undefined) {
+        // An empty URL is resolved by the browser against the current document, so the iframe would load the admin
+        // page into itself. Render nothing until the instance answered with a URL.
+        if (!this.state.url) {
             return null;
         }
 

@@ -1,0 +1,33 @@
+{
+    "name": "test-gui",
+    "version": "2.1.2",
+    "private": true,
+    "comment": "react, react-dom and their type definitions are used from the root project to avoid duplicated types",
+    "dependencies": {
+        "@vitejs/plugin-react": "^6.0.4",
+        "vite": "^8.1.5",
+        "vite-tsconfig-paths": "^6.1.1"
+    },
+    "scripts": {
+        "start": "vite",
+        "build_gui": "tsc && vite build",
+        "build": "vite build",
+        "preview": "vite preview",
+        "lint": "eslint -c eslint.config.mjs src",
+        "tsc": "tsc -p tsconfig.json"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "proxy": "http://127.0.0.1:8081",
+    "allowedHosts": [
+        "127.0.0.1"
+    ],
+    "homepage": ".",
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ]
+}

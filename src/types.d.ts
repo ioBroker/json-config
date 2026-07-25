@@ -6,7 +6,7 @@ import type {
     ObjectBrowserType,
     ThemeType,
     ThemeName,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 import type { ConfigGeneric, DeviceManagerPropsProps } from './JsonConfigComponent/ConfigGeneric';
 
 declare module '@mui/material/Button' {
@@ -83,68 +83,53 @@ export type ConfigItemType =
     | 'uuid'
     | 'yamlEditor';
 
-export type ConfigIconType =
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+/**
+ * Named icons, which are rendered by `ConfigGeneric.getIcon()`. Every name listed here must have an entry in the
+ * `NAMED_ICONS` map there - TypeScript enforces that - otherwise it would silently be treated as an image path.
+ */
+export type ConfigNamedIcon =
     | 'add'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'auth'
     | 'backlight'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'book'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'delete'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'dimmer'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'edit'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'error'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'group'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'help'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'identify'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'info'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'light'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'lines'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'next'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'open'
     | 'pair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'pause'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'play'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'previous'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'qrcode'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'refresh'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'save'
     | 'search'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'send'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'settings'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'socket'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'stop'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'unpair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'upload'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'user'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'warning'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'web'
-    | string; // base 64 string
+    | 'web';
+
+/**
+ * A named icon, or a URL / path relative to `./adapter/NAME` / base64 string of an image.
+ *
+ * `string & {}` instead of a plain `string`: a plain `string` would swallow the literals of `ConfigNamedIcon`, so
+ * editors would stop suggesting the icon names. The intersection keeps them as distinct constituents while still
+ * accepting any string.
+ */
+export type ConfigIconType = ConfigNamedIcon | (string & {});
 
 export interface ConfigItemConfirmData {
     condition: string;

@@ -13,7 +13,7 @@ import {
 
 import { Check, Close } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import type { ConfigItemLicense } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -32,7 +32,7 @@ interface ConfigLicenseState extends ConfigGenericState {
 }
 
 class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState> {
-    private readonly scrollRef: React.RefObject<HTMLDivElement | HTMLPreElement>;
+    private readonly scrollRef: React.RefObject<HTMLDivElement | HTMLPreElement | null>;
 
     constructor(props: ConfigLicenseProps) {
         super(props);
@@ -110,7 +110,7 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
                         <>
                             {this.state.loading ? <LinearProgress /> : null}
                             <pre
-                                ref={this.scrollRef as React.RefObject<HTMLPreElement>}
+                                ref={this.scrollRef as React.RefObject<HTMLPreElement | null>}
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -124,7 +124,7 @@ class ConfigLicense extends ConfigGeneric<ConfigLicenseProps, ConfigLicenseState
                     ) : null}
                     {!this.props.schema.licenseUrl && this.props.schema.texts ? (
                         <div
-                            ref={this.scrollRef as React.RefObject<HTMLDivElement>}
+                            ref={this.scrollRef as React.RefObject<HTMLDivElement | null>}
                             style={{
                                 width: '100%',
                                 height: '100%',

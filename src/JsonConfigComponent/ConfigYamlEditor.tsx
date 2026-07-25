@@ -3,7 +3,7 @@ import { parse } from 'yaml';
 
 import { FormHelperText, FormControl, Button } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 import type { ConfigItemYamlEditor } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import CustomModal from './wrapper/Components/CustomModal';

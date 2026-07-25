@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, IconButton, TextField } from '@mui/material';
 import { Close as CloseIcon, CloudUpload } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import type { ConfigItemOAuth2 } from '../types';

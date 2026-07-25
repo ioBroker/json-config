@@ -1,7 +1,7 @@
 import React, { type JSX } from 'react';
 
 import { CircularProgress } from '@mui/material';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import type QRCode from 'react-qr-code';
 import type { ConfigItemQrCodeSendTo } from '../types';
@@ -146,6 +146,8 @@ export default class ConfigQrCodeSendTo extends ConfigGeneric<ConfigQrCodeSendTo
                     padding,
                     width: '100%',
                     height: '100%',
+                    // without this, the padding is added on top of the 100% and the box overflows its grid cell
+                    boxSizing: 'border-box',
                 }}
             >
                 <QRCodeComponent

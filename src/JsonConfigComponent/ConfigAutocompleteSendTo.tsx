@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Autocomplete, TextField, CircularProgress, InputAdornment } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import type { ConfigItemAutocompleteSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps } from './ConfigGeneric';
@@ -208,7 +208,11 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 freeSolo={!!this.props.schema.freeSolo}
                 options={options}
                 disabled={disabled}
-                isOptionEqualToValue={(option, value) => option.value === value.value}
+                // With `freeSolo` the value can be a plain string typed by the user and is
+                // therefore not necessarily one of the options.
+                isOptionEqualToValue={(option, value) =>
+                    option.value === (typeof value === 'string' ? value : value.value)
+                }
                 filterOptions={(options: { value: string; label: string }[], params) => {
                     const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
@@ -272,7 +276,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                         disabled={disabled}
                         slotProps={{
                             input: {
-                                ...params.InputProps,
+                                ...params.slotProps.input,
                                 endAdornment: (
                                     <>
                                         {this.state.loading ? (
@@ -280,7 +284,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                                                 <CircularProgress size={20} />
                                             </InputAdornment>
                                         ) : null}
-                                        {disabled ? null : params.InputProps.endAdornment}
+                                        {disabled ? null : params.slotProps.input.endAdornment}
                                     </>
                                 ),
                             },

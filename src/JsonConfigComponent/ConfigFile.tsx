@@ -9,7 +9,7 @@ import {
     Videocam as IconVideo,
 } from '@mui/icons-material';
 
-import { DialogSelectFile } from '@iobroker/adapter-react-v5';
+import { DialogSelectFile } from '@iobroker/gui-components';
 
 import type { ConfigItemFile } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

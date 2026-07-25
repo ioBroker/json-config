@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        // the app compiles `../src` directly, so it must use the same strictness as the library itself
+        "useUnknownInCatchVariables": false,
+        "noFallthroughCasesInSwitch": false,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        // the app imports the sources of the library directly from `../src`
+        "rootDir": "..",
+        "jsx": "react-jsx",
+        "types": ["@iobroker/types", "vite/client"]
+    },
+    // `../src/globals.d.ts` declares the additional properties of `window` used by the library
+    "include": ["src/index.tsx", "../src/globals.d.ts"],
+    "exclude": ["node_modules", "build"]
+}

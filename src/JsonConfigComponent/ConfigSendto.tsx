@@ -4,7 +4,7 @@ import { Button, CircularProgress } from '@mui/material';
 
 import { Warning as IconWarning, Error as IconError, Info as IconInfo } from '@mui/icons-material';
 
-import { DialogConfirm, DialogError, DialogMessage, I18n, copy } from '@iobroker/adapter-react-v5';
+import { DialogConfirm, DialogError, DialogMessage, I18n, copy } from '@iobroker/gui-components';
 
 import type { BackEndCommand, ConfigItemSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

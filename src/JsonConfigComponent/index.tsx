@@ -2,7 +2,7 @@ import React, { Component, type JSX } from 'react';
 
 import { LinearProgress } from '@mui/material';
 
-import { type AdminConnection, I18n, type ThemeName, type ThemeType, type IobTheme } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, type ThemeName, type ThemeType, type IobTheme } from '@iobroker/gui-components';
 
 import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext } from '../types';
 import type ConfigGeneric from './ConfigGeneric';
@@ -202,8 +202,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
                 systemConfig = await this.props.socket.getCompactSystemConfig();
             } else {
                 systemConfig = ((await this.getCachedObject('system.config')) || undefined) as
-                    | ioBroker.SystemConfigObject
-                    | undefined;
+                    ioBroker.SystemConfigObject | undefined;
             }
             const state = await this.props.socket.getState(
                 `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,

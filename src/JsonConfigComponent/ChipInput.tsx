@@ -3,7 +3,6 @@
  *         Copyright (c) 2014 Call-Em-All (https://github.com/callemall/material-ui)
  */
 import React, { type RefObject, type JSX } from 'react';
-import ReactDOM from 'react-dom';
 
 import {
     Input,
@@ -18,7 +17,7 @@ import {
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 
-import { type IobTheme, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
+import { type IobTheme, type ThemeType, Utils } from '@iobroker/gui-components';
 
 const variantComponent = {
     standard: Input,
@@ -294,11 +293,11 @@ interface ChipInputState {
 }
 
 export default class ChipInput extends React.Component<ChipInputProps, ChipInputState> {
-    private readonly labelRef: React.RefObject<HTMLLabelElement>;
+    private readonly labelRef: React.RefObject<HTMLLabelElement | null>;
 
     private labelNode: HTMLLabelElement | null = null;
 
-    private readonly input: React.RefObject<HTMLInputElement>;
+    private readonly input: React.RefObject<HTMLInputElement | null>;
 
     private readonly newChipKeyCodes: number[];
 
@@ -336,8 +335,9 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
 
     componentDidMount(): void {
         if (this.state.variant === 'outlined') {
-            // eslint-disable-next-line react/no-find-dom-node
-            this.labelNode = ReactDOM.findDOMNode(this.labelRef.current) as HTMLLabelElement;
+            // `ref` on InputLabel with `component="label"` already points at the DOM <label>,
+            // so the former `ReactDOM.findDOMNode()` call (removed in React 19) was a no-op.
+            this.labelNode = this.labelRef.current;
             this.forceUpdate();
         }
     }

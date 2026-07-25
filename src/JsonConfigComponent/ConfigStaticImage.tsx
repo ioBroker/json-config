@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Button, Dialog, DialogActions, DialogContent, Tooltip } from '@mui/material';
 
-import { I18n, Icon } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/gui-components';
 
 import type { ConfigItemStaticImage } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

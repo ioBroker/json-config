@@ -12,7 +12,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Grid2,
+    Grid,
     IconButton,
     InputAdornment,
     Paper,
@@ -47,7 +47,7 @@ import {
     ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 
-import { I18n, type IobTheme } from '@iobroker/adapter-react-v5';
+import { I18n, type IobTheme } from '@iobroker/gui-components';
 
 import type { ConfigItemTableIndexed, ConfigItemPanel, ConfigItemTable } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -292,7 +292,7 @@ function decrypt(secret: string, value: string): string {
 }
 
 export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigTableState> {
-    private readonly filterRefs: Record<string, RefObject<HTMLInputElement>>;
+    private readonly filterRefs: Record<string, RefObject<HTMLInputElement | null>>;
 
     private typingTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -300,7 +300,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
     private secret: string = 'Zgfr56gFe87jJOM';
 
-    private readonly refDiv: React.RefObject<HTMLDivElement>;
+    private readonly refDiv: React.RefObject<HTMLDivElement | null>;
 
     private readonly listOfHiddenElements: string[][] = [];
 
@@ -350,8 +350,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     systemConfig = await this.props.oContext.socket.getCompactSystemConfig();
                 } else {
                     systemConfig = (await this.getCachedObject('system.config')) as
-                        | ioBroker.SystemConfigObject
-                        | undefined;
+                        ioBroker.SystemConfigObject | undefined;
                 }
             } catch (e) {
                 console.error(`Cannot get system configuration: ${e}`);
@@ -590,11 +589,11 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             : (a: Record<string, any>, b: Record<string, any>) => -ConfigTable.descendingComparator(a, b, orderBy);
     }
 
-    static getFilterValue(el: React.RefObject<HTMLInputElement>): string {
+    static getFilterValue(el: React.RefObject<HTMLInputElement | null>): string {
         return (el?.current?.children[0]?.children[0] as HTMLInputElement)?.value;
     }
 
-    static setFilterValue(el: React.RefObject<HTMLInputElement>, filterValue: string): void {
+    static setFilterValue(el: React.RefObject<HTMLInputElement | null>, filterValue: string): void {
         if (el.current) {
             (el.current.children[0].children[0] as HTMLInputElement).value = filterValue;
         }
@@ -1336,7 +1335,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
         if (importExportVisible || schema.items?.find(item => item.sort || item.filter)) {
             return (
-                <Grid2
+                <Grid
                     size={{
                         xs: schema.xs || 12, // if xs is not defined, take the full width
                         sm: schema.sm || undefined,
@@ -1393,7 +1392,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             </Accordion>
                         </Paper>
                     </Card>
-                </Grid2>
+                </Grid>
             );
         }
 
@@ -1408,7 +1407,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         }
         const doAnyFilterSet = this.isAnyFilterSet();
         return (
-            <Grid2
+            <Grid
                 size={{
                     xs: schema.xs || 12, // if xs is not defined, take the full width
                     sm: schema.sm || undefined,
@@ -1433,7 +1432,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         </Table>
                     </Paper>
                 </Card>
-            </Grid2>
+            </Grid>
         );
     }
 
@@ -1450,12 +1449,12 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         const doAnyFilterSet = this.isAnyFilterSet();
 
         return (
-            <Grid2 container>
+            <Grid container>
                 {this.showImportDialog()}
                 {this.showTypeOfImportDialog()}
                 {this.enhancedFilterCard()}
                 {visibleValue.map((idx, i) => (
-                    <Grid2
+                    <Grid
                         key={`${idx}_${i}`}
                         size={{
                             xs: schema.xs || 12, // if xs is not defined, take the full width
@@ -1676,10 +1675,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 </Collapse>
                             </Paper>
                         </Card>
-                    </Grid2>
+                    </Grid>
                 ))}
                 {this.enhancedBottomCard()}
-            </Grid2>
+            </Grid>
         );
     }
 

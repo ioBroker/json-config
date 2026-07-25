@@ -24,7 +24,7 @@ import {
     UploadFile as UploadIcon,
 } from '@mui/icons-material';
 
-import { DialogConfirm, Utils, I18n } from '@iobroker/adapter-react-v5';
+import { DialogConfirm, Utils, I18n } from '@iobroker/gui-components';
 
 import type { ConfigItemFileSelector } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -127,7 +127,7 @@ interface ConfigFileSelectorState extends ConfigGenericState {
 }
 
 export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFileSelectorState> {
-    private readonly dropzoneRef: React.RefObject<DropzoneRef>;
+    private readonly dropzoneRef: React.RefObject<DropzoneRef | null>;
 
     private readonly imagePrefix: string;
 

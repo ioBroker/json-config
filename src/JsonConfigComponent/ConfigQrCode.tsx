@@ -39,6 +39,8 @@ export default class ConfigQrCode extends ConfigGeneric<ConfigQrCodeProps, Confi
                     padding,
                     width: '100%',
                     height: '100%',
+                    // without this, the padding is added on top of the 100% and the box overflows its grid cell
+                    boxSizing: 'border-box',
                 }}
             >
                 <QRCodeComponent

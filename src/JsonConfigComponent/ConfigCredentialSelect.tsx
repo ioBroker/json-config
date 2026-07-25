@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Icon, Utils } from '@iobroker/gui-components';
 import type { ConfigItemCredentialSelect } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
@@ -472,7 +472,7 @@ export default class ConfigCredentialSelect extends ConfigGeneric<
                             <Select
                                 variant="standard"
                                 value={this.state.addType || 'custom'}
-                                onChange={e => this.setState({ addType: e.target.value as CredentialType })}
+                                onChange={e => this.setState({ addType: e.target.value })}
                             >
                                 {CREDENTIAL_TYPES.map(type => (
                                     <MenuItem

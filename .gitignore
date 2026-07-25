@@ -4,4 +4,6 @@
 /i18n/
 /index.css
 /.claude/settings.local.json
+/test-gui/node_modules/
+/test-gui/build/
 nul

@@ -14,7 +14,7 @@ import {
 
 import { Check as CheckIcon, Close as CloseIcon, Language as LanguageIcon } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 const styles: Record<string, React.CSSProperties> = {
     modalDialog: {
@@ -94,7 +94,6 @@ const CustomModal = ({
             maxWidth={isSmallScreen ? false : maxWidth || 'md'}
             fullWidth={!!fullWidth}
             fullScreen={isSmallScreen}
-            disableEscapeKeyDown={false}
             onClose={onClose}
             sx={{ '& .MuiPaper-root': isSmallScreen ? {} : styles.modalDialog /* paper: classes.background */ }}
         >

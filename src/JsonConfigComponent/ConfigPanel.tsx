@@ -1,10 +1,10 @@
 import React, { type JSX } from 'react';
 
-import { Grid2, Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 
-import { type AdminConnection, type IobTheme, Utils } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, type IobTheme, Utils } from '@iobroker/gui-components';
 import type { ConfigItemComponent, ConfigItemPanel } from '../types';
 
 import ConfigGeneric, { type ConfigGenericState, type ConfigGenericProps } from './ConfigGeneric';
@@ -280,7 +280,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
         if (this.state.calculatedValues.hidden) {
             if (schema.hideOnlyControl) {
                 const item = (
-                    <Grid2
+                    <Grid
                         size={{
                             xs: schema.xs || undefined,
                             sm: schema.sm || undefined,
@@ -316,7 +316,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
 
         if (this.props.custom) {
             return (
-                <Grid2
+                <Grid
                     key={`${this.props.attr}_${this.props.index}`}
                     container
                     style={styles.fullWidth}
@@ -325,7 +325,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                     sx={schemaStyle}
                 >
                     {this.renderItems(items, this.state.calculatedValues.disabled)}
-                </Grid2>
+                </Grid>
             );
         }
 
@@ -359,14 +359,14 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                         <Typography style={styles.heading}>{this.getText(schema.label)}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Grid2
+                        <Grid
                             container
                             columnSpacing={2}
                             rowSpacing={1}
                             sx={{ ...schemaStyle, width: '100%', padding: '10px' }}
                         >
                             {this.renderItems(items, this.state.calculatedValues.disabled)}
-                        </Grid2>
+                        </Grid>
                     </AccordionDetails>
                 </Accordion>
             );
@@ -394,7 +394,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                     className={this.props.className}
                     sx={sx}
                 >
-                    <Grid2
+                    <Grid
                         container
                         columnSpacing={2}
                         rowSpacing={1}
@@ -406,14 +406,14 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                         )}
                     >
                         {this.renderItems(items, this.state.calculatedValues.disabled)}
-                    </Grid2>
+                    </Grid>
                 </Box>
             );
         }
 
         if (!this.props.isParentTab) {
             const item = (
-                <Grid2
+                <Grid
                     title={this.getText(schema.tooltip)}
                     size={{
                         xs: schema.xs || undefined,
@@ -425,7 +425,7 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                     sx={{ marginBottom: 0, /* marginRight: 8, */ textAlign: 'left', ...schemaStyle }}
                 >
                     {content}
-                </Grid2>
+                </Grid>
             );
 
             if (schema.newLine) {

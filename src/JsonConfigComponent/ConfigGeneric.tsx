@@ -1,6 +1,6 @@
 import React, { Component, type JSX } from 'react';
 
-import { Grid2, Button } from '@mui/material';
+import { Grid, Button } from '@mui/material';
 
 import {
     Info as IconInfo,
@@ -23,6 +23,19 @@ import {
     Link as LinkIcon,
     Save,
     OpenInNew,
+    Highlight as IconBacklight,
+    BrightnessMedium as IconDimmer,
+    Fingerprint as IconIdentify,
+    Lightbulb as IconLight,
+    Reorder as IconLines,
+    SkipNext as IconNext,
+    Pause as IconPause,
+    PlayArrow as IconPlay,
+    SkipPrevious as IconPrevious,
+    QrCode as IconQrCode,
+    Settings as IconSettings,
+    Power as IconSocket,
+    Stop as IconStop,
 } from '@mui/icons-material';
 
 import {
@@ -34,10 +47,56 @@ import {
     type ThemeType,
     type ThemeName,
     type IobTheme,
-} from '@iobroker/adapter-react-v5';
-import type { ConfigIconType, ConfigItemAny, ConfigItemConfirmData, JsonConfigContext } from '../types';
+} from '@iobroker/gui-components';
+import type {
+    ConfigIconType,
+    ConfigItemAny,
+    ConfigItemConfirmData,
+    ConfigNamedIcon,
+    JsonConfigContext,
+} from '../types';
 
 const DEFAULT_SM_SIZE = window.innerWidth <= 600 ? 12 : undefined;
+
+/**
+ * All named icons a schema may use. `Record<ConfigNamedIcon, ...>` is deliberate: adding a name to `ConfigNamedIcon`
+ * without a renderer here is a compile error, instead of silently falling through to the image path below.
+ */
+const NAMED_ICONS: Record<ConfigNamedIcon, () => JSX.Element> = {
+    add: () => <IconAdd />,
+    auth: () => <IconAuth />,
+    backlight: () => <IconBacklight />,
+    book: () => <IconMenuBook />,
+    delete: () => <IconDelete />,
+    dimmer: () => <IconDimmer />,
+    edit: () => <IconEdit />,
+    error: () => <IconError />,
+    group: () => <IconGroup />,
+    help: () => <IconHelp />,
+    identify: () => <IconIdentify />,
+    info: () => <IconInfo />,
+    light: () => <IconLight />,
+    lines: () => <IconLines />,
+    next: () => <IconNext />,
+    open: () => <OpenInNew />,
+    pair: () => <LinkIcon />,
+    pause: () => <IconPause />,
+    play: () => <IconPlay />,
+    previous: () => <IconPrevious />,
+    qrcode: () => <IconQrCode />,
+    refresh: () => <IconRefresh />,
+    save: () => <Save />,
+    search: () => <IconSearch />,
+    send: () => <IconSend />,
+    settings: () => <IconSettings />,
+    socket: () => <IconSocket />,
+    stop: () => <IconStop />,
+    unpair: () => <IconLinkOff />,
+    upload: () => <IconUploadFile />,
+    user: () => <IconPerson />,
+    warning: () => <IconWarning />,
+    web: () => <IconWeb />,
+};
 
 // because this class is used in react-components, do not include here any foreign files like from '../../helpers/utils.ts'
 export function isObject(it: any): it is Record<string, any> {
@@ -551,64 +610,29 @@ export default class ConfigGeneric<
     // eslint-disable-next-line react/no-unused-class-component-methods
     getIcon(iconSettings?: ConfigIconType | null): JSX.Element | null {
         iconSettings = iconSettings || this.props.schema.icon;
-        let icon = null;
-        if (iconSettings === 'auth') {
-            icon = <IconAuth />;
-        } else if (iconSettings === 'send') {
-            icon = <IconSend />;
-        } else if (iconSettings === 'web') {
-            icon = <IconWeb />;
-        } else if (iconSettings === 'warning') {
-            icon = <IconWarning />;
-        } else if (iconSettings === 'error') {
-            icon = <IconError />;
-        } else if (iconSettings === 'info') {
-            icon = <IconInfo />;
-        } else if (iconSettings === 'search') {
-            icon = <IconSearch />;
-        } else if (iconSettings === 'book') {
-            icon = <IconMenuBook />;
-        } else if (iconSettings === 'help') {
-            icon = <IconHelp />;
-        } else if (iconSettings === 'upload') {
-            icon = <IconUploadFile />;
-        } else if (iconSettings === 'edit') {
-            icon = <IconEdit />;
-        } else if (iconSettings === 'user') {
-            icon = <IconPerson />;
-        } else if (iconSettings === 'group') {
-            icon = <IconGroup />;
-        } else if (iconSettings === 'delete') {
-            icon = <IconDelete />;
-        } else if (iconSettings === 'refresh') {
-            icon = <IconRefresh />;
-        } else if (iconSettings === 'add') {
-            icon = <IconAdd />;
-        } else if (iconSettings === 'unpair') {
-            icon = <IconLinkOff />;
-        } else if (iconSettings === 'pair') {
-            icon = <LinkIcon />;
-        } else if (iconSettings === 'save') {
-            icon = <Save />;
-        } else if (iconSettings === 'open') {
-            icon = <OpenInNew />;
-        } else if (iconSettings) {
-            if (iconSettings.endsWith('.png') || iconSettings.endsWith('.svg') || iconSettings.endsWith('.jpg')) {
-                // this path is relative to ./adapter/NAME
-                if (!iconSettings.startsWith('http://') && !iconSettings.startsWith('https://')) {
-                    iconSettings = `${this.props.oContext.imagePrefix}/adapter/${this.props.oContext.adapterName}/${iconSettings}`;
-                }
-            }
-
-            icon = (
-                <Icon
-                    src={iconSettings}
-                    style={{ width: 22, height: 22 }}
-                />
-            );
+        if (!iconSettings) {
+            return null;
         }
 
-        return icon;
+        const namedIcon = NAMED_ICONS[iconSettings as ConfigNamedIcon];
+        if (namedIcon) {
+            return namedIcon();
+        }
+
+        // not a known name, so it must be an image
+        if (iconSettings.endsWith('.png') || iconSettings.endsWith('.svg') || iconSettings.endsWith('.jpg')) {
+            // this path is relative to ./adapter/NAME
+            if (!iconSettings.startsWith('http://') && !iconSettings.startsWith('https://')) {
+                iconSettings = `${this.props.oContext.imagePrefix}/adapter/${this.props.oContext.adapterName}/${iconSettings}`;
+            }
+        }
+
+        return (
+            <Icon
+                src={iconSettings}
+                style={{ width: 22, height: 22 }}
+            />
+        );
     }
 
     /**
@@ -1247,7 +1271,7 @@ export default class ConfigGeneric<
         let patternStr: string;
         if (typeof pattern === 'object') {
             if (pattern.func) {
-                patternStr = (pattern as { func: string }).func;
+                patternStr = pattern.func;
             } else {
                 console.log(`Object must be stringified: ${JSON.stringify(pattern)}`);
                 patternStr = JSON.stringify(pattern);
@@ -1341,7 +1365,7 @@ export default class ConfigGeneric<
         let patternStr: string;
         if (typeof pattern === 'object') {
             if (pattern.func) {
-                patternStr = (pattern as { func: string }).func;
+                patternStr = pattern.func;
             } else {
                 console.log(`Object must be stringified: ${JSON.stringify(pattern)}`);
                 patternStr = JSON.stringify(pattern);
@@ -1489,7 +1513,7 @@ export default class ConfigGeneric<
 
             if (schema.hideOnlyControl) {
                 const item = (
-                    <Grid2
+                    <Grid
                         size={{
                             xs: schema.xs || DEFAULT_SM_SIZE, // if xs is not defined, take the full width
                             sm: schema.sm || undefined,
@@ -1560,7 +1584,7 @@ export default class ConfigGeneric<
         }
 
         const item = (
-            <Grid2
+            <Grid
                 title={this.getText(schema.tooltip)}
                 size={{
                     xs: schema.xs || 12, // if xs is not defined, take the full width
@@ -1578,12 +1602,12 @@ export default class ConfigGeneric<
                 }}
             >
                 {this.props.schema.defaultSendTo && this.props.schema.button ? (
-                    <Grid2
+                    <Grid
                         container
                         style={{ width: '100%' }}
                     >
-                        <Grid2 flex={1}>{renderedItem}</Grid2>
-                        <Grid2>
+                        <Grid sx={{ flex: 1 }}>{renderedItem}</Grid>
+                        <Grid>
                             <Button
                                 disabled={this.state.calculatedValues.disabled}
                                 variant="outlined"
@@ -1599,12 +1623,12 @@ export default class ConfigGeneric<
                             >
                                 {this.getText(this.props.schema.button as ioBroker.StringOrTranslated)}
                             </Button>
-                        </Grid2>
-                    </Grid2>
+                        </Grid>
+                    </Grid>
                 ) : (
                     renderedItem
                 )}
-            </Grid2>
+            </Grid>
         );
 
         if (schema.newLine) {

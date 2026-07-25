@@ -1,0 +1,880 @@
+{
+    "$schema": "../../schemas/jsonConfig.json",
+    "type": "tabs",
+    "i18n": false,
+    "iconPosition": "start",
+    "items": {
+        "textTab": {
+            "type": "panel",
+            "label": "Text & Numbers",
+            "icon": "edit",
+            "items": {
+                "_headerText": {
+                    "type": "header",
+                    "text": "Plain text inputs",
+                    "size": 2
+                },
+                "text": {
+                    "newLine": true,
+                    "type": "text",
+                    "label": "Simple text",
+                    "help": "Any text is allowed here",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "textMultiline": {
+                    "type": "text",
+                    "label": "Multiline text",
+                    "minRows": 3,
+                    "maxRows": 6,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "textReadOnly": {
+                    "type": "text",
+                    "label": "Read only",
+                    "readOnly": true,
+                    "default": "You cannot change me",
+                    "copyToClipboard": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "textValidated": {
+                    "newLine": true,
+                    "type": "text",
+                    "label": "Only lower case letters",
+                    "validator": "!data.textValidated || /^[a-z]+$/.test(data.textValidated)",
+                    "validatorErrorText": "Only a-z allowed",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "password": {
+                    "type": "password",
+                    "label": "Password",
+                    "repeat": true,
+                    "visible": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "pattern": {
+                    "type": "pattern",
+                    "label": "Pattern (read only)",
+                    "pattern": "http://${data.ip}:${data.port}/",
+                    "copyToClipboard": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_headerNumbers": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Numbers",
+                    "size": 2
+                },
+                "number": {
+                    "newLine": true,
+                    "type": "number",
+                    "label": "Number",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "default": 25,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "port": {
+                    "type": "port",
+                    "label": "Port",
+                    "min": 1,
+                    "max": 65535,
+                    "default": 8081,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "ip": {
+                    "type": "ip",
+                    "label": "Bind address",
+                    "listenOnAllPorts": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "slider": {
+                    "type": "slider",
+                    "label": "Slider",
+                    "min": 0,
+                    "max": 100,
+                    "step": 10,
+                    "unit": "%",
+                    "default": 50,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "_headerMisc": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Chips, color, coordinates",
+                    "size": 2
+                },
+                "chips": {
+                    "newLine": true,
+                    "type": "chips",
+                    "label": "Chips",
+                    "delimiter": ",",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "color": {
+                    "type": "color",
+                    "label": "Color",
+                    "default": "#3399ff",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "coordinates": {
+                    "type": "coordinates",
+                    "label": "Coordinates",
+                    "longitudeName": "longitude",
+                    "latitudeName": "latitude",
+                    "useSystemName": "useSystemCoordinates",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_headerTime": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Date & time",
+                    "size": 2
+                },
+                "datePicker": {
+                    "newLine": true,
+                    "type": "datePicker",
+                    "label": "Date",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "timePicker": {
+                    "type": "timePicker",
+                    "label": "Time",
+                    "format": "HH:mm:ss",
+                    "views": ["hours", "minutes", "seconds"],
+                    "returnFormat": "HH:mm:ss",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "cron": {
+                    "newLine": true,
+                    "type": "cron",
+                    "label": "CRON (simple)",
+                    "simple": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6
+                },
+                "cronComplex": {
+                    "type": "cron",
+                    "label": "CRON (complex)",
+                    "complex": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6
+                }
+            }
+        },
+        "selectTab": {
+            "type": "panel",
+            "label": "Selects",
+            "icon": "book",
+            "items": {
+                "_headerSelect": {
+                    "type": "header",
+                    "text": "Simple selects",
+                    "size": 2
+                },
+                "select": {
+                    "newLine": true,
+                    "type": "select",
+                    "label": "Select",
+                    "default": "b",
+                    "options": [
+                        { "label": "Option A", "value": "a" },
+                        { "label": "Option B", "value": "b" },
+                        { "label": "Option C", "value": "c" }
+                    ],
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "selectMultiple": {
+                    "type": "select",
+                    "label": "Multiple select",
+                    "multiple": true,
+                    "options": [
+                        { "label": "Red", "value": "red" },
+                        { "label": "Green", "value": "green" },
+                        { "label": "Blue", "value": "blue" }
+                    ],
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "autocomplete": {
+                    "type": "autocomplete",
+                    "label": "Autocomplete",
+                    "freeSolo": true,
+                    "options": ["alpha", "beta", "gamma", "delta"],
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_headerChecks": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Checkboxes & conditions",
+                    "size": 2
+                },
+                "checkbox": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "label": "Show the hidden field",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "checkboxConditional": {
+                    "type": "text",
+                    "label": "Visible only if checkbox is set",
+                    "hidden": "!data.checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "checkboxDisabling": {
+                    "type": "text",
+                    "label": "Disabled if checkbox is set",
+                    "disabled": "!!data.checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "checkboxConfirm": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "label": "With confirmation dialog",
+                    "confirm": {
+                        "condition": "data.checkboxConfirm",
+                        "title": "Warning!",
+                        "text": "Do you really want to enable this option?",
+                        "ok": "Yes",
+                        "cancel": "No",
+                        "type": "warning"
+                    },
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_headerSystem": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "System selects (need a running ioBroker)",
+                    "size": 2
+                },
+                "language": {
+                    "newLine": true,
+                    "type": "language",
+                    "label": "Language",
+                    "system": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "user": {
+                    "type": "user",
+                    "label": "Run as user",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "instance": {
+                    "type": "instance",
+                    "label": "Instance",
+                    "adapter": "admin",
+                    "allowDeactivate": true,
+                    "long": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "room": {
+                    "newLine": true,
+                    "type": "room",
+                    "label": "Room",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "func": {
+                    "type": "func",
+                    "label": "Function",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "interface": {
+                    "type": "interface",
+                    "label": "Network interface",
+                    "ignoreLoopback": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_headerCerts": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Certificates & credentials",
+                    "size": 2
+                },
+                "certPublic": {
+                    "newLine": true,
+                    "type": "certificate",
+                    "certType": "public",
+                    "label": "Public certificate",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "certPrivate": {
+                    "type": "certificate",
+                    "certType": "private",
+                    "label": "Private certificate",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "certCollection": {
+                    "type": "certCollection",
+                    "label": "Certificate collection",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                },
+                "credential": {
+                    "type": "credential",
+                    "label": "Credential",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 3
+                }
+            }
+        },
+        "objectsTab": {
+            "type": "panel",
+            "label": "Objects & Files",
+            "icon": "info",
+            "items": {
+                "_headerObjects": {
+                    "type": "header",
+                    "text": "Object and state selectors",
+                    "size": 2
+                },
+                "objectId": {
+                    "newLine": true,
+                    "type": "objectId",
+                    "label": "Any object ID",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "objectIdFiltered": {
+                    "type": "objectId",
+                    "label": "Only number states",
+                    "types": ["state"],
+                    "filterFunc": "obj.common.type === 'number'",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "state": {
+                    "type": "state",
+                    "label": "State value",
+                    "oid": "system.adapter.admin.0.alive",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_setState": {
+                    "newLine": true,
+                    "type": "setState",
+                    "label": "Write a state",
+                    "id": "javascript.0.test",
+                    "val": "${data.text}",
+                    "ack": false,
+                    "variant": "contained",
+                    "okText": "Written",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_alive": {
+                    "type": "alive",
+                    "instance": "admin.0",
+                    "textAlive": "Instance %s is alive",
+                    "textNotAlive": "Instance %s is NOT alive",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "topic": {
+                    "type": "topic",
+                    "label": "MQTT topic",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_headerFiles": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Files & images",
+                    "size": 2
+                },
+                "file": {
+                    "newLine": true,
+                    "type": "file",
+                    "label": "File from the file storage",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "fileSelector": {
+                    "type": "fileSelector",
+                    "label": "File selector",
+                    "pattern": "*.*",
+                    "maxSize": 2097152,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "logo.png": {
+                    "type": "image",
+                    "label": "Upload image",
+                    "accept": { "image/*": [] },
+                    "crop": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_staticImage": {
+                    "newLine": true,
+                    "type": "staticImage",
+                    "src": "admin.png",
+                    "href": "https://iobroker.net",
+                    "tooltip": "Relative src - resolved to <imagePrefix>/adapter/admin/admin.png",
+                    "style": { "width": 120, "height": 120 },
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                }
+            }
+        },
+        "staticTab": {
+            "type": "panel",
+            "label": "Static & Info",
+            "icon": "help",
+            "items": {
+                "_header1": {
+                    "type": "header",
+                    "text": "Headers and dividers",
+                    "size": 1
+                },
+                "_header2": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Second level header",
+                    "size": 3
+                },
+                "_divider": {
+                    "newLine": true,
+                    "type": "divider",
+                    "height": 2,
+                    "color": "primary",
+                    "sm": 12
+                },
+                "_staticText": {
+                    "newLine": true,
+                    "type": "staticText",
+                    "text": "This is a simple static text.",
+                    "sm": 12
+                },
+                "_staticHtml": {
+                    "newLine": true,
+                    "type": "staticText",
+                    "text": "<b>Bold</b> and <i>italic</i> HTML text.",
+                    "format": "html",
+                    "sm": 12
+                },
+                "_staticButton": {
+                    "newLine": true,
+                    "type": "staticText",
+                    "text": "Open ioBroker.net",
+                    "href": "https://iobroker.net",
+                    "target": "_blank",
+                    "button": true,
+                    "variant": "contained",
+                    "color": "primary",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_staticLink": {
+                    "type": "staticLink",
+                    "text": "A plain link",
+                    "href": "https://github.com/ioBroker/json-config",
+                    "target": "_blank",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_staticInfo": {
+                    "newLine": true,
+                    "type": "staticInfo",
+                    "label": "Static info",
+                    "data": "Some read only information",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_infoBoxInfo": {
+                    "newLine": true,
+                    "type": "infoBox",
+                    "boxType": "info",
+                    "text": "This is an info box.",
+                    "sm": 12
+                },
+                "_infoBoxWarning": {
+                    "newLine": true,
+                    "type": "infoBox",
+                    "boxType": "warning",
+                    "text": "This is a warning box, it can be closed.",
+                    "closeable": true,
+                    "sm": 12
+                },
+                "_infoBoxError": {
+                    "newLine": true,
+                    "type": "infoBox",
+                    "boxType": "error",
+                    "text": "This is an error box.",
+                    "sm": 12
+                },
+                "_headerQr": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "QR code and iframe",
+                    "size": 2
+                },
+                "_qrCode": {
+                    "newLine": true,
+                    "type": "qrCode",
+                    "data": "https://iobroker.net",
+                    "size": 128,
+                    "level": "M",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_iframe": {
+                    "type": "iframe",
+                    "url": "https://www.openstreetmap.org/export/embed.html?bbox=8.6,50.1,8.7,50.2&layer=mapnik",
+                    "lazyLoad": "lazy",
+                    "innerStyle": { "width": "100%", "height": 300, "border": 0 },
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 8
+                },
+                "_uuid": {
+                    "newLine": true,
+                    "type": "uuid",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                }
+            }
+        },
+        "tableTab": {
+            "type": "panel",
+            "label": "Table & Accordion",
+            "icon": "group",
+            "items": {
+                "_headerTable": {
+                    "type": "header",
+                    "text": "Table",
+                    "size": 2
+                },
+                "table": {
+                    "newLine": true,
+                    "type": "table",
+                    "sm": 12,
+                    "export": true,
+                    "import": true,
+                    "uniqueColumns": ["name"],
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Name",
+                            "width": "30%",
+                            "filter": true,
+                            "sort": true,
+                            "default": ""
+                        },
+                        {
+                            "type": "number",
+                            "attr": "delay",
+                            "title": "Delay",
+                            "width": 100,
+                            "min": 0,
+                            "default": 1000
+                        },
+                        {
+                            "type": "select",
+                            "attr": "mode",
+                            "title": "Mode",
+                            "width": 120,
+                            "default": "read",
+                            "options": [
+                                { "label": "Read", "value": "read" },
+                                { "label": "Write", "value": "write" }
+                            ]
+                        },
+                        {
+                            "type": "objectId",
+                            "attr": "oid",
+                            "title": "Object ID",
+                            "width": "30%"
+                        },
+                        {
+                            "type": "color",
+                            "attr": "color",
+                            "title": "Color",
+                            "width": 80
+                        },
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": 60,
+                            "default": true
+                        }
+                    ]
+                },
+                "_headerAccordion": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Accordion",
+                    "size": 2
+                },
+                "accordion": {
+                    "newLine": true,
+                    "type": "accordion",
+                    "titleAttr": "name",
+                    "sm": 12,
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "label": "Name",
+                            "default": "entry",
+                            "sm": 12,
+                            "md": 6
+                        },
+                        {
+                            "type": "number",
+                            "attr": "interval",
+                            "label": "Interval",
+                            "default": 60,
+                            "sm": 12,
+                            "md": 6
+                        },
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "label": "Enabled",
+                            "newLine": true,
+                            "sm": 12,
+                            "md": 6
+                        }
+                    ]
+                }
+            }
+        },
+        "editorTab": {
+            "type": "panel",
+            "label": "Editors & Certs",
+            "icon": "settings",
+            "items": {
+                "_headerEditors": {
+                    "type": "header",
+                    "text": "JSON / YAML editors",
+                    "size": 2
+                },
+                "json": {
+                    "newLine": true,
+                    "type": "jsonEditor",
+                    "label": "JSON editor",
+                    "default": "{\n    \"hello\": \"world\"\n}",
+                    "sm": 12,
+                    "md": 6
+                },
+                "yaml": {
+                    "type": "yamlEditor",
+                    "label": "YAML editor",
+                    "default": "hello: world\n",
+                    "sm": 12,
+                    "md": 6
+                },
+                "_headerLicense": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Certificates",
+                    "size": 2
+                },
+                "certs": {
+                    "newLine": true,
+                    "type": "certificates",
+                    "sm": 12
+                },
+                "_checkLicense": {
+                    "newLine": true,
+                    "type": "checkLicense",
+                    "label": "Check license",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_checkDocker": {
+                    "type": "checkDocker",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                }
+            }
+        },
+        "licenseTab": {
+            "type": "panel",
+            "label": "License",
+            "icon": "help",
+            "items": {
+                "_infoLicense": {
+                    "type": "infoBox",
+                    "boxType": "info",
+                    "text": "The license component opens its dialog as soon as this tab is shown - that is why it has its own tab.",
+                    "sm": 12
+                },
+                "licenseAccepted": {
+                    "newLine": true,
+                    "type": "license",
+                    "texts": ["This is the demo license text. Accept it to continue."],
+                    "title": "Demo license",
+                    "agreeText": "I agree",
+                    "sm": 12
+                }
+            }
+        },
+        "sendToTab": {
+            "type": "panel",
+            "label": "SendTo",
+            "icon": "search",
+            "items": {
+                "_infoSendTo": {
+                    "type": "infoBox",
+                    "boxType": "info",
+                    "text": "These items talk to admin.0. `autocomplete`, `selectSendTo` and `url` are test commands that admin implements; the rest have no handler there and stay empty.",
+                    "sm": 12
+                },
+                "_sendTo": {
+                    "newLine": true,
+                    "type": "sendTo",
+                    "label": "Send a command",
+                    "command": "url",
+                    "openUrl": true,
+                    "variant": "contained",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "textSendTo": {
+                    "type": "textSendTo",
+                    "label": "Text from backend",
+                    "command": "test",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "selectSendTo": {
+                    "type": "selectSendTo",
+                    "label": "Select from backend",
+                    "command": "selectSendTo",
+                    "manual": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "autocompleteSendTo": {
+                    "newLine": true,
+                    "type": "autocompleteSendTo",
+                    "label": "Autocomplete from backend",
+                    "command": "autocomplete",
+                    "freeSolo": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_imageSendTo": {
+                    "type": "imageSendTo",
+                    "command": "test",
+                    "height": 120,
+                    "sendFirstByClick": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_qrCodeSendTo": {
+                    "type": "qrCodeSendTo",
+                    "command": "test",
+                    "size": 128,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "_iframeSendTo": {
+                    "newLine": true,
+                    "type": "iframeSendTo",
+                    "command": "test",
+                    "innerStyle": { "width": "100%", "height": 200, "border": 0 },
+                    "sm": 12
+                },
+                "oauth2": {
+                    "newLine": true,
+                    "type": "oauth2",
+                    "label": "OAuth2 login",
+                    "identifier": "demo",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                }
+            }
+        }
+    }
+}

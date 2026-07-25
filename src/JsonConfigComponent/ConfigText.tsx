@@ -4,7 +4,7 @@ import { Autocomplete, TextField, TextareaAutosize, InputAdornment, IconButton }
 
 import { Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n, IconCopy, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, IconCopy, Utils } from '@iobroker/gui-components';
 
 import type { ConfigItemText } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -177,7 +177,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                             placeholder={this.getText(this.props.schema.placeholder)}
                             slotProps={{
                                 htmlInput: {
-                                    ...params.inputProps,
+                                    ...params.slotProps.htmlInput,
                                     maxLength: this.props.schema.maxLength || this.props.schema.max || undefined,
                                     readOnly: this.props.schema.readOnly || false,
                                 },

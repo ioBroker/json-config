@@ -59,7 +59,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
     private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
     private pinTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    private readonly refDiv: React.RefObject<HTMLDivElement>;
+    private readonly refDiv: React.RefObject<HTMLDivElement | null>;
 
     constructor(props: ConfigTabsProps) {
         super(props);

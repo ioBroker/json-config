@@ -18,12 +18,6 @@ export default [
         rules: {
             'jsdoc/require-jsdoc': 'off',
             'jsdoc/require-param': 'off',
-            'react-hooks/set-state-in-effect': 'off',
         },
-    },
-    {
-        // `test-gui` is a standalone vite app with its own tsconfig and eslint config - lint it via `npm run lint`
-        // inside that folder, otherwise the project service here cannot resolve its files.
-        ignores: ['build/**/*', 'node_modules/**', 'test/**/*', 'test-gui/**/*'],
     },
 ];

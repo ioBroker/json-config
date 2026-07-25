@@ -17,7 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { I18n, Icon } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/gui-components';
 
 import type { ConfigItemSelect, ConfigItemSelectOption } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

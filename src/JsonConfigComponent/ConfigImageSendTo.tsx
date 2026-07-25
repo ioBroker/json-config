@@ -1,7 +1,7 @@
 import React, { type JSX } from 'react';
 
 import { CircularProgress } from '@mui/material';
-import { I18n, Icon } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/gui-components';
 
 import type { ConfigItemImageSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';

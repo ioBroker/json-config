@@ -5,7 +5,7 @@ import { FormHelperText, FormControl } from '@mui/material';
 import type { ConfigItemChip } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import ChipInput from './ChipInput';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 interface ConfigChipProps extends ConfigGenericProps {
     schema: ConfigItemChip;

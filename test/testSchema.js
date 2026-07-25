@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ajv_1 = require("ajv");
+const ajv_1 = __importDefault(require("ajv"));
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
 const ajv = new ajv_1.default({ allErrors: true, strict: false });

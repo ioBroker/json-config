@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import type { ConfigItemAutocomplete, ConfigItemSelectOption } from '../types';
 import ConfigGeneric, { type ConfigGenericState, type ConfigGenericProps } from './ConfigGeneric';
@@ -87,7 +87,11 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 freeSolo={!!this.props.schema.freeSolo}
                 value={item}
                 options={options}
-                isOptionEqualToValue={(option, value) => option.value === value.value}
+                // With `freeSolo` the value can be a plain string typed by the user and is
+                // therefore not necessarily one of the options.
+                isOptionEqualToValue={(option, value) =>
+                    option.value === (typeof value === 'string' ? value : value.value)
+                }
                 filterOptions={(options: { value: string | number; label: ioBroker.StringOrTranslated }[], params) => {
                     const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {

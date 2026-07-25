@@ -16,7 +16,7 @@ import {
     type ThemeName,
     type ThemeType,
     Utils,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 
 import type { ConfigItemAny, ConfigItemPanel, ConfigItemTabs } from './types';
 import ConfigGeneric, {
@@ -503,8 +503,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
             try {
                 // detect #include attr
                 return (await this.scanForInclude(JSON5.parse(content), _filePaths)) as
-                    | ConfigItemPanel
-                    | ConfigItemTabs;
+                    ConfigItemPanel | ConfigItemTabs;
             } catch (e) {
                 window.alert('[JsonConfig] Cannot parse json5 config!');
                 console.log(e);
@@ -574,7 +573,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     if (schema.items) {
                         for (const tItem of schema.items) {
                             if (tItem.attr) {
-                                this.postProcessing(entry, tItem.attr, tItem as ConfigItemAny);
+                                this.postProcessing(entry, tItem.attr, tItem);
                             }
                         }
                     }
