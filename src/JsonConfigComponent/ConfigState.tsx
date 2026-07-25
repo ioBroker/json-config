@@ -131,7 +131,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
             this.controlTimeout = null;
             if (this.state.objId) {
                 this.props.oContext.socket
-                    .setState(this.state.objId, this.state.stateValue, false)
+                    .setState(this.state.objId, this.state.stateValue ?? null, false)
                     .catch((e: Error) => console.error(`Cannot control value: ${e.toString()}`));
             }
         }
@@ -413,7 +413,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             if (this.props.schema.setOnEnterKey && e.key === 'Enter' && this.state.objId) {
                                 void this.props.oContext.socket.setState(
                                     this.state.objId,
-                                    this.state.stateValue,
+                                    this.state.stateValue ?? null,
                                     false,
                                 );
                             }
@@ -454,7 +454,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 if (this.state.objId) {
                                     void this.props.oContext.socket.setState(
                                         this.state.objId,
-                                        this.state.stateValue,
+                                        this.state.stateValue ?? null,
                                         false,
                                     );
                                 }
@@ -656,7 +656,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                     if (this.state.objId) {
                                         await this.props.oContext.socket.setState(
                                             this.state.objId,
-                                            this.state.stateValue,
+                                            this.state.stateValue ?? null,
                                             false,
                                         );
                                     }

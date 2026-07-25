@@ -272,8 +272,14 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                 return;
             }
 
+            const content = reader.result;
+            if (content === null) {
+                console.error(`Cannot read file ${file.name}`);
+                return;
+            }
+
             this.props.oContext.socket
-                .writeFile64(this.objectID, this.path + file.name, reader.result)
+                .writeFile64(this.objectID, this.path + file.name, content)
                 .then(() => this.updateFiles())
                 .then(() =>
                     // Automatically select the new uploaded file
