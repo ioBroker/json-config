@@ -273,7 +273,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
             }
 
             this.props.oContext.socket
-                .writeFile64(this.objectID, this.path + file.name, reader.result as ArrayBuffer)
+                .writeFile64(this.objectID, this.path + file.name, reader.result)
                 .then(() => this.updateFiles())
                 .then(() =>
                     // Automatically select the new uploaded file
