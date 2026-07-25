@@ -714,10 +714,22 @@ export interface ConfigItemCustom extends ConfigItem {
     type: 'custom';
     /** location of Widget, like "custom/customComponents.js" */
     url: string;
-    /** New format for components written in TypeScript */
+    /**
+     * @deprecated Ignored since GUI API generation 2 - such components are always built as ES
+     * modules. Still accepted so existing configurations stay valid, and can be removed.
+     */
     bundlerType?: 'module';
     /** Component name, like "ConfigCustomBackItUpSet/Components/AdapterExist" */
     name: string;
+    /**
+     * Generation of the GUI API this component was built against.
+     *
+     * `2` means it uses `@iobroker/gui-components` (React 19 / MUI 9). Omitted or `1` means it was
+     * built against the legacy `@iobroker/adapter-react-v5` (React 18 / MUI 6). A component that
+     * declares an older generation than the admin provides is not loaded at all, because the shared
+     * React/MUI singletons it was built against no longer exist.
+     */
+    guiApi?: number;
     /** i18n */
     i18n: boolean | Record<string, string>;
     /** custom properties */

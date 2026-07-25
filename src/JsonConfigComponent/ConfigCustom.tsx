@@ -8,6 +8,7 @@ import * as AdapterReact from '@iobroker/gui-components';
 import { I18n } from '@iobroker/gui-components';
 
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
+import ConfigCustomErrorBoundary from './ConfigCustomErrorBoundary';
 import * as JsonConfig from '../';
 import type { ConfigItemCustom } from '../types';
 
@@ -130,7 +131,9 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
                         {
                             name: uniqueName,
                             entry: url,
-                            type: this.props.schema.bundlerType || undefined,
+                            // Components of the current GUI API generation are always built as ES
+                            // modules, so the former `bundlerType` schema attribute is obsolete.
+                            type: 'module',
                         },
                     ],
                     // force: true // may be needed to side-load remotes after the fact.
@@ -169,17 +172,24 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
         const schema = this.props.schema || ({} as ConfigItemCustom);
 
         const item = CustomComponent ? (
-            <CustomComponent
-                {...this.props}
-                // @ts-expect-error BF (2024-12-18) Remove after the 7.4 will be mainstream. All following lines
-                socket={this.props.oContext.socket}
-                theme={this.props.oContext.theme}
-                themeType={this.props.oContext.themeType}
-                instance={this.props.oContext.instance}
-                adapterName={this.props.oContext.adapterName}
-                systemConfig={this.props.oContext.systemConfig}
-                forceUpdate={this.props.oContext.forceUpdate}
-            />
+            // The custom component is third-party code, so a render error must not take down the
+            // whole configuration page with it.
+            <ConfigCustomErrorBoundary
+                name={schema.name}
+                url={schema.url}
+            >
+                <CustomComponent
+                    {...this.props}
+                    // @ts-expect-error BF (2024-12-18) Remove after the 7.4 will be mainstream. All following lines
+                    socket={this.props.oContext.socket}
+                    theme={this.props.oContext.theme}
+                    themeType={this.props.oContext.themeType}
+                    instance={this.props.oContext.instance}
+                    adapterName={this.props.oContext.adapterName}
+                    systemConfig={this.props.oContext.systemConfig}
+                    forceUpdate={this.props.oContext.forceUpdate}
+                />
+            </ConfigCustomErrorBoundary>
         ) : this.state.error ? (
             <div>{this.state.error}</div>
         ) : (
