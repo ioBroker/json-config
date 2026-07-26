@@ -2,15 +2,11 @@ import React, { type JSX } from 'react';
 import { LinearProgress } from '@mui/material';
 import { registerRemotes, loadRemote, init } from '@module-federation/runtime';
 
-import * as IconsMaterial from '@mui/icons-material';
-
-import * as AdapterReact from '@iobroker/gui-components';
 import { I18n, InfoBox } from '@iobroker/gui-components';
 
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import ConfigCustomErrorBoundary from './ConfigCustomErrorBoundary';
 import { checkGuiApiCompatibility, GUI_API_GENERATION, type GuiApiVerdict } from './guiApiGate';
-import * as JsonConfig from '../';
 import type { ConfigItemCustom } from '../types';
 
 interface ConfigCustomProps extends ConfigGenericProps {
@@ -24,22 +20,21 @@ interface ConfigCustomState extends ConfigGenericState {
     incompatible: GuiApiVerdict | null;
 }
 
+// Only create the federation instance so that `registerRemotes`/`loadRemote` below have one.
+//
+// Do NOT declare shared modules here. The host already registers them from its own federation
+// config, with the real version and `singleton: true`. Re-registering a subset under the pseudo
+// version '*' and without `singleton` put a SECOND entry for the same package into the share scope
+// (observable as `['*', '10.0.3']` for '@iobroker/gui-components'), which let a custom component
+// resolve to its own bundled fallback copy instead of the host's module. For `I18n` - whose
+// dictionary lives in static class fields - that meant `ConfigCustom` filled one instance while the
+// component read from another, so custom components rendered raw keys like `custom_easy_Instance`.
+//
+// That the host's registration is the operative one is evident from `react`, `react-dom` and
+// `@mui/material`: they were never registered here and resolve correctly.
 init({
     name: 'iobroker_admin',
-    shared: {
-        '@iobroker/gui-components': {
-            lib: () => AdapterReact,
-            version: '*',
-        },
-        '@mui/icons-material': {
-            lib: () => IconsMaterial,
-            version: '*',
-        },
-        '@iobroker/json-config': {
-            lib: () => JsonConfig,
-            version: '*',
-        },
-    },
+    shared: {},
     remotes: [],
 });
 
