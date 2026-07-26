@@ -5,10 +5,11 @@ import { registerRemotes, loadRemote, init } from '@module-federation/runtime';
 import * as IconsMaterial from '@mui/icons-material';
 
 import * as AdapterReact from '@iobroker/gui-components';
-import { I18n } from '@iobroker/gui-components';
+import { I18n, InfoBox } from '@iobroker/gui-components';
 
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import ConfigCustomErrorBoundary from './ConfigCustomErrorBoundary';
+import { checkGuiApiCompatibility, GUI_API_GENERATION, type GuiApiVerdict } from './guiApiGate';
 import * as JsonConfig from '../';
 import type { ConfigItemCustom } from '../types';
 
@@ -19,6 +20,8 @@ interface ConfigCustomProps extends ConfigGenericProps {
 interface ConfigCustomState extends ConfigGenericState {
     Component: React.FC<ConfigGenericProps> | null;
     error: string;
+    /** Set when the component was refused by the GUI API gate, so it was never loaded */
+    incompatible: GuiApiVerdict | null;
 }
 
 init({
@@ -52,6 +55,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
         Object.assign(this.state, {
             Component: null,
             error: '',
+            incompatible: null,
         });
     }
 
@@ -85,6 +89,19 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
             );
             return;
         }
+
+        // Refuse an incompatible component before it is registered: it shares this admin's React and
+        // MUI singletons, so one built against another generation would break while rendering.
+        const verdict = await checkGuiApiCompatibility(url, this.props.schema.guiApi);
+        if (!verdict.compatible) {
+            console.warn(
+                `Custom component "${this.props.schema.name}" from "${url}" was not started: it targets ` +
+                    `GUI API generation ${verdict.declared}, but this admin provides generation ${GUI_API_GENERATION}.`,
+            );
+            this.setState({ incompatible: verdict });
+            return;
+        }
+
         let setPromise: Promise<{ default: Record<string, React.FC<ConfigGenericProps>> } | null> | undefined =
             ConfigCustom.runningLoads[`${url}!${fileToLoad}`];
 
@@ -167,6 +184,35 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
         }
     }
 
+    /** Explain why a component was not started, and what the user can do about it */
+    renderIncompatible(verdict: GuiApiVerdict): JSX.Element {
+        return (
+            <InfoBox
+                type="warning"
+                iconPosition="top"
+            >
+                <div>
+                    <div style={{ fontWeight: 'bold' }}>
+                        {I18n.t('jc_Custom component "%s" was not started', this.props.schema.name)}
+                    </div>
+                    <div>
+                        {verdict.tooNew
+                            ? I18n.t(
+                                  'jc_It requires GUI API generation %s, but this admin provides generation %s. Please update the admin.',
+                                  verdict.declared,
+                                  GUI_API_GENERATION,
+                              )
+                            : I18n.t(
+                                  'jc_It was built for GUI API generation %s, but this admin provides generation %s. Please update the adapter.',
+                                  verdict.declared,
+                                  GUI_API_GENERATION,
+                              )}
+                    </div>
+                </div>
+            </InfoBox>
+        );
+    }
+
     render(): JSX.Element {
         const CustomComponent: React.FC<ConfigGenericProps> | null = this.state.Component;
         const schema = this.props.schema || ({} as ConfigItemCustom);
@@ -190,6 +236,8 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
                     forceUpdate={this.props.oContext.forceUpdate}
                 />
             </ConfigCustomErrorBoundary>
+        ) : this.state.incompatible ? (
+            this.renderIncompatible(this.state.incompatible)
         ) : this.state.error ? (
             <div>{this.state.error}</div>
         ) : (
