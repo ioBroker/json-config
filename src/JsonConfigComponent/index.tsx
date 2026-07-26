@@ -22,6 +22,24 @@ import pl from './i18n/pl.json';
 import uk from './i18n/uk.json';
 import zhCn from './i18n/zh-cn.json';
 
+// Register the `jc_*` translations when this module is loaded, NOT when the component is first
+// constructed. `JsonConfig` renders its own toolbar (the export/import buttons) before it mounts
+// `JsonConfigComponent` as a child, so a constructor-based registration came too late and those
+// labels rendered as raw keys such as `jc_Import settings from JSON file`.
+I18n.extendTranslations({
+    en,
+    de,
+    ru,
+    pt,
+    nl,
+    fr,
+    it,
+    es,
+    pl,
+    uk,
+    'zh-cn': zhCn,
+});
+
 const styles: Record<string, React.CSSProperties> = {
     root: {
         width: '100%',
@@ -79,27 +97,8 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
     private errorCached: Record<string, string> | null = null;
     private oContext: JsonConfigContext | undefined;
     private cachedObjects: Record<string, ioBroker.Object | null> = {};
-    static i18nInitialized = false;
-
     constructor(props: JsonConfigComponentProps) {
         super(props);
-
-        if (!JsonConfigComponent.i18nInitialized) {
-            JsonConfigComponent.i18nInitialized = true;
-            I18n.extendTranslations({
-                en,
-                de,
-                ru,
-                pt,
-                nl,
-                fr,
-                it,
-                es,
-                pl,
-                uk,
-                'zh-cn': zhCn,
-            });
-        }
 
         this.state = {
             originalData: JSON.stringify(this.props.data),
