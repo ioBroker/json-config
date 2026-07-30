@@ -45,7 +45,7 @@
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react": "^19.2.8",
-    "react-ace": "^14.0.1",
+    "react-ace": "^15.0.0",
     "react-dom": "^19.2.8",
     "react-dropzone": "^19.1.1",
     "react-qr-code": "^2.2.0",
