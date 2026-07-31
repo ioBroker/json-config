@@ -1822,6 +1822,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Updated packages
+
 ### 9.0.9 (2026-07-30)
 - (@GermanBluefox) Improvement of I18n
 
