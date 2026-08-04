@@ -410,6 +410,7 @@
                     "type": "custom",
                     "url": "custom/customComponents.js",
                     "name": "AdminComponentEasyAccessSet/Components/ConfigCustomEasyAccess",
+                    "guiApi": 2,
                     "i18n": true
                 }
             }
