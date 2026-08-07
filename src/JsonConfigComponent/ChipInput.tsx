@@ -30,7 +30,6 @@ const styles = (theme: IobTheme): SxProps => {
     const bottomLineColor = light ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.7)';
 
     return {
-        root: {},
         inputRoot: {
             display: 'inline-flex',
             flexWrap: 'wrap',
@@ -169,7 +168,6 @@ const styles = (theme: IobTheme): SxProps => {
             margin: '0 8px 8px 0',
             float: 'left',
         },
-        marginDense: {},
     };
 };
 
@@ -681,7 +679,6 @@ export default class ChipInput extends React.Component<ChipInputProps, ChipInput
                 ref={rootRef}
                 fullWidth={fullWidth}
                 className={className}
-                sx={{ ...this.styles.root, ...(margin === 'dense' ? this.styles.marginDense : {}) }}
                 error={error}
                 required={chips.length > 0 ? undefined : required}
                 onClick={this.focus}
