@@ -275,6 +275,12 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                         )}
                         disabled={disabled}
                         slotProps={{
+                            // `params.slotProps` must be spread: `htmlInput` carries the `ref` of the
+                            // input element (and the value/keyboard handlers), `inputLabel` the label
+                            // association. Replacing the object drops them and MUI crashes with
+                            // "Cannot read properties of null (reading 'setAttribute')" as soon as the
+                            // dropdown opens.
+                            ...params.slotProps,
                             input: {
                                 ...params.slotProps.input,
                                 endAdornment: (

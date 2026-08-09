@@ -160,14 +160,21 @@ class ConfigNumber extends ConfigGeneric<ConfigNumberProps, ConfigNumberState> {
                             label={this.getText(this.props.schema.label)}
                             variant="standard"
                             slotProps={{
+                                ...params.slotProps,
                                 htmlInput: {
                                     ...params.slotProps.htmlInput,
                                     readOnly: this.props.schema.readOnly || false,
                                 },
                                 input: {
-                                    endAdornment: this.props.schema.unit
-                                        ? this.getText(this.props.schema.unit, this.props.schema.noTranslation)
-                                        : undefined,
+                                    ...params.slotProps.input,
+                                    endAdornment: this.props.schema.unit ? (
+                                        <>
+                                            {this.getText(this.props.schema.unit, this.props.schema.noTranslation)}
+                                            {params.slotProps.input.endAdornment}
+                                        </>
+                                    ) : (
+                                        params.slotProps.input.endAdornment
+                                    ),
                                 },
                             }}
                             error={!!error}

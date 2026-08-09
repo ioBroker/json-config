@@ -1822,6 +1822,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Correcting autocompleteSendTo component
+
 ### 9.0.18 (2026-08-07)
 - (@GermanBluefox) Updated packages
 

@@ -176,6 +176,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                             error={!!error}
                             placeholder={this.getText(this.props.schema.placeholder)}
                             slotProps={{
+                                ...params.slotProps,
                                 htmlInput: {
                                     ...params.slotProps.htmlInput,
                                     maxLength: this.props.schema.maxLength || this.props.schema.max || undefined,

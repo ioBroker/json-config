@@ -37,7 +37,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@iobroker/gui-components": "^10.0.14",
+    "@iobroker/gui-components": "^10.0.15",
     "@module-federation/runtime": "^2.8.2",
     "@mui/icons-material": "^9.3.1",
     "@mui/material": "^9.3.1",
@@ -58,7 +58,7 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/types": "^7.2.2",
     "@types/crypto-js": "^4.2.2",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "^19.2.4",
