@@ -46,6 +46,8 @@ interface SelectItem {
     label: string;
     value: number | string;
     group?: boolean;
+    /** True if this option belongs to the group in front of it. Such an option is hidden with its group */
+    inGroup?: boolean;
     hidden?: string | boolean;
     color?: string;
     description?: string;
@@ -72,16 +74,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
             }
         }
 
-        const selectOptions: {
-            label: string;
-            value: number | string;
-            group?: boolean;
-            hidden?: string | boolean;
-            color?: string;
-            description?: string;
-            icon?: string;
-            hiddenValue?: boolean;
-        }[] = [];
+        const selectOptions: SelectItem[] = [];
 
         for (const item of this.props.schema.options || []) {
             // if optgroup
@@ -99,38 +92,34 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 description?: string;
             };
             if (Array.isArray(groupItem.items)) {
-                const selectItem: SelectItem = {
+                selectOptions.push({
                     label: this.getText(item.label, this.props.schema.noTranslation),
                     value: item.value!,
                     group: true,
+                    hidden: groupItem.hidden,
                     color: item.color,
                     description: this.getText(item.description),
-                };
-                selectItem.hiddenValue = await this.isHidden(selectItem);
-                selectOptions.push(selectItem);
+                });
                 for (const it of groupItem.items) {
-                    const selectSubItem: SelectItem = {
+                    selectOptions.push({
                         label: this.getText(it.label, this.props.schema.noTranslation || it.noTranslation),
                         value: it.value,
+                        inGroup: true,
                         hidden: it.hidden,
                         color: it.color,
                         description: this.getText(it.description),
                         icon: it.icon,
-                    };
-                    selectSubItem.hiddenValue = await this.isHidden(selectSubItem);
-                    selectOptions.push(selectSubItem);
+                    });
                 }
             } else {
-                const selectItem: SelectItem = {
+                selectOptions.push({
                     label: this.getText(item.label, this.props.schema.noTranslation || item.noTranslation),
                     value: item.value!,
                     hidden: item.hidden,
                     color: item.color,
                     description: this.getText(item.description),
                     icon: item.icon,
-                };
-                selectItem.hiddenValue = await this.isHidden(selectItem);
-                selectOptions.push(selectItem);
+                });
             }
         }
 
@@ -146,15 +135,84 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
         }
 
         // if __different
-        if (Array.isArray(value) && !this.props.schema.multiple) {
+        const isDifferent = Array.isArray(value) && !this.props.schema.multiple;
+        if (isDifferent) {
             this.initialValue = [...value];
             selectOptions.unshift({
                 label: I18n.t(ConfigGeneric.DIFFERENT_LABEL),
                 value: ConfigGeneric.DIFFERENT_VALUE,
             });
+        }
+
+        // An option of a hidden group is hidden too, so all options must be evaluated together
+        await this.evaluateHidden(selectOptions);
+
+        if (isDifferent) {
             this.setState({ value: ConfigGeneric.DIFFERENT_VALUE, selectOptions });
         } else {
             this.setState({ value, selectOptions });
+        }
+    }
+
+    /**
+     * Calculate `hiddenValue` of all options.
+     *
+     * The options are evaluated in the order in which they are shown, because a group hides its own
+     * options too: a group is followed by its options, which are marked with `inGroup`.
+     *
+     * @param selectOptions the options to evaluate. They are modified in place
+     * @returns true if at least one value changed
+     */
+    private async evaluateHidden(selectOptions: SelectItem[]): Promise<boolean> {
+        let changed = false;
+        let groupHidden = false;
+
+        for (const item of selectOptions) {
+            let hiddenValue = await this.isHidden(item);
+
+            if (item.group) {
+                // Remember it for the options of this group
+                groupHidden = hiddenValue;
+            } else if (item.inGroup) {
+                hiddenValue = hiddenValue || groupHidden;
+            } else {
+                // An option outside any group ends the group
+                groupHidden = false;
+            }
+
+            if (item.hiddenValue !== hiddenValue) {
+                item.hiddenValue = hiddenValue;
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
+
+    /**
+     * Re-evaluate the `hidden` formulas of the options.
+     *
+     * A formula may use other attributes, like `data.type === 'system'`, so it cannot be evaluated only
+     * once in `componentDidMount`: as soon as such an attribute changes, the visibility of the options
+     * changes too. The state is only written if a value really changed, so this cannot end in an endless
+     * update loop, even if `data` is a new object on every render.
+     *
+     * @param prevProps the properties before the update
+     */
+    async componentDidUpdate(prevProps: ConfigInstanceSelectProps): Promise<void> {
+        if (prevProps.data === this.props.data || !this.state.selectOptions) {
+            return;
+        }
+
+        // Only formulas must be re-evaluated. A boolean `hidden` cannot change.
+        if (!this.state.selectOptions.some(item => typeof item.hidden === 'string')) {
+            return;
+        }
+
+        const selectOptions: SelectItem[] = this.state.selectOptions.map(item => ({ ...item }));
+
+        if (await this.evaluateHidden(selectOptions)) {
+            this.setState({ selectOptions });
         }
     }
 
