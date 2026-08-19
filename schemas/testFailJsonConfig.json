@@ -25,6 +25,16 @@
                     "md": 4,
                     "lg": 3
                 },
+                "wrongOs": {
+                    "type": "text",
+                    "label": "Only on windows",
+                    "os": "windows"
+                },
+                "wrongDocker": {
+                    "type": "text",
+                    "label": "Only in docker",
+                    "docker": "yes"
+                },
                 "secure": {
                     "newLine": true,
                     "type": "checkbox",

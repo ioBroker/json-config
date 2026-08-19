@@ -4,7 +4,7 @@ import { LinearProgress } from '@mui/material';
 
 import { type AdminConnection, I18n, type ThemeName, type ThemeType, type IobTheme } from '@iobroker/gui-components';
 
-import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext } from '../types';
+import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext, JsonConfigHostInfo } from '../types';
 import type ConfigGeneric from './ConfigGeneric';
 import { type DeviceManagerPropsProps, type ConfigGenericProps } from './ConfigGeneric';
 import ConfigTabs from './ConfigTabs';
@@ -39,6 +39,9 @@ I18n.extendTranslations({
     uk,
     'zh-cn': zhCn,
 });
+
+/** Timeout for the request of the docker information from the host */
+const DOCKER_INFO_TIMEOUT_MS = 3_000;
 
 const styles: Record<string, React.CSSProperties> = {
     root: {
@@ -85,6 +88,7 @@ interface JsonConfigComponentState {
     changed: boolean;
     errors: Record<string, string>;
     systemConfig: ioBroker.SystemConfigCommon | null;
+    hostInfo: JsonConfigHostInfo | null;
     updateData?: number;
     alive: boolean;
     commandRunning: boolean;
@@ -106,6 +110,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             errors: {},
             updateData: this.props.updateData || 0,
             systemConfig: null,
+            hostInfo: null,
             alive: false,
             commandRunning: false,
             schema: JSON.parse(JSON.stringify(this.props.schema)),
@@ -209,6 +214,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             this.setState(
                 {
                     systemConfig: systemConfig?.common || ({} as ioBroker.SystemConfigCommon),
+                    hostInfo: await this.readHostInfo(),
                     alive: !!state?.val,
                 },
                 () => {
@@ -224,6 +230,73 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
         } catch (error) {
             console.error(`Cannot read system config: ${error}`);
         }
+    }
+
+    /**
+     * Read the information about the host, on which the configured instance runs.
+     *
+     * The object `system.host.X` is used and not the message `getHostInfo`, because the object can be read
+     * even if the host is not running. The result is used for the `os`/`notOs` attributes and for the
+     * `_os`, `_arch` and `_host` variables in the JS functions.
+     *
+     * Only the docker state cannot be read from the object, so it will be requested from the running host,
+     * but only if the configuration really uses it.
+     *
+     * @returns information about the host. The properties are empty if the host could not be read
+     */
+    async readHostInfo(): Promise<JsonConfigHostInfo> {
+        const hostName: string | undefined =
+            (this.props.common?.host as string | undefined) || this.props.instanceObj?.common?.host;
+
+        const hostObj = hostName
+            ? ((await this.getCachedObject(`system.host.${hostName}`)) as ioBroker.HostObject | null)
+            : null;
+
+        const hostInfo: JsonConfigHostInfo = {
+            id: hostName || '',
+            os: hostObj?.native?.os?.platform || '',
+            osType: hostObj?.native?.os?.type || '',
+            arch: hostObj?.native?.os?.arch || '',
+            release: hostObj?.native?.os?.release || '',
+            nodeVersion: hostObj?.native?.process?.versions?.node || '',
+            controllerVersion: hostObj?.common?.installedVersion || '',
+        };
+
+        if (hostName && JsonConfigComponent.usesDocker(this.props.schema)) {
+            try {
+                // If the host is not running, the request would only run into the timeout
+                const aliveState = await this.props.socket.getState(`system.host.${hostName}.alive`);
+                if (aliveState?.val !== false) {
+                    const info = await this.props.socket.getHostInfoShort(hostName, false, DOCKER_INFO_TIMEOUT_MS);
+                    if (info) {
+                        // Older js-controllers do not deliver `dockerInformation`, but `Platform` is 'docker' then
+                        hostInfo.docker = info.dockerInformation?.isDocker ?? info.Platform === 'docker';
+                        if (info.dockerInformation?.isOfficial) {
+                            hostInfo.dockerVersion = info.dockerInformation.officialVersion;
+                        }
+                    }
+                }
+            } catch (e) {
+                // The host does not answer or the user has no rights => the docker state stays unknown
+                console.warn(`Cannot read the docker information of ${hostName}: ${e as Error}`);
+            }
+        }
+
+        return hostInfo;
+    }
+
+    /**
+     * Check if the configuration uses the docker state of the host.
+     *
+     * The docker state can only be requested from a running host, so this request will only be done if
+     * the `docker` attribute or the `_host.docker` variable is really used in the configuration.
+     *
+     * @param schema the configuration schema
+     * @returns true if the docker state must be read
+     */
+    static usesDocker(schema: ConfigItemTabs | ConfigItemPanel): boolean {
+        const str = JSON.stringify(schema);
+        return str.includes('"docker":') || str.includes('_host.docker');
     }
 
     onAlive = (_id: string, state?: ioBroker.State | null): void => {
@@ -440,6 +513,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             _themeName: this.props.themeName,
             updateData: this.state.updateData,
             getCachedObject: this.getCachedObject,
+            hostInfo: this.state.hostInfo || undefined,
         } as JsonConfigContext;
 
         if (forceUpdate) {

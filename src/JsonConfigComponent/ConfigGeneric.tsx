@@ -50,10 +50,13 @@ import {
 } from '@iobroker/gui-components';
 import type {
     ConfigIconType,
+    ConfigItem,
     ConfigItemAny,
     ConfigItemConfirmData,
+    ConfigItemOs,
     ConfigNamedIcon,
     JsonConfigContext,
+    JsonConfigHostInfo,
 } from '../types';
 
 const DEFAULT_SM_SIZE = window.innerWidth <= 600 ? 12 : undefined;
@@ -895,6 +898,44 @@ export default class ConfigGeneric<
         }
     }
 
+    /**
+     * Check if the element may be shown on the host, where the instance runs.
+     *
+     * It evaluates the `os`, `notOs` and `docker` attributes. If the operating system or the docker state
+     * cannot be detected, the element will be shown, because it is better to show one element too much
+     * than to hide a required one.
+     *
+     * @param schema config item or select option with the optional `os`, `notOs` and `docker` attributes
+     * @param hostInfo information about the host, where the instance runs
+     * @returns false if the element must not be shown on this host
+     */
+    static isHostAllowed(schema: Pick<ConfigItem, 'os' | 'notOs' | 'docker'>, hostInfo?: JsonConfigHostInfo): boolean {
+        if (!schema?.os && !schema?.notOs && schema?.docker === undefined) {
+            return true;
+        }
+        const os: ConfigItemOs | '' | undefined = hostInfo?.os;
+        // If the operating system of the host is unknown, the `os`/`notOs` attributes will be ignored
+        if (os) {
+            if (schema.os) {
+                const allowed: ConfigItemOs[] = Array.isArray(schema.os) ? schema.os : [schema.os];
+                if (!allowed.includes(os)) {
+                    return false;
+                }
+            }
+            if (schema.notOs) {
+                const forbidden: ConfigItemOs[] = Array.isArray(schema.notOs) ? schema.notOs : [schema.notOs];
+                if (forbidden.includes(os)) {
+                    return false;
+                }
+            }
+        }
+        // If the docker state of the host is unknown, the `docker` attribute will be ignored
+        if (schema.docker !== undefined && hostInfo?.docker !== undefined && schema.docker !== hostInfo.docker) {
+            return false;
+        }
+        return true;
+    }
+
     async execute(
         func: string | boolean | Record<string, string> | undefined,
         defaultValue: string | number | boolean | undefined,
@@ -934,6 +975,9 @@ export default class ConfigGeneric<
                 '_changed',
                 '_href',
                 'getObject',
+                '_os',
+                '_arch',
+                '_host',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
             const result = await f(
@@ -949,6 +993,9 @@ export default class ConfigGeneric<
                 this.props.changed,
                 window.location.href,
                 this.getObject,
+                this.props.oContext.hostInfo?.os || '',
+                this.props.oContext.hostInfo?.arch || '',
+                this.props.oContext.hostInfo || {},
             );
             this.debugLog(funcName || 'JS function', fun, result, data);
             return result;
@@ -998,6 +1045,9 @@ export default class ConfigGeneric<
                 '_changed',
                 '_href',
                 'getObject',
+                '_os',
+                '_arch',
+                '_host',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
             const result = await f(
@@ -1012,6 +1062,9 @@ export default class ConfigGeneric<
                 this.props.changed,
                 window.location.href,
                 this.getObject,
+                this.props.oContext.hostInfo?.os || '',
+                this.props.oContext.hostInfo?.arch || '',
+                this.props.oContext.hostInfo || {},
             );
             this.debugLog(funcName || 'JS function', fun, result, data);
             return result;
@@ -1299,6 +1352,9 @@ export default class ConfigGeneric<
                     '_changed',
                     '_href',
                     'getObject',
+                    '_os',
+                    '_arch',
+                    '_host',
                     `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
                 );
                 const text = await f(
@@ -1313,6 +1369,9 @@ export default class ConfigGeneric<
                     this.props.changed,
                     window.location.href,
                     this.getObject,
+                    this.props.oContext.hostInfo?.os || '',
+                    this.props.oContext.hostInfo?.arch || '',
+                    this.props.oContext.hostInfo || {},
                 );
                 if (noTranslation) {
                     return text;
@@ -1332,6 +1391,9 @@ export default class ConfigGeneric<
                 '_changed',
                 '_href',
                 'getObject',
+                '_os',
+                '_arch',
+                '_host',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = await f(
@@ -1346,6 +1408,9 @@ export default class ConfigGeneric<
                 this.props.changed,
                 window.location.href,
                 this.getObject,
+                this.props.oContext.hostInfo?.os || '',
+                this.props.oContext.hostInfo?.arch || '',
+                this.props.oContext.hostInfo || {},
             );
             if (noTranslation) {
                 return text;
@@ -1392,6 +1457,9 @@ export default class ConfigGeneric<
                     '_socket',
                     '_changed',
                     '_href',
+                    '_os',
+                    '_arch',
+                    '_host',
                     `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
                 );
                 const text = f(
@@ -1405,7 +1473,9 @@ export default class ConfigGeneric<
                     this.props.oContext.socket,
                     this.props.changed,
                     window.location.href,
-                    this.getObject,
+                    this.props.oContext.hostInfo?.os || '',
+                    this.props.oContext.hostInfo?.arch || '',
+                    this.props.oContext.hostInfo || {},
                 );
                 if (noTranslation) {
                     return text;
@@ -1424,6 +1494,9 @@ export default class ConfigGeneric<
                 '_socket',
                 '_changed',
                 '_href',
+                '_os',
+                '_arch',
+                '_host',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = f(
@@ -1437,6 +1510,9 @@ export default class ConfigGeneric<
                 this.props.oContext.socket,
                 this.props.changed,
                 window.location.href,
+                this.props.oContext.hostInfo?.os || '',
+                this.props.oContext.hostInfo?.arch || '',
+                this.props.oContext.hostInfo || {},
             );
             if (noTranslation) {
                 return text;
@@ -1484,6 +1560,11 @@ export default class ConfigGeneric<
 
         // Do not show this component if expert mode is false
         if (this.props.expertMode === false && schema.expertMode) {
+            return null;
+        }
+
+        // Do not show this component if it is not intended for the host, where the instance runs
+        if (!ConfigGeneric.isHostAllowed(schema, this.props.oContext.hostInfo)) {
             return null;
         }
 

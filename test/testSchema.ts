@@ -31,6 +31,63 @@ function positiveTests(): void {
 const expectedErrorsPerTest = {
     'testFailJsonConfig.json': [
         {
+            instancePath: '/items/mainTab/items/wrongOs/os',
+            schemaPath: '#/definitions/osName/enum',
+            keyword: 'enum',
+            params: {
+                allowedValues: [
+                    'aix',
+                    'android',
+                    'cygwin',
+                    'darwin',
+                    'freebsd',
+                    'haiku',
+                    'linux',
+                    'netbsd',
+                    'openbsd',
+                    'sunos',
+                    'win32',
+                ],
+            },
+            message: 'must be equal to one of the allowed values',
+        },
+        {
+            instancePath: '/items/mainTab/items/wrongOs/os',
+            schemaPath: '#/oneOf/1/type',
+            keyword: 'type',
+            params: {
+                type: 'array',
+            },
+            message: 'must be array',
+        },
+        {
+            instancePath: '/items/mainTab/items/wrongOs/os',
+            schemaPath: '#/oneOf',
+            keyword: 'oneOf',
+            params: {
+                passingSchemas: null,
+            },
+            message: 'must match exactly one schema in oneOf',
+        },
+        {
+            instancePath: '/items/mainTab/items/wrongDocker/docker',
+            schemaPath: '#/patternProperties/%5E.%2B/properties/docker/type',
+            keyword: 'type',
+            params: {
+                type: 'boolean',
+            },
+            message: 'must be boolean',
+        },
+        {
+            instancePath: '/items/mainTab',
+            schemaPath: '#/properties/items/patternProperties/%5E.%2B/allOf/11/if',
+            keyword: 'if',
+            params: {
+                failingKeyword: 'then',
+            },
+            message: 'must match "then" schema',
+        },
+        {
             instancePath: '/items/demoTab/items/myTable/items/2',
             schemaPath: '#/items/allOf/20/then/additionalProperties',
             keyword: 'additionalProperties',

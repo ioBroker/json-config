@@ -142,6 +142,38 @@
                     "md": 6,
                     "lg": 2
                 },
+                "myComPort": {
+                    "type": "text",
+                    "label": "COM port",
+                    "os": "win32"
+                },
+                "mySerialPort": {
+                    "type": "text",
+                    "label": "Serial port",
+                    "os": ["linux", "darwin"],
+                    "hidden": "!!_os && _os === 'win32'",
+                    "defaultFunc": "_os === 'win32' ? 'COM3' : '/dev/ttyUSB0'"
+                },
+                "mySudoHint": {
+                    "type": "staticText",
+                    "text": "The service must be started with sudo",
+                    "notOs": ["win32", "darwin"]
+                },
+                "myDockerHint": {
+                    "type": "staticText",
+                    "text": "ioBroker runs in a docker container",
+                    "docker": true
+                },
+                "myService": {
+                    "type": "checkbox",
+                    "label": "Install as service",
+                    "docker": false,
+                    "help": "${_host.docker ? 'docker' : 'no docker'}"
+                },
+                "myArchitecture": {
+                    "type": "staticText",
+                    "text": "Host ${_host.id} runs ${_os} on ${_arch}"
+                },
                 "autoUpdate": {
                     "newLine": true,
                     "type": "select",
@@ -149,7 +181,19 @@
                     "options": [
                         {
                             "label": "manually",
-                            "value": 0
+                            "value": 0,
+                            "os": ["linux", "darwin", "win32"],
+                            "docker": false
+                        },
+                        {
+                            "label": "group",
+                            "notOs": "win32",
+                            "items": [
+                                {
+                                    "label": "every hour",
+                                    "value": 1
+                                }
+                            ]
                         },
                         {
                             "label": "every 12 hours",
@@ -211,6 +255,7 @@
         "leTab": {
             "type": "panel",
             "label": "Let's Encrypt SSL",
+            "notOs": "win32",
             "disabled": "!data.secure",
             "items": {
                 "_image": {

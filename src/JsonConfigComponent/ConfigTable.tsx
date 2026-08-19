@@ -310,6 +310,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         super(props);
         this.filterRefs = {};
         this.props.schema.items ||= [];
+        // Remove the columns, which are not intended for the host, where the instance runs
+        this.props.schema.items = this.props.schema.items.filter((el: ConfigItemTableIndexed) =>
+            ConfigGeneric.isHostAllowed(el, this.props.oContext.hostInfo),
+        );
         this.props.schema.items.forEach((el: ConfigItemTableIndexed) => {
             if (el.filter && el.attr) {
                 this.filterRefs[el.attr] = createRef();

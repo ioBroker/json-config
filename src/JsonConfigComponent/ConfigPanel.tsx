@@ -195,6 +195,12 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                       return null;
                   }
 
+                  // Do not create the component if it is not intended for the host, where the instance
+                  // runs. In this way, no default value will be written for it and no request will be sent by it
+                  if (!ConfigGeneric.isHostAllowed(items[attr], this.props.oContext.hostInfo)) {
+                      return null;
+                  }
+
                   const type = items[attr].type || 'panel';
                   let ItemComponent: typeof ConfigGeneric<ConfigGenericProps, any>;
                   let socket: string | AdminConnection = 'Use this.props.oContext.socket!';

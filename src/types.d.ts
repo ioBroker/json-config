@@ -17,6 +17,40 @@ declare module '@mui/material/Button' {
 
 type CustomCSSProperties = React.CSSProperties;
 
+/**
+ * Operating system of the ioBroker host, on which the instance runs.
+ * These are the values of the node.js `process.platform`, like in `common.os` of `io-package.json`.
+ */
+export type ConfigItemOs =
+    'aix' | 'android' | 'cygwin' | 'darwin' | 'freebsd' | 'haiku' | 'linux' | 'netbsd' | 'openbsd' | 'sunos' | 'win32';
+
+/** Information about the ioBroker host, on which the configured instance runs */
+export interface JsonConfigHostInfo {
+    /** Name of the host without `system.host.` prefix, e.g. `iobroker-raspi`. Empty if unknown */
+    id: string;
+    /** Operating system of the host (`process.platform`), e.g. `linux`. Empty if unknown */
+    os: ConfigItemOs | '';
+    /** Type of the operating system (`os.type()`), e.g. `Linux`, `Windows_NT`, `Darwin` */
+    osType: string;
+    /** Architecture of the host (`os.arch()`), e.g. `x64`, `arm64` */
+    arch: string;
+    /** Release of the operating system (`os.release()`) */
+    release: string;
+    /** Node.js version of the js-controller, e.g. `22.18.0` */
+    nodeVersion: string;
+    /** Installed js-controller version, e.g. `7.0.7` */
+    controllerVersion: string;
+    /**
+     * True if the ioBroker runs in a docker container.
+     *
+     * It is `undefined` if the docker state could not be detected: it is only requested if the configuration
+     * uses it (`docker` attribute or `_host.docker`) and it requires a running host.
+     */
+    docker?: boolean;
+    /** Version of the official ioBroker docker image. It is `undefined` for a not official image */
+    dockerVersion?: string;
+}
+
 export type ConfigItemType =
     | 'accordion'
     | 'alive'
@@ -164,6 +198,22 @@ export interface ConfigItem {
     hidden?: string | boolean;
     /** If true and the control is hidden, the place of the control will be still reserved for it */
     hideOnlyControl?: boolean;
+    /**
+     * Show this element only on the given operating system(s) of the host, on which the instance runs:
+     * e.g. `"win32"` or `["linux", "darwin"]`. If the OS cannot be detected, the element will be shown.
+     */
+    os?: ConfigItemOs | ConfigItemOs[];
+    /**
+     * Do not show this element on the given operating system(s) of the host, on which the instance runs:
+     * e.g. `"win32"` or `["linux", "darwin"]`. If the OS cannot be detected, the element will be shown.
+     */
+    notOs?: ConfigItemOs | ConfigItemOs[];
+    /**
+     * Show this element only if the ioBroker runs in a docker container (`true`) or only if it does not
+     * run in a docker container (`false`). If the docker state cannot be detected (the host must run for
+     * that), the element will be shown.
+     */
+    docker?: boolean;
     /** JS function to calculate if the control is disabled. You can write "true" too */
     disabled?: string | boolean;
     /** Help text of the control */
@@ -247,6 +297,12 @@ export interface ConfigItemSelectOption {
     color?: string;
     /** Formula or boolean value to show or hide the option */
     hidden?: string | boolean;
+    /** Show this option only on the given operating system(s) of the host, on which the instance runs */
+    os?: ConfigItemOs | ConfigItemOs[];
+    /** Do not show this option on the given operating system(s) of the host, on which the instance runs */
+    notOs?: ConfigItemOs | ConfigItemOs[];
+    /** Show this option only if the ioBroker runs (`true`) or does not run (`false`) in a docker container */
+    docker?: boolean;
     /** Description for the value */
     description?: ioBroker.StringOrTranslated;
     /** Icon URL or base64 to display next to the option */
@@ -614,6 +670,12 @@ export interface ConfigItemSelect extends ConfigItem {
               value?: number | string;
               color?: string;
               hidden?: string | boolean;
+              /** Show this group only on the given operating system(s) of the host, on which the instance runs */
+              os?: ConfigItemOs | ConfigItemOs[];
+              /** Do not show this group on the given operating system(s) of the host, on which the instance runs */
+              notOs?: ConfigItemOs | ConfigItemOs[];
+              /** Show this group only if the ioBroker runs (`true`) or does not run (`false`) in a docker container */
+              docker?: boolean;
               description?: ioBroker.StringOrTranslated;
               noTranslation?: boolean;
               icon?: string;
@@ -1250,6 +1312,8 @@ export type JsonConfigContext = {
     onValueChange?: (attr: string, value: any, saveConfig: boolean) => void;
     registerOnForceUpdate?: (attr: string, cb?: (data: any) => void) => void;
     getCachedObject?: (id: string) => Promise<ioBroker.Object | null>;
+    /** Information about the host, on which the configured instance runs */
+    hostInfo?: JsonConfigHostInfo;
 };
 
 // Notification GUI

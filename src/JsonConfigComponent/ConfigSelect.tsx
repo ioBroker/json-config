@@ -19,7 +19,7 @@ import {
 
 import { I18n, Icon } from '@iobroker/gui-components';
 
-import type { ConfigItemSelect, ConfigItemSelectOption } from '../types';
+import type { ConfigItemOs, ConfigItemSelect, ConfigItemSelectOption } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
 const styles: Record<string, any> = {
@@ -49,6 +49,9 @@ interface SelectItem {
     /** True if this option belongs to the group in front of it. Such an option is hidden with its group */
     inGroup?: boolean;
     hidden?: string | boolean;
+    os?: ConfigItemOs | ConfigItemOs[];
+    notOs?: ConfigItemOs | ConfigItemOs[];
+    docker?: boolean;
     color?: string;
     description?: string;
     icon?: string;
@@ -83,12 +86,18 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 label: ioBroker.StringOrTranslated;
                 value?: number | string;
                 hidden?: string | boolean;
+                os?: ConfigItemOs | ConfigItemOs[];
+                notOs?: ConfigItemOs | ConfigItemOs[];
+                docker?: boolean;
                 description?: string;
             } = item as {
                 items: ConfigItemSelectOption[];
                 label: ioBroker.StringOrTranslated;
                 value?: number | string;
                 hidden?: string | boolean;
+                os?: ConfigItemOs | ConfigItemOs[];
+                notOs?: ConfigItemOs | ConfigItemOs[];
+                docker?: boolean;
                 description?: string;
             };
             if (Array.isArray(groupItem.items)) {
@@ -97,6 +106,9 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     value: item.value!,
                     group: true,
                     hidden: groupItem.hidden,
+                    os: groupItem.os,
+                    notOs: groupItem.notOs,
+                    docker: groupItem.docker,
                     color: item.color,
                     description: this.getText(item.description),
                 });
@@ -106,6 +118,9 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         value: it.value,
                         inGroup: true,
                         hidden: it.hidden,
+                        os: it.os,
+                        notOs: it.notOs,
+                        docker: it.docker,
                         color: it.color,
                         description: this.getText(it.description),
                         icon: it.icon,
@@ -116,6 +131,9 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     label: this.getText(item.label, this.props.schema.noTranslation || item.noTranslation),
                     value: item.value!,
                     hidden: item.hidden,
+                    os: item.os,
+                    notOs: item.notOs,
+                    docker: item.docker,
                     color: item.color,
                     description: this.getText(item.description),
                     icon: item.icon,
@@ -234,6 +252,11 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
     }
 
     private async isHidden(item: SelectItem): Promise<boolean> {
+        // Do not show the option if it is not intended for the host, where the instance runs
+        if (!ConfigGeneric.isHostAllowed(item, this.props.oContext.hostInfo)) {
+            return true;
+        }
+
         // if optgroup or no hidden function
         if (!item.hidden) {
             return false;

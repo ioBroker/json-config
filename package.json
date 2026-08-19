@@ -65,7 +65,7 @@
     "ajv": "^8.20.0",
     "date-fns": "^4.4.0",
     "react-color": "^2.19.3",
-    "tsc-alias": "^1.9.1",
+    "tsc-alias": "^1.9.2",
     "typescript": "~6.0.3"
   },
   "overrides": {

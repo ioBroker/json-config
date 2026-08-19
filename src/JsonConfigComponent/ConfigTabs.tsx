@@ -284,6 +284,12 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     continue;
                 }
 
+                // Do not show the tab if it is not intended for the host, where the instance runs
+                if (!ConfigGeneric.isHostAllowed(items[name], this.props.oContext.hostInfo)) {
+                    calculatedValuesTable[name] = { hidden: true, disabled: false };
+                    continue;
+                }
+
                 if (this.props.custom) {
                     const hidden = !!(await this.executeCustom(
                         items[name].hidden,
