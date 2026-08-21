@@ -47,6 +47,9 @@ const styles: Record<string, React.CSSProperties> = {
     root: {
         width: '100%',
         height: '100%',
+        // The root panel or the tabs must use the whole available height
+        display: 'flex',
+        flexDirection: 'column',
     },
 };
 

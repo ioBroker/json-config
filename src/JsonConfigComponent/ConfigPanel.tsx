@@ -146,12 +146,11 @@ const styles: Record<string, any> = {
         width: 'auto !important',
         overflowY: 'auto',
         paddingBottom: 1,
-    },
-    paperWithIcons: {
-        height: 'calc(100vh - 259px) !important',
-    },
-    paperWithoutIcons: {
-        height: 'calc(100vh - 235px) !important',
+        // The height comes from the parent (tabs or the root container of the JSON config),
+        // so the panel uses the whole available height and not some pre-calculated value.
+        flex: '1 1 auto',
+        // Allow the panel to be smaller than its content, so it can scroll itself
+        minHeight: 0,
     },
     padding: {
         padding: '10px',
@@ -383,14 +382,6 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                 schemaStyle,
                 { width: '100%' },
                 this.props.isParentTab && styles.paper,
-                this.props.isParentTab &&
-                    (this.props.withoutSaveButtons
-                        ? this.props.withIcons
-                            ? { height: 'calc(100% - 88px) !important' }
-                            : { height: 'calc(100% - 64px) !important' }
-                        : this.props.withIcons
-                          ? styles.paperWithIcons
-                          : styles.paperWithoutIcons),
             );
 
             content = (

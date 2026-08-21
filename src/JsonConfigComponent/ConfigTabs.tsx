@@ -11,16 +11,21 @@ const styles: Record<string, React.CSSProperties> = {
     tabs: {
         height: '100%',
         width: '100%',
+        // The tab bar keeps its own height, and the panel takes all the rest.
+        // Do not calculate the panel height with magic numbers, as the height of the tab bar
+        // depends on the theme, on the icons and on the font size.
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    tabsBar: {
+        flex: '0 0 auto',
     },
     panel: {
         width: '100%',
         display: 'block',
-    },
-    panelWithIcons: {
-        height: 'calc(100% - 72px)',
-    },
-    panelWithoutIcons: {
-        height: 'calc(100% - 48px)',
+        flex: '1 1 auto',
+        // Allow the panel to be smaller than its content, so it can scroll itself
+        minHeight: 0,
     },
 };
 
@@ -374,6 +379,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
             tabs = (
                 <Toolbar
                     style={{
+                        ...styles.tabsBar,
                         top: 2,
                         backgroundColor: this.props.oContext.themeType === 'dark' ? '#222' : '#DDD',
                     }}
@@ -421,7 +427,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                 <Tabs
                     variant="scrollable"
                     scrollButtons="auto"
-                    style={this.props.schema.tabsStyle}
+                    style={{ ...styles.tabsBar, ...this.props.schema.tabsStyle }}
                     value={this.state.tab}
                     onChange={(_e, tab: string): void => this.onMenuChange(tab)}
                 >
@@ -477,10 +483,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     arrayIndex={this.props.arrayIndex}
                     globalData={this.props.globalData}
                     commandRunning={this.props.commandRunning}
-                    style={{
-                        ...styles.panel,
-                        ...(withIcons ? styles.panelWithIcons : styles.panelWithoutIcons),
-                    }}
+                    style={styles.panel}
                     common={this.props.common}
                     alive={this.props.alive}
                     themeName={this.props.themeName}

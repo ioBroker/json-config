@@ -1907,6 +1907,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Corrected layout of Config view
+
 ### 9.0.21 (2026-08-19)
 - (@GermanBluefox) Added the possibility to show or hide elements depending on the operating system of the host: `os`, `notOs` and the JS variables `_os`, `_arch`, `_host`
 - (@GermanBluefox) Added the possibility to show or hide elements depending on the docker installation: `docker` and `_host.docker`
