@@ -1907,7 +1907,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 9.0.24 (2026-08-30)
 - (@GermanBluefox) Added progress bar to the state component
 
 ### 9.0.23 (2026-08-27)
