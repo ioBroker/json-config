@@ -11,6 +11,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    LinearProgress,
 } from '@mui/material';
 
 import { I18n, Icon, type IobTheme } from '@iobroker/gui-components';
@@ -773,6 +774,33 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                         >
                             {icon}
                             {text || (this.state.stateValue ? I18n.t('jc_true') : I18n.t('jc_false'))}
+                        </Box>
+                    </div>
+                );
+            } else if (
+                this.state.obj.common.write === false &&
+                this.state.obj.common.type === 'number' &&
+                (this.state.obj.common.unit === '%' || this.state.obj.common.max != null)
+            ) {
+                // Progress
+                const min = this.props.schema.min ?? this.state.obj.common.min ?? 0;
+                const max = this.props.schema.max ?? this.state.obj.common.max ?? 100;
+
+                content = (
+                    <div style={divStyle}>
+                        {labelControl}
+                        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <LinearProgress
+                                variant="determinate"
+                                value={
+                                    Math.min(Math.max(((this.state.stateValue as number) - min) / (max - min), 0), 1) *
+                                    100
+                                }
+                            />
+                            <div style={{ textAlign: 'right' }}>
+                                {this.state.stateValue}
+                                {this.state.obj.common.unit}
+                            </div>
                         </Box>
                     </div>
                 );
