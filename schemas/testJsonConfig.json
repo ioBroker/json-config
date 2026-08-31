@@ -492,6 +492,21 @@
                     "openUrl": true,
                     "onLoaded": true
                 },
+                "startBrowse": {
+                    "type": "sendTo",
+                    "command": "browse",
+                    "label": "${_states.running?.val ? 'Stop browse' : 'Start browse'}",
+                    "dependsOnStates": {
+                        "running": ".info.browsing"
+                    },
+                    "disabled": "!!_states.running?.val"
+                },
+                "browseResult": {
+                    "type": "staticText",
+                    "text": "Browsing...",
+                    "dependsOnStates": ["admin.0.info.connection"],
+                    "hidden": "!_states['admin.0.info.connection']?.val"
+                },
                 "reverseProxy": {
                     "sm": 12,
                     "newLine": true,

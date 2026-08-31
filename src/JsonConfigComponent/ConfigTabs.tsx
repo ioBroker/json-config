@@ -63,6 +63,11 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
     private resizeRaf: number | null = null;
     private calculateTimeoutTable: ReturnType<typeof setTimeout> | null = null;
     private pinTimeout: ReturnType<typeof setTimeout> | null = null;
+    /**
+     * Resolved `dependsOnStates` of the tabs: tab name => (alias => state ID).
+     * The tab bar calculates `hidden`/`disabled` of the tabs itself, so it must subscribe to their states too.
+     */
+    private tabStateAliases: Record<string, Record<string, string>> = {};
 
     private readonly refDiv: React.RefObject<HTMLDivElement | null>;
 
@@ -274,12 +279,41 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
         });
     }
 
+    /** The tab bar depends on the states of all its tabs, because it calculates their `hidden`/`disabled` */
+    protected usesDependsOnStates(): boolean {
+        const items = this.props.schema.items;
+        return super.usesDependsOnStates() || Object.keys(items || {}).some(name => !!items[name].dependsOnStates);
+    }
+
+    /** Subscribe on the own states and additionally on the states of all tabs */
+    protected async updateStateSubscriptions(): Promise<void> {
+        this.stateAliases = await this.resolveDependsOnStates(this.props.schema?.dependsOnStates);
+        const ids: string[] = Object.values(this.stateAliases);
+
+        const items = this.props.schema.items;
+        const tabStateAliases: Record<string, Record<string, string>> = {};
+        for (const name of Object.keys(items || {})) {
+            if (items[name].dependsOnStates) {
+                const aliases = await this.resolveDependsOnStates(items[name].dependsOnStates);
+                tabStateAliases[name] = aliases;
+                ids.push(...Object.values(aliases));
+            }
+        }
+        this.tabStateAliases = tabStateAliases;
+
+        await this.subscribeOnStateIds(ids);
+    }
+
     updateCalculatedValuesForTable(): void {
         if (this.calculateTimeoutTable) {
             clearTimeout(this.calculateTimeoutTable);
         }
         this.calculateTimeoutTable = setTimeout(async (): Promise<void> => {
             this.calculateTimeoutTable = null;
+            if (this.usesDependsOnStates()) {
+                // Resolve the state IDs of the tabs and wait for their values
+                await this.updateStateSubscriptions();
+            }
             const items = this.props.schema.items;
             const calculatedValuesTable: Record<string, { hidden: boolean; disabled: boolean }> = {};
             for (const name in items) {
@@ -295,6 +329,9 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     continue;
                 }
 
+                // Every tab is calculated with its own `dependsOnStates` values
+                const states = this.getStateValues(this.tabStateAliases[name] || null);
+
                 if (this.props.custom) {
                     const hidden = !!(await this.executeCustom(
                         items[name].hidden,
@@ -303,6 +340,8 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                         this.props.oContext.instanceObj,
                         this.props.index,
                         this.props.globalData,
+                        'hidden',
+                        states,
                     ));
                     if (hidden) {
                         calculatedValuesTable[name] = { hidden: true, disabled: false };
@@ -315,6 +354,8 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                         this.props.oContext.instanceObj,
                         this.props.index,
                         this.props.globalData,
+                        'disabled',
+                        states,
                     ));
                     calculatedValuesTable[name] = { hidden, disabled };
                 } else {
@@ -324,6 +365,8 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                         this.props.data,
                         this.props.index,
                         this.props.globalData,
+                        'hidden',
+                        states,
                     ));
                     if (hidden) {
                         calculatedValuesTable[name] = { hidden: true, disabled: false };
@@ -335,6 +378,8 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                         this.props.data,
                         this.props.index,
                         this.props.globalData,
+                        'disabled',
+                        states,
                     ));
                     calculatedValuesTable[name] = { hidden: false, disabled };
                 }
@@ -364,7 +409,11 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                 elements.push({
                     icon,
                     disabled: !!this.state.calculatedValuesTable?.[name]?.disabled,
-                    label: this.getText(items[name].label),
+                    label: this.getText(
+                        items[name].label,
+                        undefined,
+                        this.getStateValues(this.tabStateAliases[name] || null),
+                    ),
                     name,
                 });
             });

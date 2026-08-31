@@ -212,6 +212,10 @@ export default class ConfigGeneric<
     private reportedHidden: boolean = false;
     private calculateTimeout: ReturnType<typeof setTimeout> | null = null;
     private readonly AsyncFunction: FunctionConstructor;
+    /** Resolved `dependsOnStates` of this element: alias => state ID */
+    protected stateAliases: Record<string, string> | null = null;
+    /** True if this element has subscribed on states, so it must unsubscribe if `dependsOnStates` disappears */
+    protected statesSubscribed: boolean = false;
 
     constructor(props: Props) {
         super(props);
@@ -251,7 +255,139 @@ export default class ConfigGeneric<
         return (await this.props.oContext.socket.getObject(id)) || null;
     }
 
+    /**
+     * Bring the `dependsOnStates` attribute into the form `{ alias: stateID }`.
+     * In the short array form the state ID is used as an alias too.
+     *
+     * @param dependsOnStates value of the `dependsOnStates` attribute
+     * @returns aliases with the still unresolved state IDs
+     */
+    static normalizeDependsOnStates(
+        dependsOnStates: Record<string, string> | string[] | undefined,
+    ): Record<string, string> {
+        const result: Record<string, string> = {};
+        if (!dependsOnStates) {
+            return result;
+        }
+        if (Array.isArray(dependsOnStates)) {
+            dependsOnStates.forEach(id => {
+                if (id && typeof id === 'string') {
+                    result[id] = id;
+                }
+            });
+        } else if (isObject(dependsOnStates)) {
+            Object.keys(dependsOnStates).forEach(alias => {
+                if (dependsOnStates[alias] && typeof dependsOnStates[alias] === 'string') {
+                    result[alias] = dependsOnStates[alias];
+                }
+            });
+        } else {
+            console.error(`[JsonConfigComponent] Invalid dependsOnStates: ${JSON.stringify(dependsOnStates)}`);
+        }
+        return result;
+    }
+
+    /**
+     * Build the real state ID out of a `dependsOnStates` entry: resolve the `${data.xxx}` patterns and
+     * expand a leading dot (`.info.running`) to the namespace of the own instance.
+     *
+     * @param id state ID from the schema
+     * @returns the resolved state ID or an empty string if it cannot be used
+     */
+    protected async resolveStateId(id: string): Promise<string> {
+        let result = (id || '').toString();
+        if (result.includes('${')) {
+            result = await this.getPatternAsync(result, null, true);
+        }
+        result = result.trim();
+        if (result.startsWith('.')) {
+            result = `${this.props.oContext.adapterName}.${this.props.oContext.instance || 0}${result}`;
+        }
+        if (result.includes('*')) {
+            console.error(`[JsonConfigComponent] Wildcards are not allowed in dependsOnStates: ${result}`);
+            return '';
+        }
+        return result;
+    }
+
+    /**
+     * Resolve all state IDs of a `dependsOnStates` attribute.
+     *
+     * @param dependsOnStates value of the `dependsOnStates` attribute
+     * @returns aliases with the resolved state IDs
+     */
+    protected async resolveDependsOnStates(
+        dependsOnStates: Record<string, string> | string[] | undefined,
+    ): Promise<Record<string, string>> {
+        const aliases = ConfigGeneric.normalizeDependsOnStates(dependsOnStates);
+        const resolved: Record<string, string> = {};
+        for (const alias of Object.keys(aliases)) {
+            const id = await this.resolveStateId(aliases[alias]);
+            if (id) {
+                resolved[alias] = id;
+            }
+        }
+        return resolved;
+    }
+
+    /**
+     * Subscribe on the given state IDs. The promise is resolved as soon as all values are known,
+     * so the following calculation does not run with unknown states.
+     *
+     * @param ids resolved state IDs
+     */
+    protected async subscribeOnStateIds(ids: string[]): Promise<void> {
+        if (!ids.length && !this.statesSubscribed) {
+            return;
+        }
+        this.statesSubscribed = !!ids.length;
+        await this.props.oContext.subscribeStates?.(this, ids, this.onDependsOnStateChanged);
+    }
+
+    /**
+     * Resolve the `dependsOnStates` attribute of this element and subscribe on the states.
+     *
+     * It is called before every calculation and not only once, because a state ID can contain a
+     * `${data.xxx}` pattern and so it can change if the user changes the configuration.
+     */
+    protected async updateStateSubscriptions(): Promise<void> {
+        this.stateAliases = await this.resolveDependsOnStates(this.props.schema?.dependsOnStates);
+        await this.subscribeOnStateIds(Object.values(this.stateAliases));
+    }
+
+    /** True if this element depends on ioBroker states */
+    protected usesDependsOnStates(): boolean {
+        return !!this.props.schema?.dependsOnStates || this.statesSubscribed;
+    }
+
+    /** One of the states from `dependsOnStates` changed => recalculate `hidden`, `disabled`, ... */
+    protected onDependsOnStateChanged = (): void => {
+        this.forceUpdate();
+    };
+
+    /**
+     * Values of the subscribed states for the JS functions and patterns (`_states.<alias>`).
+     *
+     * @param aliases alias => state ID. If omitted, the aliases of this element are used
+     * @returns alias => state object. `null` if the state does not exist
+     */
+    protected getStateValues(aliases?: Record<string, string> | null): Record<string, ioBroker.State | null> {
+        const map = aliases === undefined ? this.stateAliases : aliases;
+        const result: Record<string, ioBroker.State | null> = {};
+        if (map) {
+            Object.keys(map).forEach(alias => {
+                result[alias] = this.props.oContext.getStateValue?.(map[alias]) ?? null;
+            });
+        }
+        return result;
+    }
+
     async componentDidMount(): Promise<void> {
+        if (this.usesDependsOnStates()) {
+            // Subscribe before the first calculation, so `defaultFunc` and `hidden` already see the values
+            await this.updateStateSubscriptions();
+        }
+
         if (this.props.schema?.defaultFunc) {
             if (this.props.custom) {
                 this.defaultValue = await this.executeCustom(
@@ -387,6 +523,10 @@ export default class ConfigGeneric<
         if (this.props.attr) {
             this.props.oContext.registerOnForceUpdate?.(this.props.attr);
         }
+        // Not only if `statesSubscribed` is true: the element could have released its states before (an ID
+        // with a `${data.xxx}` pattern was resolved to nothing), but it is still registered in the pool
+        this.props.oContext.unsubscribeStates?.(this);
+        this.statesSubscribed = false;
         if (this.sendToTimeout) {
             clearTimeout(this.sendToTimeout);
             this.sendToTimeout = null;
@@ -465,6 +605,8 @@ export default class ConfigGeneric<
                   func: ioBroker.StringOrTranslated;
               },
         noTranslation?: boolean,
+        /** Values for `_states`. If omitted, the states of this element are used */
+        states?: Record<string, ioBroker.State | null>,
     ): string {
         if (!text) {
             return '';
@@ -473,7 +615,7 @@ export default class ConfigGeneric<
         if (typeof text === 'string') {
             const strText = noTranslation ? text : I18n.t(text);
             if (strText.includes('${')) {
-                return this.getPattern(strText, undefined, noTranslation);
+                return this.getPattern(strText, undefined, noTranslation, states);
             }
             return strText;
         }
@@ -491,9 +633,10 @@ export default class ConfigGeneric<
                             '',
                         undefined,
                         true,
+                        states,
                     );
                 }
-                return this.getPattern(funcText.func, undefined, noTranslation);
+                return this.getPattern(funcText.func, undefined, noTranslation, states);
             }
 
             return (text as ioBroker.Translated)[this.lang] || (text as ioBroker.Translated).en || '';
@@ -943,6 +1086,8 @@ export default class ConfigGeneric<
         arrayIndex: number | undefined,
         globalData: Record<string, any> | undefined,
         funcName?: string,
+        /** Values for `_states`. If omitted, the states of this element are used */
+        states?: Record<string, ioBroker.State | null>,
     ): Promise<string | number | boolean | undefined> {
         let fun: string;
 
@@ -978,6 +1123,7 @@ export default class ConfigGeneric<
                 '_os',
                 '_arch',
                 '_host',
+                '_states',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
             const result = await f(
@@ -996,6 +1142,7 @@ export default class ConfigGeneric<
                 this.props.oContext.hostInfo?.os || '',
                 this.props.oContext.hostInfo?.arch || '',
                 this.props.oContext.hostInfo || {},
+                states || this.getStateValues(),
             );
             this.debugLog(funcName || 'JS function', fun, result, data);
             return result;
@@ -1014,6 +1161,8 @@ export default class ConfigGeneric<
         arrayIndex: number | undefined,
         globalData: Record<string, any> | undefined,
         funcName?: string,
+        /** Values for `_states`. If omitted, the states of this element are used */
+        states?: Record<string, ioBroker.State | null>,
     ): Promise<string | boolean | number | null | undefined> {
         let fun: string;
 
@@ -1048,6 +1197,7 @@ export default class ConfigGeneric<
                 '_os',
                 '_arch',
                 '_host',
+                '_states',
                 fun.includes('return') ? fun : `return ${fun}`,
             );
             const result = await f(
@@ -1065,6 +1215,7 @@ export default class ConfigGeneric<
                 this.props.oContext.hostInfo?.os || '',
                 this.props.oContext.hostInfo?.arch || '',
                 this.props.oContext.hostInfo || {},
+                states || this.getStateValues(),
             );
             this.debugLog(funcName || 'JS function', fun, result, data);
             return result;
@@ -1316,6 +1467,8 @@ export default class ConfigGeneric<
         pattern: string | { func: string },
         data?: Record<string, any> | null,
         noTranslation?: boolean,
+        /** Values for `_states`. If omitted, the states of this element are used */
+        states?: Record<string, ioBroker.State | null>,
     ): Promise<string> {
         data ||= this.props.data;
         if (!pattern) {
@@ -1355,6 +1508,7 @@ export default class ConfigGeneric<
                     '_os',
                     '_arch',
                     '_host',
+                    '_states',
                     `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
                 );
                 const text = await f(
@@ -1372,6 +1526,7 @@ export default class ConfigGeneric<
                     this.props.oContext.hostInfo?.os || '',
                     this.props.oContext.hostInfo?.arch || '',
                     this.props.oContext.hostInfo || {},
+                    states || this.getStateValues(),
                 );
                 if (noTranslation) {
                     return text;
@@ -1394,6 +1549,7 @@ export default class ConfigGeneric<
                 '_os',
                 '_arch',
                 '_host',
+                '_states',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = await f(
@@ -1411,6 +1567,7 @@ export default class ConfigGeneric<
                 this.props.oContext.hostInfo?.os || '',
                 this.props.oContext.hostInfo?.arch || '',
                 this.props.oContext.hostInfo || {},
+                states || this.getStateValues(),
             );
             if (noTranslation) {
                 return text;
@@ -1422,7 +1579,13 @@ export default class ConfigGeneric<
         }
     }
 
-    getPattern(pattern: string | { func: string }, data?: Record<string, any>, noTranslation?: boolean): string {
+    getPattern(
+        pattern: string | { func: string },
+        data?: Record<string, any>,
+        noTranslation?: boolean,
+        /** Values for `_states`. If omitted, the states of this element are used */
+        states?: Record<string, ioBroker.State | null>,
+    ): string {
         data ||= this.props.data;
         if (!pattern) {
             return '';
@@ -1460,6 +1623,7 @@ export default class ConfigGeneric<
                     '_os',
                     '_arch',
                     '_host',
+                    '_states',
                     `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
                 );
                 const text = f(
@@ -1476,6 +1640,7 @@ export default class ConfigGeneric<
                     this.props.oContext.hostInfo?.os || '',
                     this.props.oContext.hostInfo?.arch || '',
                     this.props.oContext.hostInfo || {},
+                    states || this.getStateValues(),
                 );
                 if (noTranslation) {
                     return text;
@@ -1497,6 +1662,7 @@ export default class ConfigGeneric<
                 '_os',
                 '_arch',
                 '_host',
+                '_states',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = f(
@@ -1513,6 +1679,7 @@ export default class ConfigGeneric<
                 this.props.oContext.hostInfo?.os || '',
                 this.props.oContext.hostInfo?.arch || '',
                 this.props.oContext.hostInfo || {},
+                states || this.getStateValues(),
             );
             if (noTranslation) {
                 return text;
@@ -1535,6 +1702,11 @@ export default class ConfigGeneric<
 
             if (!schema) {
                 return;
+            }
+            if (this.usesDependsOnStates()) {
+                // The state IDs can contain `${data.xxx}` patterns, so they must be resolved anew if the data changed.
+                // It waits for the first values, so the element is not calculated with unknown states.
+                await this.updateStateSubscriptions();
             }
             const { error, disabled, hidden, defaultValue } = await this.calculate(schema);
             if (

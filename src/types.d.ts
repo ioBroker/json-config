@@ -216,6 +216,23 @@ export interface ConfigItem {
     docker?: boolean;
     /** JS function to calculate if the control is disabled. You can write "true" too */
     disabled?: string | boolean;
+    /**
+     * ioBroker states, on which this element depends: `{ "<alias>": "<state ID>" }`.
+     *
+     * The states are subscribed, and if one of them changes, `hidden`, `disabled`, `label`, `help`, `validator`
+     * and `defaultFunc` will be calculated anew. The values are available in all JS functions and in all
+     * `${...}` patterns as `_states.<alias>`, and they contain the whole state object (`_states.running?.val`,
+     * `_states.running?.ts`, ...). `_states.<alias>` is `null` if the state does not exist.
+     *
+     * A state ID, that starts with a dot, addresses the own instance: `.info.connection` => `adapter.0.info.connection`.
+     * Every other ID is used as it is, so states of other adapters can be used too. `${data.xxx}` patterns
+     * are allowed in the ID, wildcards are not.
+     *
+     * The short array form `["adapter.0.info.connection"]` uses the ID itself as an alias.
+     *
+     * @example { "running": ".info.running" } together with `disabled: "_states.running?.val === true"`
+     */
+    dependsOnStates?: Record<string, string> | string[];
     /** Help text of the control */
     help?: ioBroker.StringOrTranslated;
     /** Link that will be opened by clicking on the help text */
@@ -1312,6 +1329,16 @@ export type JsonConfigContext = {
     onValueChange?: (attr: string, value: any, saveConfig: boolean) => void;
     registerOnForceUpdate?: (attr: string, cb?: (data: any) => void) => void;
     getCachedObject?: (id: string) => Promise<ioBroker.Object | null>;
+    /**
+     * Subscribe an element (`owner`) on the given state IDs (see the `dependsOnStates` attribute).
+     * It replaces the IDs, this element was subscribed to before, and it is resolved as soon as the
+     * values of all these states are known.
+     */
+    subscribeStates?: (owner: object, ids: string[], onChange: () => void) => Promise<void>;
+    /** Unsubscribe an element from all states, it was subscribed to */
+    unsubscribeStates?: (owner: object) => void;
+    /** Last known value of a subscribed state. `undefined` - not read yet, `null` - the state does not exist */
+    getStateValue?: (id: string) => ioBroker.State | null | undefined;
     /** Information about the host, on which the configured instance runs */
     hostInfo?: JsonConfigHostInfo;
 };

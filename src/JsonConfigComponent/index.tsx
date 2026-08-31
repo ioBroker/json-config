@@ -9,6 +9,7 @@ import type ConfigGeneric from './ConfigGeneric';
 import { type DeviceManagerPropsProps, type ConfigGenericProps } from './ConfigGeneric';
 import ConfigTabs from './ConfigTabs';
 import ConfigPanel from './ConfigPanel';
+import { StatePool } from './statePool';
 
 import de from './i18n/de.json';
 import en from './i18n/en.json';
@@ -104,8 +105,12 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
     private errorCached: Record<string, string> | null = null;
     private oContext: JsonConfigContext | undefined;
     private cachedObjects: Record<string, ioBroker.Object | null> = {};
+    /** Subscriptions of the elements, that use the `dependsOnStates` attribute */
+    private readonly statePool: StatePool;
     constructor(props: JsonConfigComponentProps) {
         super(props);
+
+        this.statePool = new StatePool(props.socket);
 
         this.state = {
             originalData: JSON.stringify(this.props.data),
@@ -198,6 +203,11 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             return '';
         }
         return '';
+    }
+
+    componentWillUnmount(): void {
+        // Release the subscriptions of all elements, that used `dependsOnStates`
+        this.statePool.destroy();
     }
 
     onCommandRunning = (commandRunning: boolean): void => this.setState({ commandRunning });
@@ -517,6 +527,9 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             updateData: this.state.updateData,
             getCachedObject: this.getCachedObject,
             hostInfo: this.state.hostInfo || undefined,
+            subscribeStates: this.statePool.subscribe,
+            unsubscribeStates: this.statePool.unsubscribe,
+            getStateValue: this.statePool.getValue,
         } as JsonConfigContext;
 
         if (forceUpdate) {

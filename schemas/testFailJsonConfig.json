@@ -35,6 +35,11 @@
                     "label": "Only in docker",
                     "docker": "yes"
                 },
+                "wrongDependsOnStates": {
+                    "type": "text",
+                    "label": "Depends on a state",
+                    "dependsOnStates": ".info.connection"
+                },
                 "secure": {
                     "newLine": true,
                     "type": "checkbox",

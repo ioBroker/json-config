@@ -78,6 +78,33 @@ const expectedErrorsPerTest = {
             message: 'must be boolean',
         },
         {
+            instancePath: '/items/mainTab/items/wrongDependsOnStates/dependsOnStates',
+            schemaPath: '#/patternProperties/%5E.%2B/properties/dependsOnStates/oneOf/0/type',
+            keyword: 'type',
+            params: {
+                type: 'object',
+            },
+            message: 'must be object',
+        },
+        {
+            instancePath: '/items/mainTab/items/wrongDependsOnStates/dependsOnStates',
+            schemaPath: '#/patternProperties/%5E.%2B/properties/dependsOnStates/oneOf/1/type',
+            keyword: 'type',
+            params: {
+                type: 'array',
+            },
+            message: 'must be array',
+        },
+        {
+            instancePath: '/items/mainTab/items/wrongDependsOnStates/dependsOnStates',
+            schemaPath: '#/patternProperties/%5E.%2B/properties/dependsOnStates/oneOf',
+            keyword: 'oneOf',
+            params: {
+                passingSchemas: null,
+            },
+            message: 'must match exactly one schema in oneOf',
+        },
+        {
             instancePath: '/items/mainTab',
             schemaPath: '#/properties/items/patternProperties/%5E.%2B/allOf/11/if',
             keyword: 'if',
