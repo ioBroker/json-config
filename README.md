@@ -1948,7 +1948,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 9.1.1 (2026-08-31)
 - (@GermanBluefox) Do not show export import on narrow devices
 
 ### 9.1.0 (2026-08-31)
