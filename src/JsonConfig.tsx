@@ -2,7 +2,7 @@ import React from 'react';
 import JSON5 from 'json5';
 import MD5 from 'crypto-js/md5';
 
-import { Fab, Tooltip, LinearProgress } from '@mui/material';
+import { Box, Fab, Tooltip, LinearProgress } from '@mui/material';
 import { Publish as PublishIcon } from '@mui/icons-material';
 
 import {
@@ -317,7 +317,13 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
 
     getExportImportButtons(): React.JSX.Element {
         return (
-            <div style={styles.exportImportButtons}>
+            <Box
+                sx={{
+                    ...styles.exportImportButtons,
+                    // On xs displays the buttons would hide the tabs, so do not show them there
+                    display: { xs: 'none', sm: 'block' },
+                }}
+            >
                 <Tooltip
                     title={this.props.t('jc_Import settings from JSON file')}
                     slotProps={{ popper: { sx: styles.tooltip } }}
@@ -359,7 +365,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                         <PublishIcon style={{ transform: 'rotate(180deg)' }} />
                     </Fab>
                 </Tooltip>
-            </div>
+            </Box>
         );
     }
 
