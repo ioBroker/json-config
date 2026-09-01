@@ -1,101 +1,43 @@
 import React, { type JSX } from 'react';
-import { ChromePicker, type ColorResult } from 'react-color';
 
-import { IconButton, TextField, Dialog } from '@mui/material';
+import { ColorPicker } from '@iobroker/gui-components';
 
-import { Close as ClearIcon } from '@mui/icons-material';
-
-import { Utils } from '@iobroker/gui-components';
-
-import type { ConfigItemText } from '../types';
+import type { ConfigItemColor } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
 interface ConfigColorProps extends ConfigGenericProps {
-    schema: ConfigItemText;
+    schema: ConfigItemColor;
 }
 
-interface ConfigColorState extends ConfigGenericState {
-    showColorDialog?: boolean;
-    colorDialogValue?: string;
-}
-
-class ConfigColor extends ConfigGeneric<ConfigColorProps, ConfigColorState> {
-    renderColorDialog(): JSX.Element | null {
-        return this.state.showColorDialog ? (
-            <Dialog
-                onClose={() => this.setState({ showColorDialog: false })}
-                open={this.state.showColorDialog}
-            >
-                <ChromePicker
-                    color={this.state.colorDialogValue}
-                    onChange={(color: ColorResult) =>
-                        this.setState(
-                            { colorDialogValue: color.hex },
-                            () => this.props.attr && this.onChange(this.props.attr, this.state.colorDialogValue),
-                        )
-                    }
-                />
-            </Dialog>
-        ) : null;
-    }
-
+class ConfigColor extends ConfigGeneric<ConfigColorProps, ConfigGenericState> {
     renderItem(_error: unknown, disabled: boolean /* , defaultValue */): JSX.Element {
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
-        const textColor = Utils.isUseBright(value);
 
         return (
-            <>
-                {this.renderColorDialog()}
-                <TextField
-                    variant="standard"
-                    disabled={!!disabled}
-                    style={{ minWidth: 100, width: 'calc(100% - 8px)' }}
-                    label={this.getText(this.props.schema.label)}
-                    value={value || ''}
-                    onClick={() =>
-                        !this.props.schema.readOnly &&
-                        this.setState({ showColorDialog: true, colorDialogValue: value || '' })
+            <ColorPicker
+                id={`color_${this.props.attr || ''}_${this.props.index ?? ''}`}
+                disabled={!!disabled}
+                style={{ minWidth: 100, width: 'calc(100% - 8px)' }}
+                label={this.getText(this.props.schema.label)}
+                value={value || ''}
+                // the previous picker always reported the color as #rrggbb
+                format="hex"
+                sx={
+                    this.props.schema.noClearButton
+                        ? {
+                              // the color picker has no option to hide the clear button, so it is done via CSS
+                              '& > .MuiIconButton-root': { display: 'none' },
+                              '& > .MuiFormControl-root': { width: 'calc(100% - 56px)', mr: 1 },
+                          }
+                        : undefined
+                }
+                onChange={color => {
+                    const mayBePromise = this.props.attr && this.onChange(this.props.attr, color);
+                    if (mayBePromise instanceof Promise) {
+                        void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
                     }
-                    onChange={e => {
-                        const color = e.target.value;
-                        const mayBePromise = this.props.attr && this.onChange(this.props.attr, color);
-                        if (mayBePromise instanceof Promise) {
-                            void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
-                        }
-                    }}
-                    slotProps={{
-                        htmlInput: {
-                            style: {
-                                // paddingLeft: noPadding ? 0 : 8,
-                                backgroundColor: value,
-                                color: textColor ? '#FFF' : '#000',
-                            },
-                            readOnly: this.props.schema.readOnly || false,
-                        },
-                        input: {
-                            endAdornment:
-                                !this.props.schema.readOnly && value && !this.props.schema.noClearButton ? (
-                                    <IconButton
-                                        tabIndex={-1}
-                                        size="small"
-                                        onClick={e => {
-                                            e.stopPropagation();
-                                            const mayBePromise = this.props.attr && this.onChange(this.props.attr, '');
-                                            if (mayBePromise instanceof Promise) {
-                                                void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
-                                            }
-                                        }}
-                                    >
-                                        <ClearIcon />
-                                    </IconButton>
-                                ) : undefined,
-                        },
-                        inputLabel: {
-                            shrink: true,
-                        },
-                    }}
-                />
-            </>
+                }}
+            />
         );
     }
 }
