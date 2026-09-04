@@ -1956,7 +1956,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.0.0 (2026-09-04)
 
 - (@GermanBluefox) The schema allows the root property `command` of a JSON tab now. It was documented and honoured by admin, but every `jsonTab.json5` that uses it was reported as invalid: https://github.com/ioBroker/ioBroker.admin/issues/3610
 - (@GermanBluefox) The schema of `divider` accepts any CSS color and a height as a CSS length, as the control has always rendered them. Until now only `primary`/`secondary` and a number were allowed
