@@ -33,6 +33,15 @@ There is no watch mode or dev server — this is a library consumed by ioBroker 
 
 Each `Config*.tsx` file in `src/JsonConfigComponent/` handles one `type` value from the schema (e.g., `ConfigText` handles `type: "text"`, `ConfigSelect` handles `type: "select"`). Components extend `ConfigGeneric` and override `renderItem()`.
 
+### The code editor comes from the host
+
+`jsonEditor`, `yamlEditor` and the copy dialog of `sendTo` render `wrapper/Components/Editor.tsx`,
+which draws whatever the host passed in as `AceEditor` (in practice `AceEditor` from `react-ace`,
+with the modes `json`, `json5`, `yaml` and the themes `clouds_midnight`, `chrome`). Do not import
+`react-ace` here again: it pulls the whole `ace-builds` into every bundle that uses this library, the
+custom components of all adapters included. Without an injected editor the fields fall back to a text
+area. `test-gui/src/AceEditor.tsx` shows how a host provides it.
+
 ### Type system
 
 `src/types.d.ts` defines 80+ discriminated-union config item types (`ConfigItemText`, `ConfigItemSelect`, etc.) plus `JsonConfigContext`, backend command types, and icon enums.

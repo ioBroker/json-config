@@ -128,6 +128,7 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
                                 }
                                 name="ConfigJsonEditor"
                                 themeType={this.props.oContext.themeType}
+                                AceEditor={this.props.oContext.AceEditor}
                             />
                         </div>
                     </CustomModal>

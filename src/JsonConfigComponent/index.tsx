@@ -7,6 +7,7 @@ import { type AdminConnection, I18n, type ThemeName, type ThemeType, type IobThe
 import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext, JsonConfigHostInfo } from '../types';
 import type ConfigGeneric from './ConfigGeneric';
 import { type DeviceManagerPropsProps, type ConfigGenericProps } from './ConfigGeneric';
+import type { AceEditorComponent } from './wrapper/Components/Editor';
 import ConfigTabs from './ConfigTabs';
 import ConfigPanel from './ConfigPanel';
 import { StatePool } from './statePool';
@@ -79,6 +80,14 @@ interface JsonConfigComponentProps {
     customObj?: ioBroker.Object;
     customs?: Record<string, typeof ConfigGeneric>;
     DeviceManager?: React.FC<DeviceManagerPropsProps>;
+    /**
+     * Code editor for the items `jsonEditor`, `yamlEditor` and the copy dialog of `sendTo`.
+     *
+     * `AceEditor` from `react-ace`, with the modes `json`, `json5`, `yaml` and the themes
+     * `clouds_midnight`, `chrome` registered. It is handed in so that this library does not pull the
+     * whole `ace-builds` into every bundle that uses it. Without it the editors are text areas.
+     */
+    AceEditor?: AceEditorComponent;
     style?: React.CSSProperties;
     theme: IobTheme;
     expertMode?: boolean;
@@ -502,6 +511,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
     updateContext(forceUpdate?: boolean): void {
         this.oContext = {
             DeviceManager: this.props.DeviceManager,
+            AceEditor: this.props.AceEditor,
             adapterName: this.props.adapterName,
             changeLanguage: this.changeLanguage,
             common: this.props.common,

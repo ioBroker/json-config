@@ -123,6 +123,7 @@ export default class ConfigYamlEditor extends ConfigGeneric<ConfigYamlEditorProp
                                 }
                                 name="ConfigYamlEditor"
                                 themeType={this.props.oContext.themeType}
+                                AceEditor={this.props.oContext.AceEditor}
                             />
                         </div>
                     </CustomModal>

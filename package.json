@@ -46,7 +46,6 @@
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react": "^19.2.8",
-    "react-ace": "^15.0.0",
     "react-dom": "^19.2.8",
     "react-dropzone": "^20.1.1",
     "react-qr-code": "^2.2.0",
@@ -64,6 +63,7 @@
     "@types/react-dom": "^19.2.5",
     "ajv": "^8.20.0",
     "date-fns": "^4.4.0",
+    "react-ace": "^15.0.0",
     "tsc-alias": "^1.9.3",
     "typescript": "~6.0.3"
   },

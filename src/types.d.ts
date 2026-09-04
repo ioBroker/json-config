@@ -8,6 +8,7 @@ import type {
     ThemeName,
 } from '@iobroker/gui-components';
 import type { ConfigGeneric, DeviceManagerPropsProps } from './JsonConfigComponent/ConfigGeneric';
+import type { AceEditorComponent } from './JsonConfigComponent/wrapper/Components/Editor';
 
 declare module '@mui/material/Button' {
     interface ButtonPropsColorOverrides {
@@ -964,6 +965,13 @@ export interface ConfigItemState extends ConfigItem {
     options?: (string | ConfigItemSelectOption)[];
     /** Number of decimal places to display for numeric values in text/html mode */
     digits?: number;
+    /**
+     * Write the value as acknowledged. A control writes a command by default (`false`), so that the
+     * adapter reacts to it.
+     */
+    ack?: boolean;
+    /** Highlight line on mouse over */
+    highlight?: boolean;
 }
 
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
@@ -1316,6 +1324,8 @@ export type JsonConfigContext = {
     _themeName: ThemeName;
 
     DeviceManager?: React.FC<DeviceManagerPropsProps>;
+    /** Code editor of the host, see `AceEditorComponent`. Without it the editors are text areas. */
+    AceEditor?: AceEditorComponent;
     changeLanguage?: () => void;
     customs?: Record<string, typeof ConfigGeneric>;
     embedded?: boolean;

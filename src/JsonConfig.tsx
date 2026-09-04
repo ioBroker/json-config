@@ -24,6 +24,7 @@ import ConfigGeneric, {
     type DeviceManagerPropsProps,
 } from './JsonConfigComponent/ConfigGeneric';
 import JsonConfigComponent from './JsonConfigComponent';
+import type { AceEditorComponent } from './JsonConfigComponent/wrapper/Components/Editor';
 
 const styles: Record<string, React.CSSProperties> = {
     root: {
@@ -199,6 +200,8 @@ interface JsonConfigProps {
     configStored: (notChanged: boolean) => void;
     width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     DeviceManager?: React.FC<DeviceManagerPropsProps>;
+    /** Code editor for the editor items, see `JsonConfigComponentProps.AceEditor` */
+    AceEditor?: AceEditorComponent;
     customComponents?: { [componentType: string]: typeof ConfigGeneric<ConfigGenericProps, any> };
 }
 
@@ -761,6 +764,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                         }
                     }}
                     DeviceManager={this.props.DeviceManager}
+                    AceEditor={this.props.AceEditor}
                     theme={this.state.theme}
                     customComponents={this.props.customComponents}
                     imagePrefix={'.'}

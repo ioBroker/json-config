@@ -32,6 +32,7 @@ import '@iobroker/gui-components/index.css';
 import { JsonConfigComponent } from '../../src';
 import type { ConfigItemTabs } from '../../src/types';
 
+import AceEditor from './AceEditor';
 import demoSchema from './jsonConfig.json';
 
 const LANGUAGES: ioBroker.Languages[] = ['en', 'de', 'ru', 'pt', 'nl', 'fr', 'it', 'es', 'pl', 'uk', 'zh-cn'];
@@ -133,6 +134,8 @@ export default class App extends Component<object, AppState> {
                 dateFormat="DD.MM.YYYY"
                 imagePrefix={`${window.location.protocol}//${window.location.hostname}:8081`}
                 expertMode={this.state.expertMode}
+                // the library does not bring the editor any more, the host provides it
+                AceEditor={AceEditor}
                 schema={demoSchema as unknown as ConfigItemTabs}
                 data={this.state.data}
                 updateData={this.state.updateData}

@@ -234,6 +234,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                             value={this.state._copyDialog.text}
                             name="CopyDialog"
                             themeType={this.props.oContext.themeType}
+                            AceEditor={this.props.oContext.AceEditor}
                         />
                     </div>
                 </CustomModal>

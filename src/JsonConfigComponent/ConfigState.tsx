@@ -69,6 +69,16 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
         value: null,
     };
 
+    /**
+     * Acknowledged flag for every write of this control.
+     *
+     * A control writes a command by default (`ack: false`), so the adapter reacts to it. An adapter
+     * that only shows a value it has produced itself can set `ack: true` in the configuration.
+     */
+    private get ack(): boolean {
+        return !!this.props.schema.ack;
+    }
+
     private async getObjectID(): Promise<string> {
         let oid = (this.props.schema.oid || '').toString();
         if (oid.includes('${')) {
@@ -132,7 +142,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
             this.controlTimeout = null;
             if (this.state.objId) {
                 this.props.oContext.socket
-                    .setState(this.state.objId, this.state.stateValue ?? null, false)
+                    .setState(this.state.objId, this.state.stateValue ?? null, this.ack)
                     .catch((e: Error) => console.error(`Cannot control value: ${e.toString()}`));
             }
         }
@@ -282,7 +292,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                     value = parseFloat((value as unknown as string).toString().replace(',', '.'));
                                 }
                                 if (this.state.objId) {
-                                    void this.props.oContext.socket.setState(this.state.objId, value, false);
+                                    void this.props.oContext.socket.setState(this.state.objId, value, this.ack);
                                 }
                             });
                         }}
@@ -335,7 +345,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                                 this.props.schema.buttonValue !== undefined
                                                     ? this.props.schema.buttonValue
                                                     : true,
-                                                false,
+                                                this.ack,
                                             );
                                         }
                                     },
@@ -344,7 +354,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 await this.props.oContext.socket.setState(
                                     this.state.objId,
                                     this.props.schema.buttonValue !== undefined ? this.props.schema.buttonValue : true,
-                                    false,
+                                    this.ack,
                                 );
                             }
                         }}
@@ -370,7 +380,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                                 this.props.schema.buttonValue !== undefined
                                                     ? this.props.schema.buttonValue
                                                     : true,
-                                                false,
+                                                this.ack,
                                             );
                                         }
                                     },
@@ -379,7 +389,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 await this.props.oContext.socket.setState(
                                     this.state.objId,
                                     this.props.schema.buttonValue !== undefined ? this.props.schema.buttonValue : true,
-                                    false,
+                                    this.ack,
                                 );
                             }
                         }}
@@ -415,7 +425,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 void this.props.oContext.socket.setState(
                                     this.state.objId,
                                     this.state.stateValue ?? null,
-                                    false,
+                                    this.ack,
                                 );
                             }
                         }}
@@ -435,7 +445,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                     }
 
                                     if (this.state.objId) {
-                                        await this.props.oContext.socket.setState(this.state.objId, value, false);
+                                        await this.props.oContext.socket.setState(this.state.objId, value, this.ack);
                                     }
                                 }, this.props.schema.controlDelay || 0);
                             });
@@ -456,7 +466,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                     void this.props.oContext.socket.setState(
                                         this.state.objId,
                                         this.state.stateValue ?? null,
-                                        false,
+                                        this.ack,
                                     );
                                 }
                             }}
@@ -559,7 +569,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                             await this.props.oContext.socket.setState(
                                                 this.state.objId,
                                                 !this.state.stateValue,
-                                                false,
+                                                this.ack,
                                             );
                                         }
                                     },
@@ -568,7 +578,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 await this.props.oContext.socket.setState(
                                     this.state.objId,
                                     !this.state.stateValue,
-                                    false,
+                                    this.ack,
                                 );
                             }
                         }}
@@ -658,7 +668,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                         await this.props.oContext.socket.setState(
                                             this.state.objId,
                                             this.state.stateValue ?? null,
-                                            false,
+                                            this.ack,
                                         );
                                     }
                                 }, this.props.schema.controlDelay || 0);
@@ -732,7 +742,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                     this.controlTimeout = null;
                                     if (this.state.objId) {
                                         const val = parseFloat(this.state.stateValue as unknown as string);
-                                        await this.props.oContext.socket.setState(this.state.objId, val, false);
+                                        await this.props.oContext.socket.setState(this.state.objId, val, this.ack);
                                     }
                                 }, this.props.schema.controlDelay || 0);
                             });
@@ -858,6 +868,22 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                     </div>
                 );
             }
+        }
+
+        if (content && this.props.schema.highlight) {
+            content = (
+                <Box
+                    component="div"
+                    sx={{
+                        width: '100%',
+                        '&:hover': {
+                            backgroundColor: this.props.oContext.themeType === 'dark' ? '#51515180' : '#b8b8b880',
+                        },
+                    }}
+                >
+                    {content}
+                </Box>
+            );
         }
 
         return content;

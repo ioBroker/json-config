@@ -9,6 +9,8 @@ export type {
     ConfigGenericState,
 } from './JsonConfigComponent/ConfigGeneric';
 
+export type { AceEditorComponent } from './JsonConfigComponent/wrapper/Components/Editor';
+
 export type {
     ConfigItemType,
     ConfigItemConfirmData,

@@ -2,6 +2,7 @@
     "$schema": "jsonConfig.json",
     "type": "tabs",
     "i18n": true,
+    "command": "tab",
     "iconPosition": "bottom",
     "tabsStyle": {},
     "items": {
@@ -476,6 +477,29 @@
                     "newLine": true,
                     "type": "divider",
                     "sm": 12
+                },
+                "_dividerThemeColor": {
+                    "type": "divider",
+                    "color": "primary",
+                    "height": 2
+                },
+                "_dividerCssColor": {
+                    "type": "divider",
+                    "color": "#d6d5d4",
+                    "height": "1px"
+                },
+                "stateWithAck": {
+                    "type": "state",
+                    "oid": "control.autoChildren",
+                    "ack": true,
+                    "narrow": true,
+                    "addColon": true
+                },
+                "stateHighlighted": {
+                    "type": "state",
+                    "oid": "info.Azimut",
+                    "readOnly": true,
+                    "highlight": true
                 },
                 "port": {
                     "type": "port",

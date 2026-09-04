@@ -1,0 +1,122 @@
+
+> test-gui@2.1.2 start
+> vite
+
+[2m21:45:40[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
+Port 3000 is in use, trying another one...
+Port 3001 is in use, trying another one...
+Port 3002 is in use, trying another one...
+Port 3003 is in use, trying another one...
+
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m310[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3004[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m21:45:41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/manifest.json[33m, use [36m/manifest.json[33m.[39m
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/favicon.ico[33m, use [36m/favicon.ico[33m.[39m
+[2m21:47:00[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mYour app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform
+[2m21:47:32[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled error] [1mError[22m: Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:3004/worker-json.js' failed to load.
+[39m > ../../../@vite/client:531:50
+
+[2m21:47:51[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/App.tsx[22m
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/manifest.json[33m, use [36m/manifest.json[33m.[39m
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/favicon.ico[33m, use [36m/favicon.ico[33m.[39m
+[2m21:47:54[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mYour app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/manifest.json[33m, use [36m/manifest.json[33m.[39m
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/favicon.ico[33m, use [36m/favicon.ico[33m.[39m
+[2m21:48:10[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mYour app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform
+[2m21:50:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/App.tsx[22m
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/manifest.json[33m, use [36m/manifest.json[33m.[39m
+[33mFiles in the public directory are served at the root path.
+Instead of [36m/public/favicon.ico[33m, use [36m/favicon.ico[33m.[39m
+[2m21:50:21[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mYour app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform
+[2m21:54:00[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled error] [1mError[22m: Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:3004/worker-json.js' failed to load.
+[39m > ../../../@vite/client:531:50
+
+[2m21:54:21[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled error] [1mError[22m: Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:3004/worker-json.js' failed to load.
+[39m > ../../../@vite/client:531:50
+
+[2m21:54:23[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled error] [1mError[22m: Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:3004/worker-yaml.js' failed to load.
+[39m > ../../../@vite/client:531:50
+
+[2m22:01:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:01:08.223Z] ws connection error: CLOSE_ABNORMAL
+[2m22:01:11[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:01:11.404Z] No READY flag received in 3 seconds. Re-init
+[2m22:01:11[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:01:11.405Z] ws connection error: CLOSE_ABNORMAL
+[2m22:01:17[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:01:17.402Z] No READY flag received in 3 seconds. Re-init
+[2m22:01:17[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:01:17.403Z] ws connection error: CLOSE_ABNORMAL
+[2m22:01:24[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:01:24.403Z] No READY flag received in 3 seconds. Re-init
+[2m22:01:24[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:01:24.404Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:03[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:03.938Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:12[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:12.163Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:20[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:20.393Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:28[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:28.780Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:37[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:37.085Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:45[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:45.309Z] ws connection error: CLOSE_ABNORMAL
+[2m22:02:53[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:02:53.568Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:03[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:03.023Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:10[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:10.770Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:18[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:18.754Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:26[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:26.765Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:34[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:34.753Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:42[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:42.734Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:50[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:50.756Z] ws connection error: CLOSE_ABNORMAL
+[2m22:03:58[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:03:58.779Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:08[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:04:08.401Z] No READY flag received in 3 seconds. Re-init
+[2m22:04:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:08.402Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:16[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:16.774Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:24[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:24.774Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:32[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:32.821Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:40[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:40.863Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:48[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:48.830Z] ws connection error: CLOSE_ABNORMAL
+[2m22:04:57[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:04:57.044Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:06[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:05:06.404Z] No READY flag received in 3 seconds. Re-init
+[2m22:05:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:06.405Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:14[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:14.817Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:22[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:22.806Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:30[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:30.839Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:38[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:38.822Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:46[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:46.812Z] ws connection error: CLOSE_ABNORMAL
+[2m22:05:54[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:05:54.813Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:02[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:02.831Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:11[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:11.789Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:21[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:06:21.400Z] No READY flag received in 3 seconds. Re-init
+[2m22:06:21[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:21.401Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:30[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:30.924Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:40[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:40.015Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:47[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:47.955Z] ws connection error: CLOSE_ABNORMAL
+[2m22:06:57[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:06:57.400Z] No READY flag received in 3 seconds. Re-init
+[2m22:06:57[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:06:57.401Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:07[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:07:07.402Z] No READY flag received in 3 seconds. Re-init
+[2m22:07:07[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:07.403Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:16[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:16.935Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:26[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:07:26.410Z] No READY flag received in 3 seconds. Re-init
+[2m22:07:26[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:26.411Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:34[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:34.748Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:42[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:42.759Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:51[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:51.465Z] ws connection error: CLOSE_ABNORMAL
+[2m22:07:59[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:07:59.776Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:08.006Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:15[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:15.770Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:23[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:23.774Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:31[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:31.806Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:39[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:39.830Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:47[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:47.969Z] ws connection error: CLOSE_ABNORMAL
+[2m22:08:56[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:08:56.025Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:05[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[2026-09-04T19:09:05.411Z] No READY flag received in 3 seconds. Re-init
+[2m22:09:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:05.412Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:13[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:13.808Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:21[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:21.815Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:30[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:30.035Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:38[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:38.275Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:46[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:46.523Z] ws connection error: CLOSE_ABNORMAL
+[2m22:09:54[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:09:54.885Z] ws connection error: CLOSE_ABNORMAL
+[2m22:10:03[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:10:03.153Z] ws connection error: CLOSE_ABNORMAL
+[2m22:10:11[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[2026-09-04T19:10:11.391Z] ws connection error: CLOSE_ABNORMAL
