@@ -1149,18 +1149,10 @@
             },
             "additionalProperties": false,
             "required": ["type"],
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": { "complex": true },
-                    "required": ["complex"]
-                },
-                {
-                    "type": "object",
-                    "properties": { "simple": true },
-                    "required": ["simple"]
-                }
-            ]
+            "not": {
+                "type": "object",
+                "required": ["complex", "simple"]
+            }
         },
         "sendToProps": {
             "type": "object",
@@ -4103,18 +4095,10 @@
                             },
                             "additionalProperties": false,
                             "required": ["type"],
-                            "oneOf": [
-                                {
-                                    "type": "object",
-                                    "properties": { "complex": true },
-                                    "required": ["complex"]
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": { "simple": true },
-                                    "required": ["simple"]
-                                }
-                            ]
+                            "not": {
+                                "type": "object",
+                                "required": ["complex", "simple"]
+                            }
                         }
                     },
                     {
