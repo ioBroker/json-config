@@ -1956,7 +1956,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.0.1 (2026-09-12)
 
 - (@GermanBluefox) The schema was corrected: closable to closeable.
 - (@GermanBluefox) Updated packages
