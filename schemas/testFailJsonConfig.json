@@ -419,6 +419,18 @@
                     "val": "${data.myLanguage}",
                     "id": "javascript.0.value",
                     "label": "Test"
+                },
+                "cron_both": {
+                    "newLine": true,
+                    "type": "cron",
+                    "label": "cron",
+                    "simple": true,
+                    "complex": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
                 }
             }
         }

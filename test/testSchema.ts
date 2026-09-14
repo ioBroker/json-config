@@ -142,6 +142,22 @@ const expectedErrorsPerTest = {
             message: 'must match "then" schema',
         },
         {
+            instancePath: '/items/demoTab/items/cron_both',
+            schemaPath: '#/definitions/cronProps/not',
+            keyword: 'not',
+            params: {},
+            message: 'must NOT be valid',
+        },
+        {
+            instancePath: '/items/demoTab/items/cron_both',
+            schemaPath: '#/patternProperties/%5E.%2B/allOf/26/if',
+            keyword: 'if',
+            params: {
+                failingKeyword: 'then',
+            },
+            message: 'must match "then" schema',
+        },
+        {
             instancePath: '/items/demoTab',
             schemaPath: '#/properties/items/patternProperties/%5E.%2B/allOf/11/if',
             keyword: 'if',
