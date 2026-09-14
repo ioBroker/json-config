@@ -1956,6 +1956,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@MiSchroe) Fixed: CRON schema accepts either simple or complex or none of them
+
 ### 10.0.1 (2026-09-12)
 
 - (@GermanBluefox) The schema was corrected: closable to closeable.

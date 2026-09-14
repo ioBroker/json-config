@@ -805,32 +805,44 @@
                     "type": "cron",
                     "label": "cron",
                     "simple": true,
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "cron_complex": {
                     "newLine": true,
                     "type": "cron",
                     "label": "cron",
                     "complex": true,
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "cron_complex_simple_false": {
+                    "newLine": true,
+                    "type": "cron",
+                    "label": "cron",
+                    "simple": false,
+                    "complex": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 },
                 "cron_none": {
                     "newLine": true,
                     "type": "cron",
                     "label": "cron",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
                 }
             }
         }

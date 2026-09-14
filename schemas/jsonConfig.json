@@ -1151,6 +1151,7 @@
             "required": ["type"],
             "not": {
                 "type": "object",
+                "properties": { "complex": { "const": true }, "simple": { "const": true } },
                 "required": ["complex", "simple"]
             }
         },
@@ -4099,6 +4100,7 @@
                             "required": ["type"],
                             "not": {
                                 "type": "object",
+                                "properties": { "complex": { "const": true }, "simple": { "const": true } },
                                 "required": ["complex", "simple"]
                             }
                         }
