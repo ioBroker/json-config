@@ -1956,7 +1956,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.0.2 (2026-09-15)
 - (@MiSchroe) Fixed: CRON schema accepts either simple or complex or none of them
 - (@GermanBluefox) Updated Schema
 
