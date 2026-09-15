@@ -878,7 +878,8 @@ export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
 }
 
 export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
-    type: 'sendto';
+    /** `sendto` is a backwards compatible alias of `sendTo` */
+    type: 'sendTo' | 'sendto';
     command?: string;
     jsonData?: string;
     data?: Record<string, any>;
