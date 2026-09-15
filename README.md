@@ -849,7 +849,7 @@ Example:
 }
 ```
 
-### `certificateCollection`
+### `certCollection`
 
 select a certificate collection or just use all collections or don't use let's encrypt at all.
 

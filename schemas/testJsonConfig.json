@@ -250,6 +250,87 @@
                     "allowDeactivate": true,
                     "adapter": "admin",
                     "long": true
+                },
+                "room": {
+                    "type": "room",
+                    "short": true,
+                    "allowDeactivate": false
+                },
+                "func": {
+                    "type": "func",
+                    "short": true,
+                    "allowDeactivate": false
+                },
+                "hiddenBoolean": {
+                    "type": "text",
+                    "hidden": false,
+                    "disabled": true,
+                    "validateJson": true,
+                    "allowEmpty": true,
+                    "placeholder": {
+                        "en": "Placeholder"
+                    }
+                },
+                "defaultSendToButton": {
+                    "type": "text",
+                    "defaultSendTo": "fill",
+                    "button": {
+                        "en": "Refresh"
+                    },
+                    "buttonTooltip": "Request",
+                    "jsonData": "{}"
+                },
+                "objectIdRoot": {
+                    "type": "objectId",
+                    "root": "system.adapter",
+                    "filters": {}
+                },
+                "certCollection": {
+                    "type": "certCollection",
+                    "leCollectionName": "leCollection"
+                },
+                "license": {
+                    "type": "license",
+                    "texts": ["Text"],
+                    "licenseUrl": "https://iobroker.net"
+                },
+                "topic": {
+                    "type": "topic",
+                    "maxLength": 10
+                },
+                "sendtoLowerCase": {
+                    "type": "sendto",
+                    "command": "test"
+                },
+                "checkDockerCommon": {
+                    "type": "checkDocker",
+                    "help": "Help",
+                    "doNotSave": true
+                },
+                "iframeSendTo": {
+                    "type": "iframeSendTo",
+                    "command": "test",
+                    "sandbox": "allow-scripts",
+                    "frameBorder": "1px"
+                },
+                "fileWithoutFilename": {
+                    "type": "file",
+                    "disableEdit": true,
+                    "limitPath": "admin",
+                    "filterFiles": ["png"],
+                    "trim": true,
+                    "maxLength": 100
+                },
+                "certificateWithoutType": {
+                    "type": "certificate"
+                },
+                "sendToReload": {
+                    "type": "sendTo",
+                    "command": "test",
+                    "reloadBrowser": true,
+                    "title": {
+                        "en": "Tooltip"
+                    }
                 }
             }
         },
@@ -659,6 +740,37 @@
                     "allowAddByFilter": false,
                     "uniqueColumns": ["ip"],
                     "items": [
+                        {
+                            "type": "alive",
+                            "attr": "alive",
+                            "width": 50
+                        },
+                        {
+                            "type": "password",
+                            "attr": "pw2",
+                            "readOnly": true,
+                            "maxLength": 5
+                        },
+                        {
+                            "type": "text",
+                            "attr": "t2",
+                            "copyToClipboard": true,
+                            "time": true
+                        },
+                        {
+                            "type": "room",
+                            "attr": "room",
+                            "short": true,
+                            "allowDeactivate": false,
+                            "width": 50
+                        },
+                        {
+                            "type": "func",
+                            "attr": "func",
+                            "short": true,
+                            "allowDeactivate": false,
+                            "width": 50
+                        },
                         {
                             "type": "cron",
                             "complex": true,

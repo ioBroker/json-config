@@ -142,7 +142,7 @@ const expectedErrorsPerTest = {
         },
         {
             instancePath: '/items/demoTab/items/cron_both',
-            schemaPath: '#/definitions/cronProps/not',
+            schemaPath: '#/not',
             keyword: 'not',
             params: {},
             message: 'must NOT be valid',

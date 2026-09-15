@@ -741,7 +741,7 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
-    max?: string;
+    max?: number;
     alsoDependsOn?: string[];
     /** Instance where to send the request to. Overrides the value of `oContext.instance` */
     instance?: string;
