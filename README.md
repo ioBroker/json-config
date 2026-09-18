@@ -1956,7 +1956,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 10.0.3 (2026-09-18)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Updated packages and schema
 
 ### 10.0.2 (2026-09-15)
