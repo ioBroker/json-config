@@ -100,6 +100,7 @@ export type ConfigItemType =
     | 'room'
     | 'select'
     | 'selectSendTo'
+    | 'sendTo'
     | 'sendto'
     | 'setState'
     | 'slider'
