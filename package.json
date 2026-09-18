@@ -30,7 +30,7 @@
     "release-patch": "release-script patch --yes --lf",
     "release-minor": "release-script minor --yes --lf",
     "release-major": "release-script major --yes --lf",
-    "update-packages": "npx -y npm-check-updates --upgrade"
+    "update-packages": "npx -y npm-check-updates --upgrade && cd test-gui && npx -y npm-check-updates --upgrade"
   },
   "publishConfig": {
     "access": "public"
@@ -38,16 +38,16 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@iobroker/gui-components": "^10.2.3",
+    "@iobroker/gui-components": "^10.3.1",
     "@module-federation/runtime": "^2.9.0",
     "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.4.0",
-    "@mui/x-date-pickers": "^9.13.0",
+    "@mui/x-date-pickers": "^9.14.0",
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "react-dropzone": "^20.1.1",
+    "react-dropzone": "^20.1.2",
     "react-qr-code": "^2.2.0",
     "yaml": "^2.9.1"
   },
@@ -58,7 +58,7 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/types": "^7.2.2",
     "@types/crypto-js": "^4.2.2",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.6.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "ajv": "^8.20.0",
