@@ -889,7 +889,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 this.setState({ value: values, showImportDialog: false });
             }
         } else {
-            window.alert('jc_No data found in file');
+            window.alert(I18n.t('jc_No data found in file'));
         }
     }
 
@@ -1609,7 +1609,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                         align="left"
                                                         style={tdStyle}
                                                     >
-                                                        <span style={styles.headerText}>{this.getText('Actions')}</span>
+                                                        <span style={styles.headerText}>{I18n.t('jc_Actions')}</span>
                                                     </TableCell>
                                                     <TableCell
                                                         align="left"

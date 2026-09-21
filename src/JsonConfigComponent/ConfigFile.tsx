@@ -9,7 +9,7 @@ import {
     Videocam as IconVideo,
 } from '@mui/icons-material';
 
-import { DialogSelectFile } from '@iobroker/gui-components';
+import { DialogSelectFile, I18n } from '@iobroker/gui-components';
 
 import type { ConfigItemFile } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -95,7 +95,7 @@ export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFil
                         source.connect(oContext.destination); // connect the source to the oContext's destination (the speakers)
                         source.start(0);
                     },
-                    (err: DOMException): void => window.alert(`Cannot play: ${err.message}`),
+                    (err: DOMException): void => window.alert(I18n.t('jc_Cannot play: %s', err.message)),
                 );
             }
         });

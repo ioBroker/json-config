@@ -58,7 +58,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
     async componentDidMount(): Promise<void> {
         if (!this.props.schema.url) {
             console.error('URL is empty. Cannot load custom component!');
-            this.setState({ error: 'URL is empty. Cannot load custom component!' });
+            this.setState({ error: I18n.t('jc_URL is empty. Cannot load custom component!') });
             return;
         }
 
@@ -158,7 +158,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
                 ConfigCustom.runningLoads[`${url}!${fileToLoad}`] = setPromise;
             } catch (error) {
                 console.error(error);
-                this.setState({ error: `Cannot import from ${this.props.schema.url}: ${error}` });
+                this.setState({ error: I18n.t('jc_Cannot import from %s: %s', this.props.schema.url, String(error)) });
             }
         }
         try {
@@ -168,14 +168,19 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
                 const keys = Object.keys(component || {});
                 console.error('URL is empty. Cannot load custom component!');
                 this.setState({
-                    error: `Component ${this.props.schema.name} not found in ${this.props.schema.url}. Found: ${keys.join(', ')}`,
+                    error: I18n.t(
+                        'jc_Component %s not found in %s. Found: %s',
+                        this.props.schema.name,
+                        this.props.schema.url,
+                        keys.join(', '),
+                    ),
                 });
             } else {
                 this.setState({ Component: component[componentName] });
             }
         } catch (error) {
             console.error(error);
-            this.setState({ error: `Cannot import from ${this.props.schema.url}: ${error}` });
+            this.setState({ error: I18n.t('jc_Cannot import from %s: %s', this.props.schema.url, String(error)) });
         }
     }
 

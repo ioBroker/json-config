@@ -266,7 +266,10 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                             });
                         } else {
                             window.alert(
-                                `Instance system.adapter.${this.props.adapterName}.${this.props.instance} not found!`,
+                                I18n.t(
+                                    'jc_Instance %s not found!',
+                                    `system.adapter.${this.props.adapterName}.${this.props.instance}`,
+                                ),
                             );
                         }
                     },
@@ -650,7 +653,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
 
             if (!obj) {
                 console.error('Something went wrong: may be no connection?');
-                window.alert('Something went wrong: may be no connection?');
+                window.alert(I18n.t('jc_Something went wrong: may be no connection?'));
                 return;
             }
 

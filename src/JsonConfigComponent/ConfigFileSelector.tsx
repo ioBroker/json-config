@@ -287,7 +287,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                         this.onChange(this.props.attr, this.path + file.name),
                     ),
                 )
-                .catch(e => window.alert(`Cannot upload file: ${e}`));
+                .catch(e => window.alert(I18n.t('jc_Cannot upload file: %s', String(e))));
         };
         reader.readAsArrayBuffer(file);
     }
@@ -309,7 +309,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                             this.props.oContext.socket
                                 .deleteFile(this.objectID, deleteFile)
                                 .then(() => this.updateFiles())
-                                .catch(e => window.alert(`Cannot delete file: ${e}`));
+                                .catch(e => window.alert(I18n.t('jc_Cannot delete file: %s', String(e))));
                         }
                     });
                 }}
@@ -344,7 +344,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                         source.connect(oContext.destination); // connect the source to the oContext's destination (the speakers)
                         source.start(0);
                     },
-                    (err: DOMException): void => window.alert(`Cannot play: ${err.message}`),
+                    (err: DOMException): void => window.alert(I18n.t('jc_Cannot play: %s', err.message)),
                 );
             }
         });

@@ -2,6 +2,8 @@ import React, { type JSX } from 'react';
 
 import { InputLabel, TextField, FormHelperText, MenuItem, FormControl, Select } from '@mui/material';
 
+import { I18n } from '@iobroker/gui-components';
+
 import type { ConfigItemInterface } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
@@ -73,7 +75,7 @@ class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfac
 
             this.setState({ interfaces });
         } catch (e) {
-            window.alert(`Cannot read interfaces: ${e}`);
+            window.alert(I18n.t('jc_Cannot read interfaces: %s', String(e)));
         }
     }
 
