@@ -30,6 +30,37 @@ const styles: Record<string, React.CSSProperties> = {
     },
 };
 
+/**
+ * Is this the same value the user has selected?
+ *
+ * Compared as text on purpose. An adapter may answer the `sendTo` with numbers (`{ label: 'Heat',
+ * value: 9 }`), and a configuration written while this comparison was missing can hold the same
+ * entry as a number here and as a string there. What is stored keeps the type the adapter sent; only
+ * the comparison is tolerant, so such a configuration works again as soon as it is opened
+ * (ioBroker.admin#3636).
+ *
+ * @param a one value
+ * @param b the other value
+ */
+function sameValue(a: unknown, b: unknown): boolean {
+    return String(a) === String(b);
+}
+
+/**
+ * The values that are selected right now, as an array - whatever the attribute holds.
+ *
+ * With `multiple` that is an array, but an attribute that was a single select before holds a plain
+ * value, and an empty attribute holds nothing at all.
+ *
+ * @param value what `_getValue` returned
+ */
+function selectedValues(value: string | string[] | null | undefined): (string | number)[] {
+    if (Array.isArray(value)) {
+        return value;
+    }
+    return value === null || value === undefined || value === '' ? [] : [value];
+}
+
 /*
 to use this option, your adapter must implement listUart message
 
@@ -268,6 +299,8 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
         const selectOptions = this.state.list?.filter(item => !item.hiddenValue);
 
         const item = selectOptions?.find(it => it.value === value);
+        /** What is selected now, for the checkboxes of the menu items */
+        const selected = selectedValues(value);
 
         return (
             <FormControl
@@ -292,13 +325,15 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                     renderValue={(val: string | string[]) =>
                         this.props.schema.multiple ? (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {(val as string[]).map((v: string) => {
-                                    const it = selectOptions?.find(_item => _item.value === v);
+                                {(val as string[]).map((v: string, i: number) => {
+                                    const it = selectOptions?.find(_item => sameValue(_item.value, v));
                                     if (it || this.props.schema.showAllValues !== false) {
                                         const label = it?.label || v;
                                         return (
                                             <Chip
-                                                key={v}
+                                                // a configuration written before #3636 can hold the
+                                                // same value twice, so the value alone is no key
+                                                key={`${v}_${i}`}
                                                 label={label}
                                             />
                                         );
@@ -311,10 +346,16 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                         )
                     }
                     onChange={e => {
-                        const mayBePromise = this.onChange(this.props.attr, e.target.value);
-                        if (mayBePromise instanceof Promise) {
-                            mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
-                        }
+                        // `_getValue` answers from the state as soon as it holds something, which a
+                        // click on a checkbox does. Without writing it here too, the two ways of
+                        // selecting an item disagree and the list freezes on what the checkbox left
+                        // behind (ioBroker.admin#3636).
+                        this.setState({ value: e.target.value }, () => {
+                            const mayBePromise = this.onChange(this.props.attr, e.target.value);
+                            if (mayBePromise instanceof Promise) {
+                                mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
+                            }
+                        });
                     }}
                 >
                     {selectOptions?.map((it, i) => {
@@ -337,17 +378,21 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                             >
                                 {this.props.schema.multiple ? (
                                     <Checkbox
-                                        checked={value?.includes(it.value.toString())}
+                                        checked={selected.some(v => sameValue(v, it.value))}
                                         onClick={() => {
-                                            const _value = JSON.parse(JSON.stringify(this._getValue()));
-                                            const pos = value?.indexOf(it.value.toString());
+                                            // read anew: the list may have been changed through the
+                                            // menu item itself since this checkbox was rendered
+                                            const _value = selectedValues(this._getValue()).slice();
+                                            const pos = _value.findIndex(v => sameValue(v, it.value));
                                             if (pos !== -1) {
                                                 _value.splice(pos, 1);
                                             } else {
                                                 _value.push(it.value);
-                                                _value.sort();
+                                                // the default sort compares as text, which would put
+                                                // the number 10 in front of the 2
+                                                _value.sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
                                             }
-                                            this.setState({ value: _value }, () =>
+                                            this.setState({ value: _value as string[] }, () =>
                                                 this.onChange(this.props.attr, _value),
                                             );
                                         }}
