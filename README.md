@@ -1956,6 +1956,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@krobipd) Fixed: a table with `encryptedAttributes` showed the stored secrets still encrypted and encrypted them a second time on the next save, so the adapter could no longer decrypt them. Since 8.5.0 the rows were only decrypted when the attribute was empty (`||=` instead of `&&=`); they are decrypted again when set, and a table stored as an object (`objKeyName`) no longer throws there
+
 ### 10.0.7 (2026-09-26)
 - (@GermanBluefox) Fixed: a `selectSendTo` with `multiple: true` could not be used when the adapter answers with numeric values (`{ label: 'Heat', value: 9 }`). The checkbox of a menu item compared the value as text but stored it as a number, so it never appeared as checked and every click added the entry again instead of removing it - the configuration filled up with duplicates. The comparison is tolerant about the type now, which also repairs a configuration that was written this way, and the entries are sorted as numbers instead of as text (ioBroker.admin#3636)
 - (@GermanBluefox) Fixed: in the same component, clicking a checkbox and clicking the text of a menu item disagreed about where the value lives. After the first click on a checkbox, selecting an item by its text no longer changed anything visible, because the rendered list was frozen on the internal state while only the data behind it changed
