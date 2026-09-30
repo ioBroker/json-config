@@ -123,6 +123,7 @@
     "jc_Serial number (UUID) \"%s\" in license is for other device.": "Il numero di serie (UUID) \"%s\" nella licenza è per un altro dispositivo.",
     "jc_Show/hide filter input": "Mostra/nascondi input filtro",
     "jc_Some data are not stored. Discard?": "Alcuni dati non vengono memorizzati. Scartare?",
+    "jc_Some entries are invalid": "Alcune voci non sono valide",
     "jc_Something went wrong: may be no connection?": "Qualcosa è andato storto: forse manca la connessione?",
     "jc_Successfully authorized. Token valid till %s and will be automatically renewed.": "Autorizzazione completata. Il token è valido fino al %s e verrà rinnovato automaticamente.",
     "jc_Successfully authorized. Token valid till %s but it can expire as the instance is not running.": "Autorizzazione completata. Il token è valido fino al %s, ma potrebbe scadere perché l'istanza non è in esecuzione.",

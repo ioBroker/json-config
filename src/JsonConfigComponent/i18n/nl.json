@@ -123,6 +123,7 @@
     "jc_Serial number (UUID) \"%s\" in license is for other device.": "Serienummer (UUID) \"%s\" in licentie is voor ander apparaat.",
     "jc_Show/hide filter input": "Filterinvoer weergeven/verbergen",
     "jc_Some data are not stored. Discard?": "Sommige gegevens worden niet opgeslagen. Weggooien?",
+    "jc_Some entries are invalid": "Sommige items zijn ongeldig",
     "jc_Something went wrong: may be no connection?": "Er is iets misgegaan: misschien is er geen verbinding?",
     "jc_Successfully authorized. Token valid till %s and will be automatically renewed.": "Succesvol geautoriseerd. Token geldig tot %s en wordt automatisch verlengd.",
     "jc_Successfully authorized. Token valid till %s but it can expire as the instance is not running.": "Succesvol geautoriseerd. Token geldig tot %s, maar kan verlopen omdat de instantie niet actief is.",

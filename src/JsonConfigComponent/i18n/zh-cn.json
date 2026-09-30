@@ -123,6 +123,7 @@
     "jc_Serial number (UUID) \"%s\" in license is for other device.": "许可证中的序列号 (UUID)“%s”用于其他设备。",
     "jc_Show/hide filter input": "显示/隐藏过滤器输入",
     "jc_Some data are not stored. Discard?": "部分数据未存储。丢弃？",
+    "jc_Some entries are invalid": "部分条目无效",
     "jc_Something went wrong: may be no connection?": "出现问题：可能没有连接？",
     "jc_Successfully authorized. Token valid till %s and will be automatically renewed.": "授权成功。令牌有效期至 %s，并将自动续订。",
     "jc_Successfully authorized. Token valid till %s but it can expire as the instance is not running.": "授权成功。令牌有效期至 %s，但由于实例未运行，令牌可能会过期。",
