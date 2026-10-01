@@ -306,6 +306,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
     private refreshBecauseOfHiddenElements: ReturnType<typeof setTimeout> | null = null;
 
+    /** Error state last reported to the parent, so the same state is not reported twice */
+    private reportedTableError: string = '';
+
     constructor(props: ConfigTableProps) {
         super(props);
         this.filterRefs = {};
@@ -502,49 +505,85 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
      * Validate that columns configured in `uniqueColumns` have unique values
      */
     validateUniqueProps(): void {
-        if (!this.props.schema.uniqueColumns) {
-            return;
-        }
-
         let firstErrorColumn: string | null = null;
         let firstErrorValue: string | number | null = null;
 
-        // Validate all columns and collect errors
-        for (const uniqueCol of this.props.schema.uniqueColumns) {
+        // Search for the first duplicate over all configured columns.
+        // The duplicate must not be reported under the name of the column: the cells of that column
+        // report their own errors under the same name and would delete each other's entries.
+        for (const uniqueCol of this.props.schema.uniqueColumns || []) {
             const allVals: (string | number)[] = [];
-            const found = this.state.value.find(entry => {
+            for (const entry of this.state.value) {
                 const val = entry[uniqueCol];
                 if (allVals.includes(val)) {
-                    // Store the first error we encounter
-                    if (!firstErrorColumn) {
-                        firstErrorColumn = uniqueCol;
-                        firstErrorValue = val;
-                    }
-                    this.onError(uniqueCol, 'is not unique');
-                    return true;
+                    firstErrorColumn = uniqueCol;
+                    firstErrorValue = val;
+                    break;
                 }
                 allVals.push(val);
-                return false;
-            });
-
-            // Clear error for this column if no duplicates found
-            if (!found) {
-                this.onError(uniqueCol);
+            }
+            if (firstErrorColumn) {
+                break;
             }
         }
 
         // Set error message based on the first error found (or clear if no errors)
-        if (firstErrorColumn) {
-            this.setState({
-                errorMessage: I18n.t(
-                    'jc_Non-allowed duplicate entry "%s" in column "%s"',
-                    firstErrorValue,
-                    firstErrorColumn,
-                ),
-            });
+        const errorMessage = firstErrorColumn
+            ? I18n.t('jc_Non-allowed duplicate entry "%s" in column "%s"', firstErrorValue, firstErrorColumn)
+            : '';
+
+        if (errorMessage === this.state.errorMessage) {
+            this.reportTableError(this.state.tableErrors, errorMessage);
         } else {
-            this.setState({ errorMessage: '' });
+            this.setState({ errorMessage }, () => this.reportTableError(this.state.tableErrors, errorMessage));
         }
+    }
+
+    /**
+     * Report the error state of the whole table to the parent.
+     * The error registry of the parent is a flat map of attribute names, so all rows would write into the
+     * same entry and would clear each other's errors. Therefore, only one aggregated error is reported,
+     * and it is stored under the attribute of the table itself.
+     *
+     * @param tableErrors errors of the rows, indexed by the row position
+     * @param uniqueMessage error text of the `uniqueColumns` check or an empty string
+     */
+    reportTableError(tableErrors: Record<number, Record<string, string>>, uniqueMessage: string): void {
+        const rowWithError = Object.keys(tableErrors).find(
+            rowIndex => Object.keys(tableErrors[parseInt(rowIndex, 10)]).length > 0,
+        );
+        const error = uniqueMessage || (rowWithError === undefined ? '' : I18n.t('jc_Some entries are invalid'));
+
+        if (error !== this.reportedTableError) {
+            this.reportedTableError = error;
+            this.onError(this.props.attr, error || undefined);
+        }
+    }
+
+    /**
+     * Move the errors together with their rows, so a red marker stays on the row it belongs to
+     *
+     * @param tableErrors errors of the rows, indexed by the row position
+     * @param mapIndex returns the new position of a row or null if the row does not exist anymore
+     */
+    static remapTableErrors(
+        tableErrors: Record<number, Record<string, string>>,
+        mapIndex: (rowIndex: number) => number | null,
+    ): Record<number, Record<string, string>> {
+        const result: Record<number, Record<string, string>> = {};
+        for (const rowIndexStr of Object.keys(tableErrors)) {
+            const rowIndex = parseInt(rowIndexStr, 10);
+            const newIndex = mapIndex(rowIndex);
+            if (newIndex !== null) {
+                result[newIndex] = tableErrors[rowIndex];
+            }
+        }
+        return result;
+    }
+
+    /** True if at least one cell of the row is faulty */
+    hasRowErrors(rowIndex: number): boolean {
+        return Object.keys(this.state.tableErrors[rowIndex] || {}).length > 0;
     }
 
     /**
@@ -553,26 +592,36 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
     onTableRowError =
         (rowIndex: number) =>
         (attr: string | undefined, error?: string): void => {
-            const newTableErrors = { ...this.state.tableErrors };
-
-            newTableErrors[rowIndex] ||= {};
-
-            if (attr) {
-                if (!error) {
-                    delete newTableErrors[rowIndex][attr];
-                    // Clean up empty row error objects
-                    if (Object.keys(newTableErrors[rowIndex]).length === 0) {
-                        delete newTableErrors[rowIndex];
-                    }
-                } else {
-                    newTableErrors[rowIndex][attr] = error;
-                }
+            // Without an attribute, the error cannot be assigned to a cell, and an empty record would
+            // mark the row as faulty forever
+            if (!attr) {
+                return;
             }
 
-            this.setState({ tableErrors: newTableErrors });
+            this.setState(
+                prevState => {
+                    // The state must be copied inside the updater: all rows of one render pass report
+                    // their errors in the same batch, and a copy taken outside would be the same
+                    // outdated state for every one of them, so only the last report would survive
+                    const tableErrors = { ...prevState.tableErrors };
+                    const rowErrors = { ...tableErrors[rowIndex] };
 
-            // Forward error to parent component
-            this.props.onError(attr, error);
+                    if (error) {
+                        rowErrors[attr] = error;
+                    } else {
+                        delete rowErrors[attr];
+                    }
+
+                    if (Object.keys(rowErrors).length) {
+                        tableErrors[rowIndex] = rowErrors;
+                    } else {
+                        delete tableErrors[rowIndex];
+                    }
+
+                    return { tableErrors };
+                },
+                () => this.reportTableError(this.state.tableErrors, this.state.errorMessage),
+            );
         };
 
     static descendingComparator(a: Record<string, any>, b: Record<string, any>, orderBy: string): number {
@@ -606,21 +655,43 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
     handleRequestSort = (property: string, orderCheck: boolean = false): void => {
         const { order, orderBy } = this.state;
-        //if (orderBy || 'asc') {
         const isAsc = orderBy === property && order === 'asc';
         const newOrder = orderCheck ? order : isAsc ? 'desc' : 'asc';
-        const newValue = this.stableSort(newOrder, property);
-        // update only if value is really changed
-        if (JSON.stringify(newValue) !== JSON.stringify(this.state.value)) {
-            this.setState(
-                { value: newValue, order: newOrder, orderBy: property, iteration: this.state.iteration + 10000 },
-                () => this.applyFilter(false, newValue),
-            );
+        const { value: newValue, indexes } = this.stableSort(newOrder, property);
+
+        // update the rows only if their order really changed
+        if (JSON.stringify(newValue) === JSON.stringify(this.state.value)) {
+            // The rows are already in the requested order. The sort state must be stored anyway,
+            // otherwise the arrow in the header would not move, and the next click on the same
+            // column would calculate 'asc' again instead of switching over to 'desc'.
+            // `orderCheck` only re-applies the active sorting after an edit and must not change it.
+            if (!orderCheck && (orderBy !== property || order !== newOrder)) {
+                this.setState({ order: newOrder, orderBy: property });
+            }
+            return;
         }
-        //}
+
+        // `indexes` gives the previous position for every new position, but the errors are
+        // indexed by the previous position, so the mapping must be inverted
+        const oldToNew: Record<number, number> = {};
+        indexes.forEach((oldIndex, newIndex) => (oldToNew[oldIndex] = newIndex));
+
+        this.setState(
+            {
+                value: newValue,
+                order: newOrder,
+                orderBy: property,
+                iteration: this.state.iteration + 10000,
+                tableErrors: ConfigTable.remapTableErrors(
+                    this.state.tableErrors,
+                    rowIndex => oldToNew[rowIndex] ?? null,
+                ),
+            },
+            () => this.applyFilter(false, newValue),
+        );
     };
 
-    stableSort = (order: 'desc' | 'asc', orderBy: string): Record<string, any>[] => {
+    stableSort = (order: 'desc' | 'asc', orderBy: string): { value: Record<string, any>[]; indexes: number[] } => {
         const { value } = this.state;
         const comparator = ConfigTable.getComparator(order, orderBy);
         const stabilizedThis = value.map((el, index) => ({ el, index }));
@@ -633,7 +704,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             return a.index - b.index;
         });
 
-        return stabilizedThis.map(el => el.el);
+        return { value: stabilizedThis.map(el => el.el), indexes: stabilizedThis.map(el => el.index) };
     };
 
     renderShowHideFilter(headCell: ConfigItemTableIndexed): React.JSX.Element | null {
@@ -768,38 +839,24 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         const newValue: Record<string, any>[] = JSON.parse(JSON.stringify(this.state.value));
         newValue.splice(index, 1);
 
-        // Clear errors for deleted row and shift remaining error indices
-        const newTableErrors = { ...this.state.tableErrors };
-
-        // Clear errors for the deleted row
-        if (newTableErrors[index]) {
-            // Clear all errors for this row from parent
-            Object.keys(newTableErrors[index]).forEach(attr => {
-                this.props.onError(attr, undefined);
-            });
-            delete newTableErrors[index];
-        }
-
-        // Shift error indices for rows after the deleted one
-        const shiftedErrors: Record<number, Record<string, string>> = {};
-        Object.keys(newTableErrors).forEach(rowIndexStr => {
-            const rowIndex = parseInt(rowIndexStr, 10);
-            if (rowIndex > index) {
-                // Move errors from rowIndex to rowIndex - 1
-                shiftedErrors[rowIndex - 1] = newTableErrors[rowIndex];
-            } else {
-                // Keep errors at same index for rows before deleted row
-                shiftedErrors[rowIndex] = newTableErrors[rowIndex];
-            }
-        });
+        // Drop the errors of the deleted row and shift the errors of all rows below it.
+        // The parent is informed by `validateUniqueProps` afterwards: it knows only one error for the
+        // whole table, and a single row must not clear the errors of the remaining ones.
+        const tableErrors = ConfigTable.remapTableErrors(this.state.tableErrors, rowIndex =>
+            rowIndex === index ? null : rowIndex > index ? rowIndex - 1 : rowIndex,
+        );
 
         this.setState(
             {
                 value: newValue,
                 iteration: this.state.iteration + 10_000,
-                tableErrors: shiftedErrors,
+                tableErrors,
             },
-            () => this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+            () =>
+                this.applyFilter(false, undefined, () => {
+                    this.validateUniqueProps();
+                    this.onChangeWrapper(newValue);
+                }),
         );
     };
 
@@ -919,8 +976,20 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
         newValue.splice(index, 0, cloned);
 
-        this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+        this.setState(
+            {
+                value: newValue,
+                iteration: this.state.iteration + 10000,
+                // the clone takes the position `index`, so the errors from there on move one row down
+                tableErrors: ConfigTable.remapTableErrors(this.state.tableErrors, rowIndex =>
+                    rowIndex >= index ? rowIndex + 1 : rowIndex,
+                ),
+            },
+            () =>
+                this.applyFilter(false, undefined, () => {
+                    this.validateUniqueProps();
+                    this.onChangeWrapper(newValue);
+                }),
         );
     };
 
@@ -1021,8 +1090,12 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
         newValue.push(newItem);
 
+        // the new row is appended, so the existing error indices stay valid
         this.setState({ value: newValue }, () =>
-            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+            this.applyFilter(false, undefined, () => {
+                this.validateUniqueProps();
+                this.onChangeWrapper(newValue);
+            }),
         );
     };
 
@@ -1081,8 +1154,16 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         const item = newValue[idx];
         newValue.splice(idx, 1);
         newValue.splice(idx - 1, 0, item);
-        this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+        this.setState(
+            {
+                value: newValue,
+                iteration: this.state.iteration + 10000,
+                // the moved row and its predecessor exchange their positions
+                tableErrors: ConfigTable.remapTableErrors(this.state.tableErrors, rowIndex =>
+                    rowIndex === idx ? idx - 1 : rowIndex === idx - 1 ? idx : rowIndex,
+                ),
+            },
+            () => this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
         );
     }
 
@@ -1091,8 +1172,16 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
         const item = newValue[idx];
         newValue.splice(idx, 1);
         newValue.splice(idx + 1, 0, item);
-        this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+        this.setState(
+            {
+                value: newValue,
+                iteration: this.state.iteration + 10000,
+                // the moved row and its successor exchange their positions
+                tableErrors: ConfigTable.remapTableErrors(this.state.tableErrors, rowIndex =>
+                    rowIndex === idx ? idx + 1 : rowIndex === idx + 1 ? idx : rowIndex,
+                ),
+            },
+            () => this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
         );
     }
 
@@ -1143,13 +1232,18 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 (obj: Record<string, any>) => value.push(obj),
                             );
 
+                            // the imported rows are appended, so the existing error indices stay valid
                             this.setState(
                                 {
                                     value,
                                     iteration: this.state.iteration + 10000,
                                     showTypeOfImportDialog: false,
                                 },
-                                () => this.applyFilter(false, undefined, () => this.onChangeWrapper(value)),
+                                () =>
+                                    this.applyFilter(false, undefined, () => {
+                                        this.validateUniqueProps();
+                                        this.onChangeWrapper(value);
+                                    }),
                             );
                         }}
                     >
@@ -1169,8 +1263,14 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                     value,
                                     iteration: this.state.iteration + 10000,
                                     showTypeOfImportDialog: false,
+                                    // every row is replaced, so none of the old markers fits anymore
+                                    tableErrors: {},
                                 },
-                                () => this.applyFilter(false, undefined, () => this.onChangeWrapper(value)),
+                                () =>
+                                    this.applyFilter(false, undefined, () => {
+                                        this.validateUniqueProps();
+                                        this.onChangeWrapper(value);
+                                    }),
                             );
                         }}
                     >
@@ -1469,7 +1569,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             xl: schema.xl || undefined,
                         }}
                     >
-                        <Card sx={this.state.tableErrors[idx] ? { outline: '1px solid red' } : undefined}>
+                        <Card sx={this.hasRowErrors(idx) ? { outline: '1px solid red' } : undefined}>
                             <Paper style={styles.paper}>
                                 {this.props.schema.titleAttribute ? (
                                     <Box sx={styles.cardHeader}>
@@ -1732,7 +1832,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 <TableRow
                                     hover
                                     key={`${idx}_${i}`}
-                                    sx={this.state.tableErrors[idx] ? { outline: '1px solid red' } : undefined}
+                                    sx={this.hasRowErrors(idx) ? { outline: '1px solid red' } : undefined}
                                 >
                                     {schema.items?.map((headCell: ConfigItemTableIndexed) => (
                                         <TableCell

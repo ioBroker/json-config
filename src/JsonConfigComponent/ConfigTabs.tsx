@@ -69,7 +69,11 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
      */
     private tabStateAliases: Record<string, Record<string, string>> = {};
 
-    private readonly refDiv: React.RefObject<HTMLDivElement | null>;
+    /** Filled by `onRefDiv`, not by React, because the observer has to be attached with it */
+    private readonly refDiv: { current: HTMLDivElement | null } = { current: null };
+
+    /** `onError` handler per tab, see `getTabErrorHandler` */
+    private readonly tabErrorHandlers: Record<string, (attr?: string, error?: string) => void> = {};
 
     constructor(props: ConfigTabsProps) {
         super(props);
@@ -104,56 +108,96 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                 tab = Object.keys(this.props.schema.items)[0];
             }
         }
-        this.refDiv = React.createRef();
-
         Object.assign(this.state, { tab, useMenu: false, openMenu: null, tabErrors: {} });
     }
 
-    onTabError = (attr?: string, error?: string): void => {
-        const currentTab = this.state.tab;
-        if (!currentTab && attr) {
-            // Forward to parent if no current tab
-            this.props.onError(attr, error);
-            return;
-        }
+    /**
+     * Error handler of one tab. The handlers are cached per tab, so the panel keeps the same
+     * `onError` prop across renders.
+     * The handler must be bound to the tab it was created for: the items report their errors from a
+     * timer (see `ConfigGeneric.render`), so a report can arrive after the user has already switched
+     * over. `this.state.tab` would then be the new tab, and the error marker would land on it.
+     *
+     * @param tabName the tab whose panel gets this handler
+     */
+    getTabErrorHandler(tabName: string): (attr?: string, error?: string) => void {
+        this.tabErrorHandlers[tabName] ||= (attr?: string, error?: string): void =>
+            this.onTabError(tabName, attr, error);
 
-        const newTabErrors = { ...this.state.tabErrors };
+        return this.tabErrorHandlers[tabName];
+    }
 
-        if (currentTab) {
-            newTabErrors[currentTab] ||= {};
-        }
+    onTabError(tabName: string, attr?: string, error?: string): void {
+        if (attr) {
+            this.setState(prevState => {
+                // The state must be copied inside the updater: all items of one render pass report
+                // their errors in the same batch, and a copy taken outside would be the same
+                // outdated state for every one of them, so only the last report would survive
+                const tabErrors = { ...prevState.tabErrors };
+                const errors = { ...tabErrors[tabName] };
 
-        if (currentTab && attr) {
-            if (!error) {
-                delete newTabErrors[currentTab][attr];
-                // Clean up empty tab error objects
-                if (Object.keys(newTabErrors[currentTab]).length === 0) {
-                    delete newTabErrors[currentTab];
+                if (error) {
+                    errors[attr] = error;
+                } else {
+                    delete errors[attr];
                 }
-            } else {
-                newTabErrors[currentTab][attr] = error;
-            }
-        }
 
-        this.setState({ tabErrors: newTabErrors });
+                if (Object.keys(errors).length) {
+                    tabErrors[tabName] = errors;
+                } else {
+                    delete tabErrors[tabName];
+                }
+
+                return { tabErrors };
+            });
+        }
 
         // Also forward to parent
         this.props.onError(attr, error);
-    };
+    }
 
     hasTabErrors = (tabName: string): boolean => {
-        return !!this.state.tabErrors[tabName] && Object.keys(this.state.tabErrors[tabName]).length > 0;
+        return Object.keys(this.state.tabErrors[tabName] || {}).length > 0;
     };
 
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
-        // Measure the real width synchronously so the first painted frame already
+        // The container cannot be measured here: `render` returns null until the calculated values
+        // of the tabs are ready, and those are computed asynchronously. The div therefore appears
+        // only later, and `onRefDiv` takes over the measuring and the observing.
+    }
+
+    /**
+     * Measure and observe the container as soon as it enters the DOM.
+     *
+     * This must not happen in `componentDidMount`: at that moment `render` has returned null,
+     * because the calculated values of the tabs are not ready yet. The ref would be empty, the
+     * observer would never be attached, and the width would never be measured - so the tabs would
+     * stay in the bar and simply be cut off on a narrow display instead of collapsing into the
+     * burger menu.
+     *
+     * @param node the container of the tab bar and the panel, or null when it is removed
+     */
+    onRefDiv = (node: HTMLDivElement | null): void => {
+        if (this.refDiv.current === node) {
+            return;
+        }
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = null;
+        this.refDiv.current = node;
+
+        if (!node) {
+            return;
+        }
+
+        // Measure the real width immediately so the first painted frame already
         // uses the correct breakpoint (no visible tabs -> menu switch).
         this.measureWidth();
+
         // Keep the width up to date on later layout changes (dialog open animation,
         // async detail loading, window/dialog resize) instead of freezing a
         // transient - possibly too narrow - initial measurement.
-        if (this.refDiv.current && typeof ResizeObserver !== 'undefined') {
+        if (typeof ResizeObserver !== 'undefined') {
             this.resizeObserver = new ResizeObserver(() => {
                 // Coalesce bursts into a single measurement per frame. This also breaks the
                 // ResizeObserver feedback loop: switching bar<->menu changes the layout, which
@@ -166,9 +210,9 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     this.measureWidth();
                 });
             });
-            this.resizeObserver.observe(this.refDiv.current);
+            this.resizeObserver.observe(node);
         }
-    }
+    };
 
     componentWillUnmount(): void {
         if (this.resizeRaf !== null) {
@@ -476,6 +520,9 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                 <Tabs
                     variant="scrollable"
                     scrollButtons="auto"
+                    // Without this, MUI hides the scroll buttons below its `sm` breakpoint, and on a
+                    // small display the tabs at the end cannot be reached at all
+                    allowScrollButtonsMobile
                     style={{ ...styles.tabsBar, ...this.props.schema.tabsStyle }}
                     value={this.state.tab}
                     onChange={(_e, tab: string): void => this.onMenuChange(tab)}
@@ -518,7 +565,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                         ? { ...styles.tabs, minWidth: this.state.contentMinWidth }
                         : styles.tabs
                 }
-                ref={this.refDiv}
+                ref={this.onRefDiv}
             >
                 {tabs}
                 <ConfigPanel
@@ -539,7 +586,7 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     data={this.props.data}
                     originalData={this.props.originalData}
                     onChange={this.props.onChange}
-                    onError={this.onTabError}
+                    onError={this.getTabErrorHandler(this.state.tab)}
                     customObj={this.props.customObj}
                     custom={this.props.custom}
                     schema={items[this.state.tab]}

@@ -66,6 +66,9 @@ interface ConfigAccordionState extends ConfigGenericState {
 class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordionState> {
     private typingTimer: ReturnType<typeof setTimeout> | null = null;
 
+    /** Error state last reported to the parent, so the same state is not reported twice */
+    private reportedAccordionError: string = '';
+
     constructor(props: ConfigAccordionProps) {
         super(props);
         this.props.schema.items ||= [];
@@ -96,38 +99,84 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         super.componentWillUnmount();
     }
 
+    /**
+     * Report the error state of the whole accordion to the parent.
+     * The error registry of the parent is a flat map of attribute names, so all entries would write into
+     * the same slot and would clear each other's errors. Therefore, only one aggregated error is
+     * reported, and it is stored under the attribute of the accordion itself.
+     *
+     * @param accordionErrors errors of the entries, indexed by the entry position
+     */
+    reportAccordionError(accordionErrors: Record<number, Record<string, string>>): void {
+        const entryWithError = Object.keys(accordionErrors).find(
+            index => Object.keys(accordionErrors[parseInt(index, 10)]).length > 0,
+        );
+        const error = entryWithError === undefined ? '' : I18n.t('jc_Some entries are invalid');
+
+        if (error !== this.reportedAccordionError) {
+            this.reportedAccordionError = error;
+            this.onError(this.props.attr, error || undefined);
+        }
+    }
+
+    /**
+     * Move the errors together with their entries, so an error marker stays on the entry it belongs to
+     *
+     * @param accordionErrors errors of the entries, indexed by the entry position
+     * @param mapIndex returns the new position of an entry or null if the entry does not exist anymore
+     */
+    static remapAccordionErrors(
+        accordionErrors: Record<number, Record<string, string>>,
+        mapIndex: (index: number) => number | null,
+    ): Record<number, Record<string, string>> {
+        const result: Record<number, Record<string, string>> = {};
+        for (const indexStr of Object.keys(accordionErrors)) {
+            const index = parseInt(indexStr, 10);
+            const newIndex = mapIndex(index);
+            if (newIndex !== null) {
+                result[newIndex] = accordionErrors[index];
+            }
+        }
+        return result;
+    }
+
     onAccordionError =
         (accordionIndex: number) =>
         (attr?: string, error?: string): void => {
-            const newAccordionErrors = { ...this.state.accordionErrors };
-
-            if (!newAccordionErrors[accordionIndex]) {
-                newAccordionErrors[accordionIndex] = {};
+            // Without an attribute, the error cannot be assigned to an item, and an empty record would
+            // mark the entry as faulty forever
+            if (!attr) {
+                return;
             }
 
-            if (attr) {
-                if (!error) {
-                    delete newAccordionErrors[accordionIndex][attr];
-                    // Clean up empty accordion error objects
-                    if (Object.keys(newAccordionErrors[accordionIndex]).length === 0) {
-                        delete newAccordionErrors[accordionIndex];
+            this.setState(
+                prevState => {
+                    // The state must be copied inside the updater: all entries of one render pass report
+                    // their errors in the same batch, and a copy taken outside would be the same
+                    // outdated state for every one of them, so only the last report would survive
+                    const accordionErrors = { ...prevState.accordionErrors };
+                    const entryErrors = { ...accordionErrors[accordionIndex] };
+
+                    if (error) {
+                        entryErrors[attr] = error;
+                    } else {
+                        delete entryErrors[attr];
                     }
-                } else {
-                    newAccordionErrors[accordionIndex][attr] = error;
-                }
-            }
 
-            this.setState({ accordionErrors: newAccordionErrors });
+                    if (Object.keys(entryErrors).length) {
+                        accordionErrors[accordionIndex] = entryErrors;
+                    } else {
+                        delete accordionErrors[accordionIndex];
+                    }
 
-            // Also forward to parent
-            this.props.onError(attr, error);
+                    return { accordionErrors };
+                },
+                () => this.reportAccordionError(this.state.accordionErrors),
+            );
         };
 
     hasAccordionErrors = (accordionIndex: number): boolean => {
-        return (
-            !!this.state.accordionErrors[accordionIndex] &&
-            Object.keys(this.state.accordionErrors[accordionIndex]).length > 0
-        );
+        return Object.keys(this.state.accordionErrors[accordionIndex] || {}).length > 0;
     };
 
     itemAccordion(data: Record<string, any>, idx: number): JSX.Element {
@@ -182,9 +231,15 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         const newValue = JSON.parse(JSON.stringify(this.state.value));
         newValue.splice(index, 1);
 
-        this.setState({ value: newValue, iteration: this.state.iteration + 10000 }, () =>
-            this.onChangeWrapper(newValue),
+        // drop the errors of the deleted entry and shift the errors of all entries below it
+        const accordionErrors = ConfigAccordion.remapAccordionErrors(this.state.accordionErrors, entryIndex =>
+            entryIndex === index ? null : entryIndex > index ? entryIndex - 1 : entryIndex,
         );
+
+        this.setState({ value: newValue, iteration: this.state.iteration + 10000, accordionErrors }, () => {
+            this.reportAccordionError(this.state.accordionErrors);
+            this.onChangeWrapper(newValue);
+        });
     };
 
     onClone = (index: number) => (): void => {
@@ -213,6 +268,10 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                 value: newValue,
                 activeIndex: -1,
                 iteration: this.state.iteration + 10000,
+                // the clone takes the position `index`, so the errors from there on move one entry down
+                accordionErrors: ConfigAccordion.remapAccordionErrors(this.state.accordionErrors, entryIndex =>
+                    entryIndex >= index ? entryIndex + 1 : entryIndex,
+                ),
             },
             () => this.onChangeWrapper(newValue),
         );
@@ -291,8 +350,17 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         newValue.splice(idx - 1, 0, item);
 
         const newIndex = this.state.activeIndex - 1;
-        this.setState({ value: newValue, activeIndex: newIndex, iteration: this.state.iteration + 10000 }, () =>
-            this.onChangeWrapper(newValue),
+        this.setState(
+            {
+                value: newValue,
+                activeIndex: newIndex,
+                iteration: this.state.iteration + 10000,
+                // the moved entry and its predecessor exchange their positions
+                accordionErrors: ConfigAccordion.remapAccordionErrors(this.state.accordionErrors, entryIndex =>
+                    entryIndex === idx ? idx - 1 : entryIndex === idx - 1 ? idx : entryIndex,
+                ),
+            },
+            () => this.onChangeWrapper(newValue),
         );
     }
 
@@ -303,8 +371,17 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
         newValue.splice(idx + 1, 0, item);
 
         const newIndex = this.state.activeIndex + 1;
-        this.setState({ value: newValue, activeIndex: newIndex, iteration: this.state.iteration + 10000 }, () =>
-            this.onChangeWrapper(newValue),
+        this.setState(
+            {
+                value: newValue,
+                activeIndex: newIndex,
+                iteration: this.state.iteration + 10000,
+                // the moved entry and its successor exchange their positions
+                accordionErrors: ConfigAccordion.remapAccordionErrors(this.state.accordionErrors, entryIndex =>
+                    entryIndex === idx ? idx + 1 : entryIndex === idx + 1 ? idx : entryIndex,
+                ),
+            },
+            () => this.onChangeWrapper(newValue),
         );
     }
 

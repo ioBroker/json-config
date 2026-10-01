@@ -640,6 +640,16 @@
                             "default": ""
                         },
                         {
+                            "type": "text",
+                            "attr": "restricted",
+                            "title": "Restricted",
+                            "tooltip": "A-Za-z0-9_ only, must not start with _",
+                            "width": "20%",
+                            "default": "",
+                            "validator": "return (data.restricted === '') || !!data.restricted.match(/^[A-Za-z0-9]([A-Za-z0-9-_])*$/);",
+                            "validatorNoSaveOnError": true
+                        },
+                        {
                             "type": "number",
                             "attr": "delay",
                             "title": "Delay",

@@ -123,6 +123,7 @@
     "jc_Serial number (UUID) \"%s\" in license is for other device.": "Серийный номер (UUID) «%s» в лицензии предназначен для другого устройства.",
     "jc_Show/hide filter input": "Показать/скрыть ввод фильтра",
     "jc_Some data are not stored. Discard?": "Некоторые данные не сохранились. Отказаться?",
+    "jc_Some entries are invalid": "Некоторые записи недопустимы",
     "jc_Something went wrong: may be no connection?": "Что-то пошло не так: возможно, нет соединения?",
     "jc_Successfully authorized. Token valid till %s and will be automatically renewed.": "Авторизация выполнена успешно. Токен действителен до %s и будет автоматически продлен.",
     "jc_Successfully authorized. Token valid till %s but it can expire as the instance is not running.": "Авторизация выполнена успешно. Токен действителен до %s, но его срок действия может истечь, так как экземпляр не запущен.",
