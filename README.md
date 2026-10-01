@@ -1956,7 +1956,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.0.9 (2026-10-01)
 - (@krobipd) Fixed: a table with `encryptedAttributes` showed the stored secrets still encrypted and encrypted them a second time on the next save, so the adapter could no longer decrypt them. Since 8.5.0 the rows were only decrypted when the attribute was empty (`||=` instead of `&&=`); they are decrypted again when set, and a table stored as an object (`objKeyName`) no longer throws there
 - (@GermanBluefox) Fixed: the same table decrypted its rows directly in the live configuration instead of in a copy. That encryption is a simple XOR, so a second pass turns a secret back into plain text: switching a tab remounts the table and encrypted the shown secrets again, and saving any other field wrote the table secrets unencrypted into the instance object. The rows are decrypted in a copy now, as the save path already did. A secret that a table stored this way since 8.5.0 should be entered once again
 
