@@ -364,7 +364,11 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             }
             this.secret = systemConfig?.native?.secret || this.secret;
 
-            // decrypt the rows the table works with (for objKeyName they are built from the object above)
+            // Decrypt into a copy of the rows. Without objKeyName `value` is the very array stored in
+            // `props.data`, and decrypting it in place would put the plain secrets into the live
+            // configuration: a remount (switching a tab) would encrypt them again, and saving any other
+            // field would write them unencrypted. The save path works on a copy for the same reason.
+            value = value.map(row => ({ ...row }));
             value.forEach((el: Record<string, any>) => {
                 this.props.schema.encryptedAttributes?.forEach((attr: string) => {
                     el[attr] &&= decrypt(this.secret, el[attr]);
