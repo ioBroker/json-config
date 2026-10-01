@@ -364,9 +364,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             }
             this.secret = systemConfig?.native?.secret || this.secret;
 
-            _value.forEach((el: Record<string, any>) => {
+            // decrypt the rows the table works with (for objKeyName they are built from the object above)
+            value.forEach((el: Record<string, any>) => {
                 this.props.schema.encryptedAttributes?.forEach((attr: string) => {
-                    el[attr] ||= decrypt(this.secret, el[attr]);
+                    el[attr] &&= decrypt(this.secret, el[attr]);
                 });
             });
         }
