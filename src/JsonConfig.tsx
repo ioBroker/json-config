@@ -19,6 +19,7 @@ import {
 } from '@iobroker/gui-components';
 
 import type { ConfigItemAny, ConfigItemPanel, ConfigItemTabs } from './types';
+import { AES_192_CBC_PREFIX, replaceEncryptedNative } from './encryptedNative';
 import ConfigGeneric, {
     type ConfigGenericProps,
     type DeviceManagerPropsProps,
@@ -102,7 +103,7 @@ function decrypt(key: string, value: string): string {
     }
 
     // if not encrypted as aes-192 or key not a valid 48-digit hex -> fallback
-    if (!value.startsWith('$/aes-192-cbc:') || !/^[0-9a-f]{48}$/.test(key)) {
+    if (!value.startsWith(AES_192_CBC_PREFIX) || !/^[0-9a-f]{48}$/.test(key)) {
         return decryptLegacy(key, value);
     }
 
@@ -160,7 +161,7 @@ function encrypt(key: string, value: string, _iv?: string): string {
     const _key = window.CryptoJS.enc.Hex.parse(key);
     const encrypted = window.CryptoJS.AES.encrypt(value, _key, { iv }).ciphertext;
 
-    return `$/aes-192-cbc:${window.CryptoJS.enc.Hex.stringify(iv)}:${encrypted}`;
+    return `${AES_192_CBC_PREFIX}${window.CryptoJS.enc.Hex.stringify(iv)}:${encrypted}`;
 }
 
 function loadScript(
@@ -411,11 +412,14 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     await loadScript('../../lib/js/crypto-js/crypto-js.js', 'crypto-js');
                     this.secret = systemConfig.native.secret;
                 }
-                obj.encryptedNative?.forEach(attr => {
-                    if (obj.native[attr]) {
-                        obj.native[attr] = decrypt(this.secret, obj.native[attr]);
-                    }
-                });
+                replaceEncryptedNative(obj.native, obj.encryptedNative, (value, isNested) =>
+                    // A top level attribute has always been decrypted here and may well still be stored
+                    // in the legacy format, which `decrypt` recognizes on its own. A path into `native`
+                    // on the other hand was encrypted by nobody before this fix, so an unmarked value
+                    // there is plain text: decrypting it would run it through the legacy XOR and turn it
+                    // into garbage. Left alone it still shows correctly, and the next save encrypts it.
+                    !isNested || value.startsWith(AES_192_CBC_PREFIX) ? decrypt(this.secret, value) : value,
+                );
                 return obj;
             }
             return obj || null;
@@ -679,11 +683,9 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 if (Array.isArray(encryptedObj.encryptedNative)) {
                     await loadScript('../../lib/js/crypto-js/crypto-js.js', 'crypto-js');
 
-                    for (const attr of encryptedObj.encryptedNative) {
-                        if (encryptedObj.native[attr]) {
-                            encryptedObj.native[attr] = encrypt(this.secret, encryptedObj.native[attr]);
-                        }
-                    }
+                    replaceEncryptedNative(encryptedObj.native, encryptedObj.encryptedNative, value =>
+                        encrypt(this.secret, value),
+                    );
                 }
 
                 await this.props.socket.setObject(encryptedObj._id, encryptedObj);

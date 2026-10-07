@@ -1,0 +1,14 @@
+// Compiles the unit tests together with the sources they cover, into ./build-test
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false,
+        "declaration": false,
+        "skipLibCheck": true,
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "rootDir": "..",
+        "outDir": "./build-test"
+    },
+    "include": ["./testEncryptedNative.ts"]
+}

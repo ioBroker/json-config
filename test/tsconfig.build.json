@@ -9,5 +9,7 @@
         "module": "nodenext",
         "moduleResolution": "nodenext"
     },
-    "include": ["./**/*.ts"]
+    "include": ["./**/*.ts"],
+    // the unit tests reach into ../src and are built by tsconfig.unit.json instead
+    "exclude": ["./testEncryptedNative.ts", "./build-test/**"]
 }
