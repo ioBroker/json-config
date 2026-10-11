@@ -723,9 +723,11 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
      * Validate the JSON config once on mount
      */
     async componentDidMount(): Promise<void> {
-        const link = `${window.location.protocol}//${window.location.host}${window.location.pathname}validate_config/${this.props.adapterName}`;
-        console.log(`fetch ${link}`);
-        await fetch(link);
+        // The path can end with a file name, e.g. "/admin/index.html" in the cloud
+        const basePath = window.location.pathname.replace(/[^/]*$/, '');
+        await fetch(`${basePath}validate_config/${this.props.adapterName}`).catch(e =>
+            console.warn(`Cannot validate the config of ${this.props.adapterName}: ${e}`),
+        );
     }
 
     render(): React.JSX.Element {
