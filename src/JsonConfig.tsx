@@ -20,6 +20,7 @@ import {
 
 import type { ConfigItemAny, ConfigItemPanel, ConfigItemTabs } from './types';
 import { AES_192_CBC_PREFIX, replaceEncryptedNative } from './encryptedNative';
+import { fileContentToString } from './fileContent';
 import ConfigGeneric, {
     type ConfigGenericProps,
     type DeviceManagerPropsProps,
@@ -164,6 +165,13 @@ function encrypt(key: string, value: string, _iv?: string): string {
     return `${AES_192_CBC_PREFIX}${window.CryptoJS.enc.Hex.stringify(iv)}:${encrypted}`;
 }
 
+/**
+ * The folder of the admin page. The path can end with a file name, e.g. "/admin/index.html" in the cloud
+ */
+function getAdminBasePath(): string {
+    return window.location.pathname.replace(/[^/]*$/, '');
+}
+
 function loadScript(
     src: string,
     id: string,
@@ -178,11 +186,6 @@ function loadScript(
         });
     }
     return document.getElementById(id)?.onload;
-}
-
-interface BufferObject {
-    type: 'Buffer';
-    data: Buffer;
 }
 
 interface JsonConfigProps {
@@ -409,7 +412,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
             if (Array.isArray(obj?.encryptedNative)) {
                 if (!this.secret) {
                     const systemConfig = await this.props.socket.getSystemConfig();
-                    await loadScript('../../lib/js/crypto-js/crypto-js.js', 'crypto-js');
+                    await loadScript(`${getAdminBasePath()}lib/js/crypto-js/crypto-js.js`, 'crypto-js');
                     this.secret = systemConfig.native.secret;
                 }
                 replaceEncryptedNative(obj.native, obj.encryptedNative, (value, isNested) =>
@@ -489,26 +492,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 file: string;
                 mimeType: string;
             } = await this.props.socket.readFile(`${this.props.adapterName}.admin`, fileName);
-            let content = '';
-            let file: string | BufferObject = '';
-
-            if (data.file !== undefined) {
-                file = data.file;
-            }
-
-            if (typeof file === 'string') {
-                content = file;
-                // @ts-expect-error revisit
-            } else if (file.type === 'Buffer') {
-                let binary = '';
-                // @ts-expect-error revisit
-                const bytes = new Uint8Array(file.data);
-                const len = bytes.byteLength;
-                for (let i = 0; i < len; i++) {
-                    binary += String.fromCharCode(bytes[i]);
-                }
-                content = binary;
-            }
+            const content = fileContentToString(data.file);
 
             // subscribe on changes
             if (!this.fileSubscribed.includes(fileName)) {
@@ -681,7 +665,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 const encryptedObj = JSON.parse(JSON.stringify(obj));
                 // encode all native attributes listed in obj.encryptedNative
                 if (Array.isArray(encryptedObj.encryptedNative)) {
-                    await loadScript('../../lib/js/crypto-js/crypto-js.js', 'crypto-js');
+                    await loadScript(`${getAdminBasePath()}lib/js/crypto-js/crypto-js.js`, 'crypto-js');
 
                     replaceEncryptedNative(encryptedObj.native, encryptedObj.encryptedNative, value =>
                         encrypt(this.secret, value),
@@ -723,9 +707,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
      * Validate the JSON config once on mount
      */
     async componentDidMount(): Promise<void> {
-        // The path can end with a file name, e.g. "/admin/index.html" in the cloud
-        const basePath = window.location.pathname.replace(/[^/]*$/, '');
-        await fetch(`${basePath}validate_config/${this.props.adapterName}`).catch(e =>
+        await fetch(`${getAdminBasePath()}validate_config/${this.props.adapterName}`).catch(e =>
             console.warn(`Cannot validate the config of ${this.props.adapterName}: ${e}`),
         );
     }

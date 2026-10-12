@@ -11,6 +11,7 @@ import type { AceEditorComponent } from './wrapper/Components/Editor';
 import ConfigTabs from './ConfigTabs';
 import ConfigPanel from './ConfigPanel';
 import { StatePool } from './statePool';
+import { fileContentToString } from '../fileContent';
 
 import de from './i18n/de.json';
 import en from './i18n/en.json';
@@ -186,13 +187,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
 
             if (fileName) {
                 const jsonFile = await socket.readFile(`${adapterName}.admin`, fileName);
-                let jsonStr: string;
-                if (jsonFile.file !== undefined) {
-                    jsonStr = jsonFile.file;
-                } else {
-                    // @ts-expect-error deprecated
-                    jsonStr = jsonFile;
-                }
+                const jsonStr = fileContentToString(jsonFile.file !== undefined ? jsonFile.file : jsonFile);
 
                 try {
                     const json = JSON.parse(jsonStr);
