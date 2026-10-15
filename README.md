@@ -1958,7 +1958,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.3 (2026-10-15)
 - (@GermanBluefox) Added: the `jsonEditor` dialog has a button "Format JSON" that re-indents the text, and settings stored as object are shown indented
 
 ### 10.1.2 (2026-10-12)
