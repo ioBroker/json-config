@@ -59,6 +59,8 @@ interface CustomModalProps {
     textInput?: boolean;
     defaultValue?: string;
     overflowHidden?: boolean;
+    /** Additional buttons, shown on the left side of the dialog actions */
+    actions?: JSX.Element | JSX.Element[] | null;
 }
 
 const CustomModal = ({
@@ -79,6 +81,7 @@ const CustomModal = ({
     textInput,
     defaultValue,
     overflowHidden,
+    actions,
 }: CustomModalProps): JSX.Element => {
     const [value, setValue] = useState(defaultValue);
     useEffect(() => {
@@ -135,6 +138,12 @@ const CustomModal = ({
                 {help ? <div>{help}</div> : null}
             </DialogContent>
             <DialogActions>
+                {actions ? (
+                    <>
+                        {actions}
+                        <div style={{ flexGrow: 1 }} />
+                    </>
+                ) : null}
                 {applyButton !== false && (
                     <Button
                         startIcon={<CheckIcon />}

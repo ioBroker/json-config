@@ -3,6 +3,8 @@ import JSON5 from 'json5';
 
 import { FormHelperText, FormControl, Button } from '@mui/material';
 
+import { FormatAlignLeft as FormatIcon } from '@mui/icons-material';
+
 import { I18n } from '@iobroker/gui-components';
 import type { ConfigItemJsonEditor } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -65,6 +67,25 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
         return jsonError;
     }
 
+    /** Text shown in the editor. Objects (e.g. older settings) are shown indented, not in one line. */
+    static toText(value: unknown): string {
+        return typeof value === 'object' && value !== null ? JSON.stringify(value, null, 2) : (value as string);
+    }
+
+    /** Re-indents the current text with 2 spaces. Only possible if the text is valid JSON / JSON5. */
+    formatJson(): void {
+        const text = ConfigJsonEditor.toText(this.state.value);
+        try {
+            const value = this.props.schema.json5
+                ? JSON5.stringify(JSON5.parse(text), null, 2)
+                : JSON.stringify(JSON.parse(text), null, 2);
+            this.setState({ value, jsonError: false });
+        } catch (err: unknown) {
+            console.log('Cannot format JSON', err);
+            this.setState({ jsonError: true });
+        }
+    }
+
     renderItem(_error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
         if (!this.state.initialized) {
             return null;
@@ -107,6 +128,19 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
                                 ? undefined
                                 : () => this.setState({ showSelectId: false }, () => attr && this.onChange(attr, value))
                         }
+                        actions={
+                            isReadOnly ? null : (
+                                <Button
+                                    color="grey"
+                                    variant="outlined"
+                                    startIcon={<FormatIcon />}
+                                    disabled={!!this.state.jsonError}
+                                    onClick={() => this.formatJson()}
+                                >
+                                    {I18n.t('jc_Format JSON')}
+                                </Button>
+                            )
+                        }
                     >
                         <div
                             style={{
@@ -116,7 +150,7 @@ export default class ConfigJsonEditor extends ConfigGeneric<ConfigJsonEditorProp
                         >
                             <Editor
                                 mode={this.props.schema.json5 ? 'json5' : 'json'}
-                                value={typeof value === 'object' ? JSON.stringify(value) : value}
+                                value={ConfigJsonEditor.toText(value)}
                                 onChange={
                                     isReadOnly
                                         ? undefined

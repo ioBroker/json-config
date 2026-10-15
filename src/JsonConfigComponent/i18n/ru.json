@@ -153,5 +153,6 @@
     "jc_repeat": "повтор",
     "jc_true": "истинный",
     "jc_via internet": "через интернет",
-    "sch_all": "все"
+    "sch_all": "все",
+    "jc_Format JSON": "Форматировать JSON"
 }

@@ -153,5 +153,6 @@
     "jc_repeat": "wiederholen",
     "jc_true": "WAHR",
     "jc_via internet": "übers Internet",
-    "sch_all": "alle"
+    "sch_all": "alle",
+    "jc_Format JSON": "JSON formatieren"
 }
