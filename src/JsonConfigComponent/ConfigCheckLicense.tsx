@@ -22,6 +22,7 @@ import { Check as IconCheck, Send as IconSend } from '@mui/icons-material';
 import { DialogConfirm, I18n, type IobTheme } from '@iobroker/gui-components';
 
 import type { ConfigItemCheckLicense } from '../types';
+import { isLicenseVersionValid } from '../licenseVersion';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
 const styles: Record<string, any> = {
@@ -333,41 +334,15 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
         }
     }
 
+    /** See isLicenseVersionValid */
     static isVersionValid(
         version: string,
         rule: string | undefined,
         invoice: string | undefined,
         adapterName: string,
+        convertedVis?: boolean,
     ): boolean {
-        if (!rule || !version) {
-            return true;
-        }
-        let result = true;
-        const [major] = version.split('.');
-        if (rule.startsWith('>=')) {
-            result = parseInt(major, 10) >= parseInt(rule.substring(2, 10));
-        } else if (rule.startsWith('<=')) {
-            result = parseInt(major, 10) <= parseInt(rule.substring(2, 10));
-        } else if (rule.startsWith('>')) {
-            result = parseInt(major, 10) > parseInt(rule.substring(1, 10));
-        } else if (rule.startsWith('<')) {
-            result = parseInt(major, 10) < parseInt(rule.substring(1, 10));
-        } else if (rule.startsWith('=')) {
-            result = parseInt(major, 10) === parseInt(rule.substring(1, 10));
-        } else if (rule.startsWith('==')) {
-            result = parseInt(major, 10) === parseInt(rule.substring(2, 10));
-        } else if (rule.startsWith('===')) {
-            result = parseInt(major, 10) === parseInt(rule.substring(3, 10));
-        }
-
-        if (!result && invoice && adapterName) {
-            // all commercial licenses are valid for all versions
-            if (invoice !== 'free') {
-                return true;
-            }
-        }
-
-        return true;
+        return isLicenseVersionValid(version, rule, invoice, adapterName, convertedVis);
     }
 
     async findInLicenseManager(adapterName: string): Promise<LicenseResult[]> {
@@ -404,6 +379,7 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     license.version,
                     license.invoice,
                     adapterName,
+                    parts[1] === 'vis' && !!license.uuid,
                 );
                 // commercial license has priority over free license
                 if (
@@ -550,12 +526,20 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                             });
                         }
 
-                        if (!ConfigCheckLicense.isVersionValid(version, data.version, data.invoice, adapterName)) {
+                        if (
+                            !ConfigCheckLicense.isVersionValid(
+                                version,
+                                data.version,
+                                data.invoice,
+                                adapterName,
+                                parts[1] === 'vis' && !!data.uuid,
+                            )
+                        ) {
                             return this.setState({
                                 _error: I18n.t(
                                     'jc_License is for version %s, but required version is %s',
                                     data.version,
-                                    this.props.schema.version,
+                                    version,
                                 ),
                                 licenseOfflineCheck: false,
                                 showLicenseData,
@@ -603,8 +587,19 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         result: false,
                     });
                 }
-                if (parts[1] === adapterName) {
+                if (parts[1] === adapterName || (parts[1] === 'vis' && adapterName === 'vis-2')) {
                     // check UUID
+                    if (uuid && !data?.uuid && adapterName === 'vis-2') {
+                        return this.setState({
+                            _error: I18n.t('jc_License must be converted'),
+                            showLinkToProfile: true,
+                            licenseOfflineCheck: true,
+                            showLicenseData: data,
+                            result: false,
+                            running: false,
+                        });
+                    }
+
                     if (uuid && data?.uuid && data.uuid !== uuid) {
                         return this.setState({
                             _error: I18n.t('jc_Serial number (UUID) "%s" in license is for other device.', data?.uuid),
@@ -615,12 +610,20 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                         });
                     }
 
-                    if (!ConfigCheckLicense.isVersionValid(version, data?.version, data?.invoice, adapterName)) {
+                    if (
+                        !ConfigCheckLicense.isVersionValid(
+                            version,
+                            data?.version,
+                            data?.invoice,
+                            adapterName,
+                            parts[1] === 'vis' && !!data?.uuid,
+                        )
+                    ) {
                         return this.setState({
                             _error: I18n.t(
                                 'jc_License is for version %s, but required version is %s',
                                 data?.version,
-                                this.props.schema.version,
+                                version,
                             ),
                             licenseOfflineCheck: true,
                             showLicenseData: data,
@@ -684,7 +687,8 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
     }
 
     async _onClick(secondRun?: boolean): Promise<void> {
-        const adapterName = this.props.oContext.adapterName === 'vis-2' ? 'vis' : this.props.oContext.adapterName;
+        // not "vis" for vis-2: the version is the one of vis-2, and a vis-1 license is accepted by the checks themselves
+        const adapterName = this.props.oContext.adapterName;
         this.setState({ running: true });
         let license;
         let licenses;
