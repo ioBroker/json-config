@@ -11,8 +11,13 @@ export interface ConfigAutocompleteProps extends ConfigGenericProps {
     schema: ConfigItemAutocomplete;
 }
 
+type AutocompleteOption = ConfigItemSelectOption & {
+    /** A value created from free text must be displayed exactly as entered. */
+    noTranslation?: boolean;
+};
+
 export interface ConfigAutocompleteState extends ConfigGenericState {
-    selectOptions: { value: string | number; label: ioBroker.StringOrTranslated }[];
+    selectOptions: AutocompleteOption[];
 }
 
 class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAutocompleteState> {
@@ -20,18 +25,20 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
         await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
-        const selectOptions: { label: ioBroker.StringOrTranslated; value: string | number }[] =
-            this.props.schema.options.map(
-                (item: { label: ioBroker.StringOrTranslated; value: string | number } | string) =>
-                    typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
-            );
+        const selectOptions: AutocompleteOption[] = this.props.schema.options.map(
+            (item: ConfigItemSelectOption | string) =>
+                typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
+        );
 
         // Report value-to-label mapping to parent table for filtering
         if (this.props.onFilterLabelUpdate && this.props.table && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of selectOptions) {
                 if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
-                    valueToLabel[opt.value] = this.getText(opt.label);
+                    valueToLabel[opt.value] = this.getText(
+                        opt.label,
+                        this.props.schema.noTranslation || opt.noTranslation,
+                    );
                 }
             }
             this.props.onFilterLabelUpdate(this.props.attr, valueToLabel);
@@ -55,13 +62,13 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
         }
 
         let item;
-        const options: ConfigItemSelectOption[] = JSON.parse(JSON.stringify(this.state.selectOptions));
+        const options: AutocompleteOption[] = JSON.parse(JSON.stringify(this.state.selectOptions));
         const isIndeterminate = Array.isArray(this.state.value) || this.state.value === ConfigGeneric.DIFFERENT_VALUE;
 
         if (isIndeterminate) {
             [...this.state.value]
                 .filter(val => !options.find(it => (typeof it === 'object' ? it.value === val : it === val)))
-                .forEach(it => options.push({ label: it.toString(), value: it }));
+                .forEach(it => options.push({ label: it.toString(), value: it, noTranslation: true }));
 
             item = { label: I18n.t(ConfigGeneric.DIFFERENT_LABEL), value: ConfigGeneric.DIFFERENT_VALUE };
             options.unshift(item);
@@ -74,7 +81,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 ); // let "==" be and not ===
 
             if (this.state.value !== null && this.state.value !== undefined && !item && this.props.schema.freeSolo) {
-                item = { value: this.state.value, label: this.state.value };
+                item = { value: this.state.value, label: this.state.value, noTranslation: true };
                 options.push(item);
             }
             // never pass `false`/`undefined` as a controlled value to the Autocomplete (would switch it to uncontrolled)
@@ -92,7 +99,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 isOptionEqualToValue={(option, value) =>
                     option.value === (typeof value === 'string' ? value : value.value)
                 }
-                filterOptions={(options: { value: string | number; label: ioBroker.StringOrTranslated }[], params) => {
+                filterOptions={(options: AutocompleteOption[], params) => {
                     const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
                         if (params.inputValue === '') {
@@ -101,7 +108,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                         // label/value may be numbers (or null/undefined), so coerce to string before comparing
                         // see https://github.com/ioBroker/ioBroker.admin/issues/3507
                         return (
-                            this.getText(option.label ?? '')
+                            this.getText(option.label ?? '', this.props.schema.noTranslation || option.noTranslation)
                                 .toLowerCase()
                                 .includes(inputValue) ||
                             String(option.value ?? '')
@@ -114,6 +121,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                         filtered.push({
                             label: params.inputValue,
                             value: params.inputValue,
+                            noTranslation: true,
                         });
                     }
 
@@ -136,7 +144,11 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                         this.setState({ value: val }, () => this.props.attr && this.onChange(this.props.attr, val));
                     }
                 }}
-                getOptionLabel={option => (typeof option === 'object' ? this.getText(option?.label ?? '') : '')}
+                getOptionLabel={option =>
+                    typeof option === 'object'
+                        ? this.getText(option?.label ?? '', this.props.schema.noTranslation || option.noTranslation)
+                        : ''
+                }
                 renderInput={params => (
                     <TextField
                         variant="standard"
