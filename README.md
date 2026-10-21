@@ -462,6 +462,8 @@ Each option in `options` can have:
 | `os`          | Show the option only on these operating systems of the host           |
 | `notOs`       | Do not show the option on these operating systems of the host         |
 | `docker`      | Show the option only if the ioBroker runs (`true`) or not (`false`) in docker |
+| `hiddenByAdapters` | Hide the option if at least one of these adapters is installed: `["zigbee"]` |
+| `showByAdapters` | Show the option only if at least one of these adapters is installed: `["zigbee"]` |
 | `description` | Description shown below the option label (can be translatable)        |
 | `icon`        | Icon URL or base64 string to display next to the option (from v8.3.3) |
 
@@ -1512,6 +1514,8 @@ In the Settings of the Web developer tools, you can create your own devices with
 | `os`                     | Show this element only on these operating systems of the host, on which the instance runs: `"win32"` or `["linux", "darwin"]`                                                         |
 | `notOs`                  | Do not show this element on these operating systems of the host, on which the instance runs: `"win32"` or `["linux", "darwin"]`                                                       |
 | `docker`                 | Show this element only if the ioBroker runs (`true`) or does not run (`false`) in a docker container                                                                                  |
+| `hiddenByAdapters`       | Hide this element if at least one of these adapters is installed: `["zigbee", "deconz"]`. See [Show elements depending on installed adapters](#show-elements-depending-on-installed-adapters) |
+| `showByAdapters`         | Show this element only if at least one of these adapters is installed: `["zigbee", "deconz"]`. See [Show elements depending on installed adapters](#show-elements-depending-on-installed-adapters) |
 | `disabled`               | JS function that could use `native.attribute` for calculation                                                                                                                         |
 | `dependsOnStates`        | ioBroker states, on which this element depends: `{"running": ".info.browsing"}`. See [Show or disable elements depending on ioBroker states](#show-or-disable-elements-depending-on-iobroker-states) |
 | `help`                   | help text (multi-language)                                                                                                                                                            |
@@ -1634,6 +1638,31 @@ can be used:
 Do not mix it up with the [`checkDocker`](#checkdocker) control: that one checks if a docker installation is
 available **on the host** to control containers, and not if the ioBroker itself runs in docker.
 
+### Show elements depending on installed adapters
+
+Every element (also `panel`, `tabs`, table columns and single `select` options or option groups) can be shown
+or hidden depending on whether other adapters are installed in the ioBroker system:
+
+```json5
+{
+    "zigbeeDevice": { "type": "text", "label": "Zigbee device", "showByAdapters": ["zigbee", "zigbee2mqtt"] },
+    "installHint":  { "type": "staticText", "text": "Install the zigbee adapter to use the devices", "hiddenByAdapters": ["zigbee"] }
+}
+```
+
+- `showByAdapters` - the element will be shown **only** if at least one of the given adapters is installed.
+- `hiddenByAdapters` - the element will be hidden if at least one of the given adapters is installed.
+- The names are adapter names without `system.adapter.` and without instance number: `zigbee`, not `zigbee.0`.
+  It is checked if the adapter is installed, not if an instance exists or runs.
+- The installed adapters are read once, when the configuration dialog is opened, and only if the configuration
+  uses one of these attributes. If they cannot be read, the element will be shown.
+- A not shown element is not deleted: the value stays unchanged in the configuration, exactly like by `hidden`.
+  But the `default` value of such an element will not be written into the configuration.
+
+For other conditions, e.g., an existing instance, `getObject` can be used in `hidden`:
+`"hidden": "!getObject('system.adapter.zigbee.0')"`. If a property of the object is required, use brackets,
+because `await` binds weaker than `?.`: `"hidden": "!(await getObject('system.adapter.zigbee.0'))?.common?.enabled"`.
+
 ### Options with detailed configuration
 
 #### `defaultSendTo`
@@ -1751,7 +1780,7 @@ const func = new Function(
   'globalData',    // filled only by table and represents the obj.native or obj.common.custom['adapter.X'] object
   '_changed',      // indicator if some data was changed and must be saved
   '_href',         // Current browser href
-  'getObject',     // You can call `await getObject(data.id)`in hidden, disabled, pattern functions
+  'getObject',     // You can call `await getObject(data.id)` in hidden, disabled, pattern functions. Use brackets to access properties: `(await getObject(data.id))?.common?.type`
   '_os',           // Operating system of the host, where the instance runs: 'win32', 'linux', 'darwin', ...
   '_arch',         // Architecture of the host, where the instance runs: 'x64', 'arm64', ...
   '_host',         // Information about the host: {id, os, osType, arch, release, nodeVersion, controllerVersion, docker, dockerVersion}
@@ -1959,6 +1988,8 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+- (@GermanBluefox) Added: the attributes `hiddenByAdapters` and `showByAdapters` to show elements and select options depending on the installed adapters
+- (@GermanBluefox) Fixed: the `getObject` example in the documentation
 - (@GermanBluefox) Fixed: `checkLicense` checks the version of the license again; a vis-1 license is no longer reported as valid for vis-2 unless it was converted
 
 ### 10.1.3 (2026-10-15)
@@ -2096,7 +2127,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 - (@GermanBluefox) Optimization of interfaces
 
 ### 8.4.1 (2026-05-19)
-- (@GermanBluefox) Allowed to use `await getObject(data.oid)?.common?.type === 'boolean'` in hidden, pattern or disabled
+- (@GermanBluefox) Allowed to use `(await getObject(data.oid))?.common?.type === 'boolean'` in hidden, pattern or disabled
 
 ### 8.3.13 (2026-05-16)
 - (@GermanBluefox) Added `_href` to `jsonData`

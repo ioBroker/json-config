@@ -199,6 +199,10 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                   if (!ConfigGeneric.isHostAllowed(items[attr], this.props.oContext.hostInfo)) {
                       return null;
                   }
+                  // The same for the elements, that depend on the installed adapters
+                  if (!ConfigGeneric.isAdapterAllowed(items[attr], this.props.oContext.installedAdapters)) {
+                      return null;
+                  }
 
                   const type = items[attr].type || 'panel';
                   let ItemComponent: typeof ConfigGeneric<ConfigGenericProps, any>;

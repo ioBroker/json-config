@@ -103,6 +103,8 @@ interface JsonConfigComponentState {
     errors: Record<string, string>;
     systemConfig: ioBroker.SystemConfigCommon | null;
     hostInfo: JsonConfigHostInfo | null;
+    /** Names of the installed adapters. `null` if not read (not used or not readable) */
+    installedAdapters: string[] | null;
     updateData?: number;
     alive: boolean;
     commandRunning: boolean;
@@ -129,6 +131,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             updateData: this.props.updateData || 0,
             systemConfig: null,
             hostInfo: null,
+            installedAdapters: null,
             alive: false,
             commandRunning: false,
             schema: JSON.parse(JSON.stringify(this.props.schema)),
@@ -232,6 +235,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
                 {
                     systemConfig: systemConfig?.common || ({} as ioBroker.SystemConfigCommon),
                     hostInfo: await this.readHostInfo(),
+                    installedAdapters: await this.readInstalledAdapters(),
                     alive: !!state?.val,
                 },
                 () => {
@@ -314,6 +318,28 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
     static usesDocker(schema: ConfigItemTabs | ConfigItemPanel): boolean {
         const str = JSON.stringify(schema);
         return str.includes('"docker":') || str.includes('_host.docker');
+    }
+
+    /**
+     * Read the names of the installed adapters for the `hiddenByAdapters` and `showByAdapters` attributes.
+     *
+     * The adapters are only read if the configuration really uses these attributes.
+     *
+     * @returns names of the installed adapters or `null` if not used or not readable
+     */
+    async readInstalledAdapters(): Promise<string[] | null> {
+        const str = JSON.stringify(this.props.schema);
+        if (!str.includes('"hiddenByAdapters":') && !str.includes('"showByAdapters":')) {
+            return null;
+        }
+        try {
+            const adapters = await this.props.socket.getAdapters();
+            return adapters.map(obj => (obj.common?.name || obj._id.replace(/^system\.adapter\./, '')).toLowerCase());
+        } catch (e) {
+            // The user has no rights => the attributes will be ignored
+            console.warn(`Cannot read the installed adapters: ${e as Error}`);
+            return null;
+        }
     }
 
     onAlive = (_id: string, state?: ioBroker.State | null): void => {
@@ -532,6 +558,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
             updateData: this.state.updateData,
             getCachedObject: this.getCachedObject,
             hostInfo: this.state.hostInfo || undefined,
+            installedAdapters: this.state.installedAdapters || undefined,
             subscribeStates: this.statePool.subscribe,
             unsubscribeStates: this.statePool.unsubscribe,
             getStateValue: this.statePool.getValue,

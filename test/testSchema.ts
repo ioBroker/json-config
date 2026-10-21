@@ -79,6 +79,15 @@ const expectedErrorsPerTest = {
             message: 'must be boolean',
         },
         {
+            instancePath: '/items/mainTab/items/wrongShowByAdapters/showByAdapters',
+            schemaPath: '#/definitions/showByAdaptersFilter/type',
+            keyword: 'type',
+            params: {
+                type: 'array',
+            },
+            message: 'must be array',
+        },
+        {
             instancePath: '/items/mainTab/items/wrongDependsOnStates/dependsOnStates',
             schemaPath: '#/patternProperties/%5E.%2B/properties/dependsOnStates/oneOf/0/type',
             keyword: 'type',

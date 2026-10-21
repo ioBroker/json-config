@@ -216,6 +216,16 @@ export interface ConfigItem {
      * that), the element will be shown.
      */
     docker?: boolean;
+    /**
+     * Hide this element if at least one of the given adapters is installed, e.g. `["zigbee", "deconz"]`.
+     * If the installed adapters cannot be read, the element will be shown.
+     */
+    hiddenByAdapters?: string[];
+    /**
+     * Show this element only if at least one of the given adapters is installed, e.g. `["zigbee", "deconz"]`.
+     * If the installed adapters cannot be read, the element will be shown.
+     */
+    showByAdapters?: string[];
     /** JS function to calculate if the control is disabled. You can write "true" too */
     disabled?: string | boolean;
     /**
@@ -322,6 +332,10 @@ export interface ConfigItemSelectOption {
     notOs?: ConfigItemOs | ConfigItemOs[];
     /** Show this option only if the ioBroker runs (`true`) or does not run (`false`) in a docker container */
     docker?: boolean;
+    /** Hide this option if at least one of the given adapters is installed */
+    hiddenByAdapters?: string[];
+    /** Show this option only if at least one of the given adapters is installed */
+    showByAdapters?: string[];
     /** Description for the value */
     description?: ioBroker.StringOrTranslated;
     /** Icon URL or base64 to display next to the option */
@@ -695,6 +709,10 @@ export interface ConfigItemSelect extends ConfigItem {
               notOs?: ConfigItemOs | ConfigItemOs[];
               /** Show this group only if the ioBroker runs (`true`) or does not run (`false`) in a docker container */
               docker?: boolean;
+              /** Hide this group if at least one of the given adapters is installed */
+              hiddenByAdapters?: string[];
+              /** Show this group only if at least one of the given adapters is installed */
+              showByAdapters?: string[];
               description?: ioBroker.StringOrTranslated;
               noTranslation?: boolean;
               icon?: string;
@@ -1353,6 +1371,12 @@ export type JsonConfigContext = {
     getStateValue?: (id: string) => ioBroker.State | null | undefined;
     /** Information about the host, on which the configured instance runs */
     hostInfo?: JsonConfigHostInfo;
+    /**
+     * Names of the installed adapters, e.g. `["admin", "zigbee"]`. Used for the `hiddenByAdapters` and
+     * `showByAdapters` attributes. It is only read if the configuration uses them, and it is `undefined` if
+     * the adapters could not be read.
+     */
+    installedAdapters?: string[];
 };
 
 // Notification GUI

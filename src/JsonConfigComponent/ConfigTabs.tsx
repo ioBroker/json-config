@@ -373,6 +373,12 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     continue;
                 }
 
+                // Do not show the tab if the required adapters are not installed (or forbidden ones are)
+                if (!ConfigGeneric.isAdapterAllowed(items[name], this.props.oContext.installedAdapters)) {
+                    calculatedValuesTable[name] = { hidden: true, disabled: false };
+                    continue;
+                }
+
                 // Every tab is calculated with its own `dependsOnStates` values
                 const states = this.getStateValues(this.tabStateAliases[name] || null);
 

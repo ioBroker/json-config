@@ -165,6 +165,16 @@
                     "text": "ioBroker runs in a docker container",
                     "docker": true
                 },
+                "myZigbeeDevice": {
+                    "type": "text",
+                    "label": "Zigbee device",
+                    "showByAdapters": ["zigbee", "zigbee2mqtt"]
+                },
+                "myZigbeeHint": {
+                    "type": "staticText",
+                    "text": "Install the zigbee adapter",
+                    "hiddenByAdapters": ["zigbee"]
+                },
                 "myService": {
                     "type": "checkbox",
                     "label": "Install as service",
@@ -185,6 +195,12 @@
                             "value": 0,
                             "os": ["linux", "darwin", "win32"],
                             "docker": false
+                        },
+                        {
+                            "label": "with zigbee",
+                            "value": 2,
+                            "showByAdapters": ["zigbee"],
+                            "hiddenByAdapters": ["deconz"]
                         },
                         {
                             "label": "group",

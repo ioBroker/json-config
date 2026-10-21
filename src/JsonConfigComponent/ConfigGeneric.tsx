@@ -1079,6 +1079,34 @@ export default class ConfigGeneric<
         return true;
     }
 
+    /**
+     * Check if the element may be shown with the installed adapters.
+     *
+     * It evaluates the `hiddenByAdapters` and `showByAdapters` attributes. If the installed adapters
+     * cannot be read, the element will be shown, like by `os` and `docker`.
+     *
+     * @param schema config item with the optional `hiddenByAdapters` and `showByAdapters` attributes
+     * @param installedAdapters names of the installed adapters
+     * @returns false if the element must not be shown with the installed adapters
+     */
+    static isAdapterAllowed(
+        schema: Pick<ConfigItem, 'hiddenByAdapters' | 'showByAdapters'>,
+        installedAdapters?: string[],
+    ): boolean {
+        if (!installedAdapters || (!schema?.hiddenByAdapters?.length && !schema?.showByAdapters?.length)) {
+            return true;
+        }
+        const isInstalled = (name: string): boolean => installedAdapters.includes(name.toLowerCase());
+
+        if (schema.hiddenByAdapters?.some(isInstalled)) {
+            return false;
+        }
+        if (schema.showByAdapters?.length && !schema.showByAdapters.some(isInstalled)) {
+            return false;
+        }
+        return true;
+    }
+
     async execute(
         func: string | boolean | Record<string, string> | undefined,
         defaultValue: string | number | boolean | undefined,
@@ -1737,6 +1765,11 @@ export default class ConfigGeneric<
 
         // Do not show this component if it is not intended for the host, where the instance runs
         if (!ConfigGeneric.isHostAllowed(schema, this.props.oContext.hostInfo)) {
+            return null;
+        }
+
+        // Do not show this component if the required adapters are not installed (or forbidden ones are)
+        if (!ConfigGeneric.isAdapterAllowed(schema, this.props.oContext.installedAdapters)) {
             return null;
         }
 

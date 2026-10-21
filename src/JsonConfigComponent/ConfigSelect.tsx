@@ -52,6 +52,8 @@ interface SelectItem {
     os?: ConfigItemOs | ConfigItemOs[];
     notOs?: ConfigItemOs | ConfigItemOs[];
     docker?: boolean;
+    hiddenByAdapters?: string[];
+    showByAdapters?: string[];
     color?: string;
     description?: string;
     icon?: string;
@@ -89,6 +91,8 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 os?: ConfigItemOs | ConfigItemOs[];
                 notOs?: ConfigItemOs | ConfigItemOs[];
                 docker?: boolean;
+                hiddenByAdapters?: string[];
+                showByAdapters?: string[];
                 description?: string;
             } = item as {
                 items: ConfigItemSelectOption[];
@@ -98,6 +102,8 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 os?: ConfigItemOs | ConfigItemOs[];
                 notOs?: ConfigItemOs | ConfigItemOs[];
                 docker?: boolean;
+                hiddenByAdapters?: string[];
+                showByAdapters?: string[];
                 description?: string;
             };
             if (Array.isArray(groupItem.items)) {
@@ -109,6 +115,8 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     os: groupItem.os,
                     notOs: groupItem.notOs,
                     docker: groupItem.docker,
+                    hiddenByAdapters: groupItem.hiddenByAdapters,
+                    showByAdapters: groupItem.showByAdapters,
                     color: item.color,
                     description: this.getText(item.description),
                 });
@@ -121,6 +129,8 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         os: it.os,
                         notOs: it.notOs,
                         docker: it.docker,
+                        hiddenByAdapters: it.hiddenByAdapters,
+                        showByAdapters: it.showByAdapters,
                         color: it.color,
                         description: this.getText(it.description),
                         icon: it.icon,
@@ -134,6 +144,8 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                     os: item.os,
                     notOs: item.notOs,
                     docker: item.docker,
+                    hiddenByAdapters: item.hiddenByAdapters,
+                    showByAdapters: item.showByAdapters,
                     color: item.color,
                     description: this.getText(item.description),
                     icon: item.icon,
@@ -254,6 +266,11 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
     private async isHidden(item: SelectItem): Promise<boolean> {
         // Do not show the option if it is not intended for the host, where the instance runs
         if (!ConfigGeneric.isHostAllowed(item, this.props.oContext.hostInfo)) {
+            return true;
+        }
+
+        // Do not show the option if the required adapters are not installed (or forbidden ones are)
+        if (!ConfigGeneric.isAdapterAllowed(item, this.props.oContext.installedAdapters)) {
             return true;
         }
 

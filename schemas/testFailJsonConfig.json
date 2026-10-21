@@ -35,6 +35,11 @@
                     "label": "Only in docker",
                     "docker": "yes"
                 },
+                "wrongShowByAdapters": {
+                    "type": "text",
+                    "label": "Only with zigbee",
+                    "showByAdapters": "zigbee"
+                },
                 "wrongDependsOnStates": {
                     "type": "text",
                     "label": "Depends on a state",
