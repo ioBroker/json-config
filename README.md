@@ -1987,7 +1987,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.5 (2026-10-21)
 - (@GermanBluefox) Added: the attributes `hiddenByAdapters` and `showByAdapters` to show elements and select options depending on the installed adapters
 - (@GermanBluefox) Fixed: the `getObject` example in the documentation
 - (@GermanBluefox) Fixed: `checkLicense` checks the version of the license again; a vis-1 license is no longer reported as valid for vis-2 unless it was converted
