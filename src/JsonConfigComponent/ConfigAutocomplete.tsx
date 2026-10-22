@@ -11,13 +11,8 @@ export interface ConfigAutocompleteProps extends ConfigGenericProps {
     schema: ConfigItemAutocomplete;
 }
 
-type AutocompleteOption = ConfigItemSelectOption & {
-    /** A value created from free text must be displayed exactly as entered. */
-    noTranslation?: boolean;
-};
-
 export interface ConfigAutocompleteState extends ConfigGenericState {
-    selectOptions: AutocompleteOption[];
+    selectOptions: ConfigItemSelectOption[];
 }
 
 class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAutocompleteState> {
@@ -25,7 +20,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
         await super.componentDidMount();
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
-        const selectOptions: AutocompleteOption[] = this.props.schema.options.map(
+        const selectOptions: ConfigItemSelectOption[] = this.props.schema.options.map(
             (item: ConfigItemSelectOption | string) =>
                 typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
         );
@@ -62,7 +57,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
         }
 
         let item;
-        const options: AutocompleteOption[] = JSON.parse(JSON.stringify(this.state.selectOptions));
+        const options: ConfigItemSelectOption[] = JSON.parse(JSON.stringify(this.state.selectOptions));
         const isIndeterminate = Array.isArray(this.state.value) || this.state.value === ConfigGeneric.DIFFERENT_VALUE;
 
         if (isIndeterminate) {
@@ -99,7 +94,7 @@ class ConfigAutocomplete extends ConfigGeneric<ConfigAutocompleteProps, ConfigAu
                 isOptionEqualToValue={(option, value) =>
                     option.value === (typeof value === 'string' ? value : value.value)
                 }
-                filterOptions={(options: AutocompleteOption[], params) => {
+                filterOptions={(options: ConfigItemSelectOption[], params) => {
                     const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
                         if (params.inputValue === '') {

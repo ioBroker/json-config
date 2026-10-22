@@ -94,6 +94,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 hiddenByAdapters?: string[];
                 showByAdapters?: string[];
                 description?: string;
+                noTranslation?: boolean;
             } = item as {
                 items: ConfigItemSelectOption[];
                 label: ioBroker.StringOrTranslated;
@@ -105,10 +106,11 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                 hiddenByAdapters?: string[];
                 showByAdapters?: string[];
                 description?: string;
+                noTranslation?: boolean;
             };
             if (Array.isArray(groupItem.items)) {
                 selectOptions.push({
-                    label: this.getText(item.label, this.props.schema.noTranslation),
+                    label: this.getText(item.label, this.props.schema.noTranslation || groupItem.noTranslation),
                     value: item.value!,
                     group: true,
                     hidden: groupItem.hidden,

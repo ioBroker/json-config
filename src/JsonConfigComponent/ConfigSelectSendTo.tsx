@@ -110,6 +110,8 @@ interface SelectItem {
     color?: string;
     description?: string;
     icon?: string;
+    /** Do not translate the label of this item */
+    noTranslation?: boolean;
     hiddenValue?: boolean;
 }
 
@@ -172,12 +174,15 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
     }
 
     /** Report value-to-label mapping to parent table for filtering */
-    reportFilterLabels(list: { label: string; value: string | number }[] | undefined): void {
+    reportFilterLabels(list: SelectItem[] | undefined): void {
         if (this.props.onFilterLabelUpdate && this.props.table && Array.isArray(list) && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of list) {
                 if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
-                    valueToLabel[opt.value] = opt.label;
+                    valueToLabel[opt.value] = this.getText(
+                        opt.label,
+                        this.props.schema.noTranslation || opt.noTranslation,
+                    );
                 }
             }
             this.props.onFilterLabelUpdate(this.props.attr, valueToLabel);
@@ -328,7 +333,12 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                                 {(val as string[]).map((v: string, i: number) => {
                                     const it = selectOptions?.find(_item => sameValue(_item.value, v));
                                     if (it || this.props.schema.showAllValues !== false) {
-                                        const label = it?.label || v;
+                                        const label = it
+                                            ? this.getText(
+                                                  it.label,
+                                                  this.props.schema.noTranslation || it.noTranslation,
+                                              )
+                                            : v;
                                         return (
                                             <Chip
                                                 // a configuration written before #3636 can hold the
@@ -342,7 +352,10 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                                 })}
                             </Box>
                         ) : (
-                            this.getText(item?.label || (val as string), this.props.schema.noTranslation)
+                            this.getText(
+                                item?.label || (val as string),
+                                this.props.schema.noTranslation || item?.noTranslation,
+                            )
                         )
                     }
                     onChange={e => {
@@ -362,7 +375,9 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                         if (it.group) {
                             return (
                                 <ListSubheader key={i}>
-                                    <div>{this.getText(it.label, this.props.schema.noTranslation)}</div>
+                                    <div>
+                                        {this.getText(it.label, this.props.schema.noTranslation || it.noTranslation)}
+                                    </div>
                                     {it.description ? (
                                         <div style={{ opacity: 0.7, fontStyle: 'italic', fontSize: 'smaller' }}>
                                             {this.getText(it.description)}
@@ -399,7 +414,10 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                                     />
                                 ) : null}
                                 <ListItemText
-                                    primary={this.getText(it.label)}
+                                    primary={this.getText(
+                                        it.label,
+                                        this.props.schema.noTranslation || it.noTranslation,
+                                    )}
                                     secondary={this.getText(it.description)}
                                     slotProps={{
                                         secondary: {

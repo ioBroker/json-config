@@ -2743,6 +2743,10 @@
                                                     "icon": {
                                                         "description": "Icon URL to display next to the option",
                                                         "type": "string"
+                                                    },
+                                                    "noTranslation": {
+                                                        "description": "Do not translate the label of this option",
+                                                        "type": "boolean"
                                                     }
                                                 },
                                                 "required": ["label", "value"]
@@ -4870,6 +4874,10 @@
                                                             "icon": {
                                                                 "description": "Icon URL to display next to the option",
                                                                 "type": "string"
+                                                            },
+                                                            "noTranslation": {
+                                                                "description": "Do not translate the label of this option",
+                                                                "type": "boolean"
                                                             }
                                                         },
                                                         "required": ["label", "value"]
@@ -8522,6 +8530,10 @@
                                                                 "icon": {
                                                                     "description": "Icon URL to display next to the option",
                                                                     "type": "string"
+                                                                },
+                                                                "noTranslation": {
+                                                                    "description": "Do not translate the label of this option",
+                                                                    "type": "boolean"
                                                                 }
                                                             },
                                                             "required": ["label", "value"]
@@ -9921,6 +9933,10 @@
                                                                 "icon": {
                                                                     "description": "Icon URL to display next to the option",
                                                                     "type": "string"
+                                                                },
+                                                                "noTranslation": {
+                                                                    "description": "Do not translate the label of this option",
+                                                                    "type": "boolean"
                                                                 }
                                                             },
                                                             "required": ["label", "value"]

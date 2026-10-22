@@ -121,6 +121,7 @@
                 "autocmpleteSendTo": {
                     "type": "autocompleteSendTo",
                     "command": "",
+                    "options": ["free", { "label": "Fixed name", "value": "fixed", "noTranslation": true }],
                     "alsoDependsOn": ["auth"]
                 },
                 "defaultUser": {
@@ -641,7 +642,7 @@
                         },
                         {
                             "type": "autocomplete",
-                            "options": [],
+                            "options": ["free", { "label": "Fixed name", "value": "fixed", "noTranslation": true }],
                             "width": 100,
                             "filter": false
                         },

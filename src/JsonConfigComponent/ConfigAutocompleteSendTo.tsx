@@ -4,7 +4,7 @@ import { Autocomplete, TextField, CircularProgress, InputAdornment } from '@mui/
 
 import { I18n } from '@iobroker/gui-components';
 
-import type { ConfigItemAutocompleteSendTo } from '../types';
+import type { ConfigItemAutocompleteSendTo, ConfigItemSelectOption } from '../types';
 import ConfigGeneric, { type ConfigGenericProps } from './ConfigGeneric';
 import type { ConfigAutocompleteState } from './ConfigAutocomplete';
 
@@ -26,8 +26,8 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
 
     async askInstance(): Promise<void> {
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
-        const selectOptions = this.props.schema.options
-            ? this.props.schema.options.map((item: any) =>
+        const selectOptions: ConfigItemSelectOption[] = this.props.schema.options
+            ? this.props.schema.options.map((item: ConfigItemSelectOption | string) =>
                   typeof item === 'string' ? { label: item, value: item } : JSON.parse(JSON.stringify(item)),
               )
             : [];
@@ -108,12 +108,15 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
     }
 
     /** Report value-to-label mapping to parent table for filtering */
-    reportFilterLabels(options: { value: string; label: string }[]): void {
+    reportFilterLabels(options: ConfigItemSelectOption[]): void {
         if (this.props.onFilterLabelUpdate && this.props.table && this.props.attr) {
             const valueToLabel: Record<string, string> = {};
             for (const opt of options) {
                 if (opt.value !== ConfigGeneric.DIFFERENT_VALUE) {
-                    valueToLabel[opt.value] = opt.label;
+                    valueToLabel[opt.value] = this.getText(
+                        opt.label,
+                        this.props.schema.noTranslation || opt.noTranslation,
+                    );
                 }
             }
             this.props.onFilterLabelUpdate(this.props.attr, valueToLabel);
@@ -141,7 +144,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
         }
 
         let item;
-        const options: { value: string; label: string }[] = this.state.selectOptions
+        const options: ConfigItemSelectOption[] = this.state.selectOptions
             ? JSON.parse(JSON.stringify(this.state.selectOptions))
             : [];
         const isIndeterminate = Array.isArray(this.state.value) || this.state.value === ConfigGeneric.DIFFERENT_LABEL;
@@ -149,7 +152,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
         if (isIndeterminate) {
             [...this.state.value]
                 .filter(val => !options.find((it: any) => it.value === val))
-                .forEach(it => options.push({ label: it.toString(), value: it }));
+                .forEach(it => options.push({ label: it.toString(), value: it, noTranslation: true }));
 
             item = { label: I18n.t(ConfigGeneric.DIFFERENT_LABEL), value: ConfigGeneric.DIFFERENT_VALUE };
             options.unshift(item);
@@ -160,7 +163,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 options.find((item: any) => item.value == this.state.value); // let "==" be and not ===
 
             if (this.state.value !== null && this.state.value !== undefined && !item && this.props.schema.freeSolo) {
-                item = { value: this.state.value, label: this.state.value };
+                item = { value: this.state.value, label: this.state.value, noTranslation: true };
                 options.push(item);
             }
             item = item || null;
@@ -213,7 +216,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 isOptionEqualToValue={(option, value) =>
                     option.value === (typeof value === 'string' ? value : value.value)
                 }
-                filterOptions={(options: { value: string; label: string }[], params) => {
+                filterOptions={(options: ConfigItemSelectOption[], params) => {
                     const inputValue = params.inputValue.toLowerCase();
                     const filtered = options.filter(option => {
                         if (params.inputValue === '') {
@@ -222,7 +225,7 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                         // label/value may be numbers (or null/undefined), so coerce to string before comparing
                         // see https://github.com/ioBroker/ioBroker.admin/issues/3507
                         return (
-                            String(option.label ?? '')
+                            this.getText(option.label ?? '', this.props.schema.noTranslation || option.noTranslation)
                                 .toLowerCase()
                                 .includes(inputValue) ||
                             String(option.value ?? '')
@@ -235,14 +238,17 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                         filtered.push({
                             label: params.inputValue,
                             value: params.inputValue,
+                            noTranslation: true,
                         });
                     }
 
                     return filtered;
                 }}
-                getOptionLabel={(
-                    option: { value: string | number; label: ioBroker.StringOrTranslated } | string,
-                ): string => this.getText(typeof option === 'object' ? (option?.label ?? '') : option)}
+                getOptionLabel={(option: ConfigItemSelectOption | string): string =>
+                    typeof option === 'object'
+                        ? this.getText(option?.label ?? '', this.props.schema.noTranslation || option?.noTranslation)
+                        : option
+                }
                 onInputChange={e => {
                     if (!e || !this.props.schema.freeSolo) {
                         return;

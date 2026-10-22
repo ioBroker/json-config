@@ -243,7 +243,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 }
                 return {
                     value: state.value,
-                    label: this.getText(state.label, this.props.schema.noTranslation),
+                    label: this.getText(state.label, this.props.schema.noTranslation || state.noTranslation),
                     color: state.color,
                 };
             });
@@ -297,7 +297,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                             });
                         }}
                         renderValue={(val: string) =>
-                            item?.color ? <div style={{ color: item.color }}>{item.label}</div> : val
+                            item?.color ? <div style={{ color: item.color }}>{item.label}</div> : (item?.label ?? val)
                         }
                     >
                         {states.map(item => (
@@ -306,7 +306,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                                 value={item.value}
                                 style={{ color: item.color }}
                             >
-                                ${item.label}
+                                {item.label}
                             </MenuItem>
                         ))}
                     </Select>

@@ -466,6 +466,7 @@ Each option in `options` can have:
 | `showByAdapters` | Show the option only if at least one of these adapters is installed: `["zigbee"]` |
 | `description` | Description shown below the option label (can be translatable)        |
 | `icon`        | Icon URL or base64 string to display next to the option (from v8.3.3) |
+| `noTranslation` | Do not translate the label of this option                           |
 
 #### Example for `select options`
 
@@ -501,6 +502,8 @@ or
 |------------|----------------------------------------------------------------------------------------------------------------------------------|
 | `options`  | `["value1", "value2", ...]` or `[{"value": "value", "label": "Value1"}, "value2", ...]` (keys and names (values) must be unique) |
 | `freeSolo` | Set `freeSolo` to `true`, so the textbox can contain any arbitrary value.                                                        |
+
+Each option in `options` can have `label`, `value`, `color`, `hidden`, `icon` and `noTranslation` (do not translate the label of this option). A value entered as free text is never translated.
 
 ### `image`
 
@@ -1136,6 +1139,7 @@ Shows the drop-down menu with the given from the instance values.
 | `instance`      | Instance where to send the request to (e.g. `"admin.0"`). Overrides `oContext.instance`. If not defined, the request is sent to the current adapter instance. You can use `${data.number}` pattern in the text.  |
 
 The backend handler can return items with an optional `description` field: `[{"value": 1, "label": "one", "description": "Some hint"}, ...]`. The description is shown below the label in the dropdown.
+An item with `"noTranslation": true` is shown as it is, even if `noTranslation` of the control is not set: `[{"value": "abc", "label": "My device", "noTranslation": true}, ...]`.
 
 #### Example of code in back-end for `selectSendTo`
 
@@ -1201,13 +1205,16 @@ Shows autocomplete control with the given from the instance values.
 | `jsonData`      | string - `{"subject1": "${data.subject}", "options1": {"host": "${data.host}"}}`. This data will be sent to the backend                                                                                         |
 | `data`          | object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to the backend if jsonData is not defined.                                                 |
 | `freeSolo`      | Set `freeSolo` to `true`, so the textbox can contain any arbitrary value.                                                                                                                                       |
+| `options`       | Options, which are always shown, in addition to the result of the command: `["value1", {"value": "value2", "label": "Value2"}, ...]`                                                                            |
+| `noTranslation` | do not translate the labels of the options                                                                                                                                                                      |
 | `alsoDependsOn` | by change of which attributes, the command must be resent                                                                                                                                                       |
 | `maxLength`     | max length of the text in field                                                                                                                                                                                 |
 | `instance`      | Instance where to send the request to (e.g. `"admin.0"`). Overrides `oContext.instance`. If not defined, the request is sent to the current adapter instance. You can use `${data.number}` pattern in the text. |
 
 To use this option, your adapter must implement a message handler:
 
-The result of command must be an array in form `["value1", {"value": "value2", "label": "Value2"}, ...]` (keys and names (values) must be unique)
+The result of command must be an array in form `["value1", {"value": "value2", "label": "Value2"}, ...]` (keys and names (values) must be unique).
+An item with `"noTranslation": true` is shown as it is: `{"value": "abc", "label": "My device", "noTranslation": true}`. The options from `options` can have `noTranslation` too. A value entered as free text is never translated.
 See `selectSendTo` for handler example
 
 ### `textSendTo`
@@ -1987,6 +1994,12 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@BenAhrdt) Fixed: the `autocomplete` does not translate the values entered as free text
+- (@GermanBluefox) Added: `noTranslation` for single options of `autocomplete`, `autocompleteSendTo`, `selectSendTo` and `state` and for the groups of `select`
+- (@GermanBluefox) Fixed: `selectSendTo` translates the items in the list even with `noTranslation`, and the chips of a multiple select show the translated label
+- (@GermanBluefox) Fixed: the options of `state` were shown with a leading `$`, and the selected option showed its value instead of its label
+
 ### 10.1.6 (2026-10-22)
 - (@GermanBluefox) Added: the attributes `hiddenByAdapters` and `showByAdapters` to show elements and select options depending on the installed adapters
 - (@GermanBluefox) Fixed: the `getObject` example in the documentation
