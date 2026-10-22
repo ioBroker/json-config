@@ -1994,7 +1994,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.7 (2026-10-22)
 - (@BenAhrdt) Fixed: the `autocomplete` does not translate the values entered as free text
 - (@GermanBluefox) Added: `noTranslation` for single options of `autocomplete`, `autocompleteSendTo`, `selectSendTo` and `state` and for the groups of `select`
 - (@GermanBluefox) Fixed: `selectSendTo` translates the items in the list even with `noTranslation`, and the chips of a multiple select show the translated label
