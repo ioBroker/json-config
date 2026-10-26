@@ -21,7 +21,8 @@ interface ConfigSliderProps extends ConfigGenericProps {
 }
 
 interface ConfigSliderState extends ConfigGenericState {
-    _value: number;
+    /** Usually a number, but settings could store it as string */
+    _value: number | string;
 }
 
 class ConfigSlider extends ConfigGeneric<ConfigSliderProps, ConfigSliderState> {
@@ -65,6 +66,12 @@ class ConfigSlider extends ConfigGeneric<ConfigSliderProps, ConfigSliderState> {
             { value: max, label: max + unit },
         ];
 
+        // The Slider crashes on non-numeric values (e.g. a number stored as string in the settings)
+        let value = typeof this.state._value === 'number' ? this.state._value : parseFloat(this.state._value);
+        if (!Number.isFinite(value)) {
+            value = min;
+        }
+
         return (
             <Box style={styles.fullWidth}>
                 {this.props.schema.label ? (
@@ -72,7 +79,7 @@ class ConfigSlider extends ConfigGeneric<ConfigSliderProps, ConfigSliderState> {
                 ) : null}
                 <Slider
                     style={styles.slider}
-                    value={this.state._value}
+                    value={value}
                     getAriaValueText={value => value + unit}
                     step={this.props.schema.step || (max - min) / 100}
                     valueLabelDisplay="auto"

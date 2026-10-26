@@ -633,6 +633,14 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 const min = this.props.schema.min ?? (this.state.obj.common.min || 0);
                 const max = this.props.schema.max ?? this.state.obj.common.max ?? 100;
                 const step = this.props.schema.step ?? (this.state.obj.common.step || 1);
+                // The Slider crashes on non-numeric values (e.g. a string from a "mixed" state)
+                let sliderValue =
+                    typeof this.state.stateValue === 'number'
+                        ? this.state.stateValue
+                        : parseFloat(this.state.stateValue as string);
+                if (!Number.isFinite(sliderValue)) {
+                    sliderValue = min;
+                }
 
                 content = (
                     <Slider
@@ -641,7 +649,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                         max={max}
                         disabled={!!this.props.schema.readOnly || disabled}
                         step={step}
-                        value={this.state.stateValue as number}
+                        value={sliderValue}
                         valueLabelDisplay="auto"
                         valueLabelFormat={(value: number) => {
                             let displayValue: string =
