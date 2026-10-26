@@ -1994,7 +1994,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.8 (2026-10-26)
 - (@GermanBluefox) Fixed: a slider (`slider` or `state`) crashed the page if the value was not a number, e.g. a string
 
 ### 10.1.7 (2026-10-22)
