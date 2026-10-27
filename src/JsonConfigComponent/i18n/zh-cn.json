@@ -46,6 +46,7 @@
     "jc_Disable/Enable translation": "禁用/启用翻译",
     "jc_Discard": "丢弃",
     "jc_Do not use let's encrypt": "不要使用让我们加密",
+    "jc_Docker cannot be checked": "无法检查 Docker",
     "jc_Docker is not available": "Docker 不可用",
     "jc_Docker is not installed or not running": "Docker 未安装或未运行",
     "jc_Drop file here": "将档案放在这里",

@@ -46,6 +46,7 @@
     "jc_Disable/Enable translation": "Übersetzung deaktivieren/aktivieren",
     "jc_Discard": "Verwerfen",
     "jc_Do not use let's encrypt": "Let's encrypt nicht verwenden",
+    "jc_Docker cannot be checked": "Docker kann nicht geprüft werden",
     "jc_Docker is not available": "Docker ist nicht verfügbar",
     "jc_Docker is not installed or not running": "Docker ist nicht installiert oder läuft nicht",
     "jc_Drop file here": "Datei hier ablegen",
