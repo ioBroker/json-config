@@ -10,6 +10,10 @@ import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from 
 interface ConfigCheckDockerState extends ConfigGenericState {
     version: string;
     errorDocker: string;
+    /** Why Docker could not be checked. Then it is unknown and not missing, so the checkbox stays usable. */
+    uncheckable: string;
+    /** The host that was checked, if admin says it */
+    host: string;
     requesting: boolean;
 }
 
@@ -23,20 +27,34 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
         await super.componentDidMount();
         const id = await this.props.oContext.socket.getCurrentInstance();
         this.setState({ requesting: true }, async () => {
+            // Docker is a property of the machine: admin has to check the host the instance runs on, which is
+            // not necessarily its own one. An older admin ignores the message and checks its own host.
             const result: {
                 version?: string;
                 daemonRunning?: boolean;
-            } = await this.props.oContext.socket.sendTo(id, 'checkDocker', null);
+                error?: string;
+                host?: string;
+            } = await this.props.oContext.socket.sendTo(id, 'checkDocker', {
+                host: this.props.common?.host,
+                instance: `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
+            });
             this.setState({
                 requesting: false,
                 version: result?.version || '',
+                host: result?.host || '',
+                uncheckable: result?.error || '',
                 errorDocker: result
-                    ? !result.daemonRunning
+                    ? !result.error && !result.daemonRunning
                         ? I18n.t('jc_Docker is not installed or not running')
                         : ''
                     : I18n.t('jc_No response from admin'),
             });
         });
+    }
+
+    /** Name the host, as it does not have to be the one of admin */
+    private withHost(text: string): string {
+        return this.state.host ? `${this.state.host}: ${text}` : text;
     }
 
     renderItem(_error: unknown, disabled: boolean): JSX.Element {
@@ -48,7 +66,7 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
         if (this.state.errorDocker && !value) {
             return (
                 <FormHelperText style={{ color: 'orange' }}>
-                    {I18n.t('jc_Docker is not available')}:&nbsp;
+                    {this.withHost(I18n.t('jc_Docker is not available'))}:&nbsp;
                     {I18n.t(`jc_${this.state.errorDocker}`).replace(/^jc_/, '')}
                 </FormHelperText>
             );
@@ -83,9 +101,14 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                     }
                     label={this.getText(this.props.schema.label)}
                 />
-                {!this.props.schema.hideVersion ? (
+                {!this.props.schema.hideVersion && this.state.uncheckable ? (
+                    <FormHelperText style={{ color: 'orange' }}>
+                        {I18n.t('jc_Docker cannot be checked')}:&nbsp;{this.state.uncheckable}
+                    </FormHelperText>
+                ) : null}
+                {!this.props.schema.hideVersion && !this.state.uncheckable ? (
                     <FormHelperText>
-                        {this.state.errorDocker ? this.state.errorDocker : this.state.version}
+                        {this.state.errorDocker ? this.state.errorDocker : this.withHost(this.state.version)}
                     </FormHelperText>
                 ) : null}
                 {this.props.schema.help ? (

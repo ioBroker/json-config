@@ -46,6 +46,7 @@
     "jc_Disable/Enable translation": "Vertaling uitschakelen/inschakelen",
     "jc_Discard": "Weggooien",
     "jc_Do not use let's encrypt": "Gebruik geen let's encrypt",
+    "jc_Docker cannot be checked": "Docker kan niet worden gecontroleerd",
     "jc_Docker is not available": "Docker is niet beschikbaar",
     "jc_Docker is not installed or not running": "Docker is niet geïnstalleerd of draait niet",
     "jc_Drop file here": "Zet het bestand hier neer",

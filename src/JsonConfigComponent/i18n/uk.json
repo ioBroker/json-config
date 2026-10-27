@@ -46,6 +46,7 @@
     "jc_Disable/Enable translation": "Вимкнути/Увімкнути переклад",
     "jc_Discard": "Відкинути",
     "jc_Do not use let's encrypt": "Не використовуйте let's encrypt",
+    "jc_Docker cannot be checked": "Не вдається перевірити Docker",
     "jc_Docker is not available": "Докер недоступний",
     "jc_Docker is not installed or not running": "Docker не встановлено або не працює",
     "jc_Drop file here": "Перетягніть файл сюди",
