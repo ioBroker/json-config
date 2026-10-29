@@ -133,7 +133,7 @@ class ConfigInterface extends ConfigGeneric<ConfigInterfaceProps, ConfigInterfac
                         ))}
                     </Select>
                 )}
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,

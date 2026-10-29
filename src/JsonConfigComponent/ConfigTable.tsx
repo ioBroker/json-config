@@ -1962,7 +1962,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         </div>
                     ) : null}
                 </TableContainer>
-                {schema.help ? (
+                {schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText style={{ paddingLeft: 16 }}>
                         {this.renderHelp(
                             this.props.schema.help,

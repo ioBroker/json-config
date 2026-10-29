@@ -281,9 +281,9 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                         }}
                         placeholder={this.getText(this.props.schema.placeholder)}
                     />
-                    {helper || error || this.state.jsonError ? (
-                        <div style={error ? styles.error : styles.helper}>
-                            {error || (this.state.jsonError ? I18n.t('jc_Invalid JSON') : helper)}
+                    {helper || this.state.jsonError ? (
+                        <div style={error || this.state.jsonError ? styles.error : styles.helper}>
+                            {this.state.jsonError ? I18n.t('jc_Invalid JSON') : helper}
                         </div>
                     ) : null}
                 </div>

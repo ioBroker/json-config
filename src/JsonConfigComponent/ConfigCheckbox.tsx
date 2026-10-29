@@ -55,14 +55,11 @@ class ConfigCheckbox extends ConfigGeneric<ConfigCheckboxProps, ConfigGenericSta
                     }
                     label={this.getText(this.props.schema.label)}
                 />
+                {/* With `validatorErrorText` the error is shown by `renderHelp` instead of the help */}
                 <FormHelperText style={{ color: 'red' }}>
-                    {error
-                        ? this.props.schema.validatorErrorText
-                            ? I18n.t(this.props.schema.validatorErrorText)
-                            : I18n.t('jc_Error')
-                        : null}
+                    {error && !this.props.schema.validatorErrorText ? I18n.t('jc_Error') : null}
                 </FormHelperText>
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,

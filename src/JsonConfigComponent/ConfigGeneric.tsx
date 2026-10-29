@@ -1,6 +1,6 @@
 import React, { Component, type JSX } from 'react';
 
-import { Grid, Button } from '@mui/material';
+import { Grid, Button, Box } from '@mui/material';
 
 import {
     Info as IconInfo,
@@ -1393,12 +1393,39 @@ export default class ConfigGeneric<
         return this.getText(this.props.schema.label) || this.getText(this.props.schema.text);
     }
 
+    /**
+     * The translated `validatorErrorText` while the validator of this element fails, else null.
+     * The components show it instead of the help text, see `renderHelp`.
+     */
+    getValidatorErrorText(): string | null {
+        if (this.state.calculatedValues?.error && this.props.schema.validatorErrorText) {
+            return I18n.t(this.props.schema.validatorErrorText);
+        }
+        return null;
+    }
+
+    /**
+     * Render the help text of this element.
+     * While the validator fails and `validatorErrorText` is set, the error text is shown instead (in red),
+     * so every component that shows the help shows the error too, also in the cells of a table.
+     */
     // eslint-disable-next-line react/no-unused-class-component-methods
     renderHelp(
         text: ioBroker.StringOrTranslated | undefined | null,
         link?: string | null,
         noTranslation?: boolean,
     ): JSX.Element | JSX.Element[] | string {
+        const errorText = this.getValidatorErrorText();
+        if (errorText) {
+            return (
+                <Box
+                    component="span"
+                    sx={{ color: 'error.main' }}
+                >
+                    {errorText}
+                </Box>
+            );
+        }
         if (!link) {
             text = this.getText(text, noTranslation) || '';
             if (
