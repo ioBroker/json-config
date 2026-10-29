@@ -752,6 +752,7 @@
                     "newLine": true,
                     "sm": 12,
                     "noDelete": false,
+                    "allowReorder": true,
                     "type": "table",
                     "export": true,
                     "allowAddByFilter": false,

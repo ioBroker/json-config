@@ -718,7 +718,15 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         }
 
         return (
-            <div style={styles.root}>
+            <Box
+                style={styles.root}
+                sx={{
+                    // The export/import buttons lie over the right end of the tab bar. Without this space
+                    // they would cover the last tabs and the right scroll button, so these tabs could not be reached.
+                    // On xs the buttons are not shown, so no space is needed there.
+                    '& .jc-root-tabs': { pr: { xs: 0, sm: '95px' } },
+                }}
+            >
                 {this.renderDialogConfirm()}
                 {this.getExportImportButtons()}
                 {this.renderSaveConfigDialog()}
@@ -772,7 +780,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     onSave={(close: boolean) => this.onSave(true, close)}
                     onClose={() => this.onSave(false)}
                 />
-            </div>
+            </Box>
         );
     }
 }
