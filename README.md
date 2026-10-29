@@ -2001,7 +2001,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.10 (2026-10-29)
 - (@GermanBluefox) Added: `allowReorder` for `table`. With `noDelete: true` the rows can still be moved up and down, but not added or deleted (ioBroker/ioBroker.admin#3707)
 - (@GermanBluefox) Fixed: in the cards mode of `table`, `noDelete` did not hide the add button and, with `titleAttribute`, the delete and clone buttons
 - (@GermanBluefox) Fixed: the export/import buttons of the instance settings covered the last tabs and the right scroll button of the tab bar, so these tabs could not be reached (ioBroker/ioBroker.admin#3613, ioBroker/ioBroker.admin#3657)
