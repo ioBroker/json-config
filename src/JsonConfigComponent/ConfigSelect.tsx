@@ -353,7 +353,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         />
                     ))}
                 </RadioGroup>
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,
@@ -534,7 +534,7 @@ export default class ConfigSelect extends ConfigGeneric<ConfigInstanceSelectProp
                         );
                     })}
                 </Select>
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,

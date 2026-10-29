@@ -595,7 +595,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                         </IconButton>
                     </Toolbar>
                 ) : null}
-                {schema.help ? (
+                {schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,

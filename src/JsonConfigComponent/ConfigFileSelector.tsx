@@ -483,7 +483,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                             </MenuItem>
                         ))}
                     </Select>
-                    {this.props.schema.help ? (
+                    {this.props.schema.help || this.getValidatorErrorText() ? (
                         <FormHelperText>
                             {this.renderHelp(
                                 this.props.schema.help,

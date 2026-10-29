@@ -111,7 +111,7 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                         {this.state.errorDocker ? this.state.errorDocker : this.withHost(this.state.version)}
                     </FormHelperText>
                 ) : null}
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,

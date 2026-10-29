@@ -92,7 +92,7 @@ class ConfigSlider extends ConfigGeneric<ConfigSliderProps, ConfigSliderState> {
                         this.setState({ _value }, () => this.onChange(this.props.attr, _value));
                     }}
                 />
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <Typography>
                         {this.renderHelp(
                             this.props.schema.help,

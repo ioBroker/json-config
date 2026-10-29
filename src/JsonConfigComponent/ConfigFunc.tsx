@@ -93,7 +93,7 @@ class ConfigFunc extends ConfigGeneric<ConfigFuncProps, ConfigFuncState> {
                         </MenuItem>
                     ))}
                 </Select>
-                {this.props.schema.help ? (
+                {this.props.schema.help || this.getValidatorErrorText() ? (
                     <FormHelperText>
                         {this.renderHelp(
                             this.props.schema.help,
