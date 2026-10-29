@@ -2001,7 +2001,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.11 (2026-10-29)
 - (@GermanBluefox) Fixed: `validatorErrorText` was not shown, only the field was marked red. The text is shown now instead of the help text below the element, also in the cells of a table (ioBroker/ioBroker.admin#1911)
 - (@GermanBluefox) Fixed: a `text` with `minRows` showed an empty red line instead of the help text when the validator failed
 
