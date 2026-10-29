@@ -529,6 +529,9 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                     // Without this, MUI hides the scroll buttons below its `sm` breakpoint, and on a
                     // small display the tabs at the end cannot be reached at all
                     allowScrollButtonsMobile
+                    // JsonConfig places its export/import buttons over the right end of the root tab bar
+                    // and reserves the space for them via this class
+                    className={this.props.root ? 'jc-root-tabs' : undefined}
                     style={{ ...styles.tabsBar, ...this.props.schema.tabsStyle }}
                     value={this.state.tab}
                     onChange={(_e, tab: string): void => this.onMenuChange(tab)}
