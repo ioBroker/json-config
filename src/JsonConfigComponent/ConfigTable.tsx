@@ -824,7 +824,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             doAnyFilterSet,
                         }),
                     )}
-                    {!schema.noDelete && (
+                    {(!schema.noDelete || schema.allowReorder) && (
                         <TableCell
                             style={{
                                 paddingLeft: 20,
@@ -1582,7 +1582,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                     <Box sx={styles.cardHeader}>
                                         <div>{this.state.value[idx][this.props.schema.titleAttribute]}</div>
                                         <div>
-                                            {!doAnyFilterSet && !this.state.orderBy ? (
+                                            {(!schema.noDelete || schema.allowReorder) &&
+                                            !doAnyFilterSet &&
+                                            !this.state.orderBy ? (
                                                 <Tooltip
                                                     title={I18n.t('jc_Move up')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
@@ -1598,7 +1600,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                     </span>
                                                 </Tooltip>
                                             ) : null}
-                                            {!doAnyFilterSet && !this.state.orderBy ? (
+                                            {(!schema.noDelete || schema.allowReorder) &&
+                                            !doAnyFilterSet &&
+                                            !this.state.orderBy ? (
                                                 <Tooltip
                                                     title={I18n.t('jc_Move down')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
@@ -1614,18 +1618,20 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                     </span>
                                                 </Tooltip>
                                             ) : null}
-                                            <Tooltip
-                                                title={I18n.t('jc_Delete current row')}
-                                                slotProps={{ popper: { sx: styles.tooltip } }}
-                                            >
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={this.onDelete(idx)}
+                                            {!schema.noDelete ? (
+                                                <Tooltip
+                                                    title={I18n.t('jc_Delete current row')}
+                                                    slotProps={{ popper: { sx: styles.tooltip } }}
                                                 >
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            {this.props.schema.clone ? (
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={this.onDelete(idx)}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            ) : null}
+                                            {!schema.noDelete && this.props.schema.clone ? (
                                                 <Tooltip
                                                     title={I18n.t('jc_Clone current row')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}
@@ -1711,77 +1717,82 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                     </TableRow>
                                                 );
                                             })}
-                                            {!this.props.schema.titleAttribute && !schema.noDelete && (
-                                                <TableRow>
-                                                    <TableCell
-                                                        align="left"
-                                                        style={tdStyle}
-                                                    >
-                                                        <span style={styles.headerText}>{I18n.t('jc_Actions')}</span>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        align="left"
-                                                        style={tdStyle}
-                                                    >
-                                                        {!doAnyFilterSet && !this.state.orderBy ? (
-                                                            <Tooltip
-                                                                title={I18n.t('jc_Move up')}
-                                                                slotProps={{ popper: { sx: styles.tooltip } }}
-                                                            >
-                                                                <span>
-                                                                    <IconButton
-                                                                        size="small"
-                                                                        onClick={() => this.onMoveUp(idx)}
-                                                                        disabled={i === 0}
-                                                                    >
-                                                                        <UpIcon />
-                                                                    </IconButton>
-                                                                </span>
-                                                            </Tooltip>
-                                                        ) : null}
-                                                        {!doAnyFilterSet && !this.state.orderBy ? (
-                                                            <Tooltip
-                                                                title={I18n.t('jc_Move down')}
-                                                                slotProps={{ popper: { sx: styles.tooltip } }}
-                                                            >
-                                                                <span>
-                                                                    <IconButton
-                                                                        size="small"
-                                                                        onClick={() => this.onMoveDown(idx)}
-                                                                        disabled={i === visibleValue.length - 1}
-                                                                    >
-                                                                        <DownIcon />
-                                                                    </IconButton>
-                                                                </span>
-                                                            </Tooltip>
-                                                        ) : null}
-                                                        <Tooltip
-                                                            title={I18n.t('jc_Delete current row')}
-                                                            slotProps={{ popper: { sx: styles.tooltip } }}
+                                            {!this.props.schema.titleAttribute &&
+                                                (!schema.noDelete || schema.allowReorder) && (
+                                                    <TableRow>
+                                                        <TableCell
+                                                            align="left"
+                                                            style={tdStyle}
                                                         >
-                                                            <IconButton
-                                                                size="small"
-                                                                onClick={this.onDelete(idx)}
-                                                            >
-                                                                <DeleteIcon />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                        {this.props.schema.clone ? (
-                                                            <Tooltip
-                                                                title={I18n.t('jc_Clone current row')}
-                                                                slotProps={{ popper: { sx: styles.tooltip } }}
-                                                            >
-                                                                <IconButton
-                                                                    size="small"
-                                                                    onClick={this.onClone(idx)}
+                                                            <span style={styles.headerText}>
+                                                                {I18n.t('jc_Actions')}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell
+                                                            align="left"
+                                                            style={tdStyle}
+                                                        >
+                                                            {!doAnyFilterSet && !this.state.orderBy ? (
+                                                                <Tooltip
+                                                                    title={I18n.t('jc_Move up')}
+                                                                    slotProps={{ popper: { sx: styles.tooltip } }}
                                                                 >
-                                                                    <CopyContentIcon />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                        ) : null}
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
+                                                                    <span>
+                                                                        <IconButton
+                                                                            size="small"
+                                                                            onClick={() => this.onMoveUp(idx)}
+                                                                            disabled={i === 0}
+                                                                        >
+                                                                            <UpIcon />
+                                                                        </IconButton>
+                                                                    </span>
+                                                                </Tooltip>
+                                                            ) : null}
+                                                            {!doAnyFilterSet && !this.state.orderBy ? (
+                                                                <Tooltip
+                                                                    title={I18n.t('jc_Move down')}
+                                                                    slotProps={{ popper: { sx: styles.tooltip } }}
+                                                                >
+                                                                    <span>
+                                                                        <IconButton
+                                                                            size="small"
+                                                                            onClick={() => this.onMoveDown(idx)}
+                                                                            disabled={i === visibleValue.length - 1}
+                                                                        >
+                                                                            <DownIcon />
+                                                                        </IconButton>
+                                                                    </span>
+                                                                </Tooltip>
+                                                            ) : null}
+                                                            {!schema.noDelete ? (
+                                                                <Tooltip
+                                                                    title={I18n.t('jc_Delete current row')}
+                                                                    slotProps={{ popper: { sx: styles.tooltip } }}
+                                                                >
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={this.onDelete(idx)}
+                                                                    >
+                                                                        <DeleteIcon />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            ) : null}
+                                                            {!schema.noDelete && this.props.schema.clone ? (
+                                                                <Tooltip
+                                                                    title={I18n.t('jc_Clone current row')}
+                                                                    slotProps={{ popper: { sx: styles.tooltip } }}
+                                                                >
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={this.onClone(idx)}
+                                                                    >
+                                                                        <CopyContentIcon />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            ) : null}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
                                         </TableBody>
                                     </Table>
                                 </Collapse>
@@ -1789,7 +1800,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         </Card>
                     </Grid>
                 ))}
-                {this.enhancedBottomCard()}
+                {schema.noDelete ? null : this.enhancedBottomCard()}
             </Grid>
         );
     }
@@ -1851,7 +1862,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                 this.itemTable(headCell.attr, this.state.value[idx], idx, false)}
                                         </TableCell>
                                     ))}
-                                    {!schema.noDelete && (
+                                    {(!schema.noDelete || schema.allowReorder) && (
                                         <TableCell
                                             align="left"
                                             style={{ ...tdStyle, ...styles.buttonCell }}
@@ -1890,18 +1901,20 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                     <div style={styles.buttonEmpty} />
                                                 )
                                             ) : null}
-                                            <Tooltip
-                                                title={I18n.t('jc_Delete current row')}
-                                                slotProps={{ popper: { sx: styles.tooltip } }}
-                                            >
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={this.onDelete(idx)}
+                                            {!schema.noDelete ? (
+                                                <Tooltip
+                                                    title={I18n.t('jc_Delete current row')}
+                                                    slotProps={{ popper: { sx: styles.tooltip } }}
                                                 >
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            {this.props.schema.clone ? (
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={this.onDelete(idx)}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            ) : null}
+                                            {!schema.noDelete && this.props.schema.clone ? (
                                                 <Tooltip
                                                     title={I18n.t('jc_Clone current row')}
                                                     slotProps={{ popper: { sx: styles.tooltip } }}

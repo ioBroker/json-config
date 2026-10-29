@@ -1040,6 +1040,8 @@ export interface ConfigItemTable extends ConfigItem {
     titleAttribute?: string;
     /** If delete or add disabled, If noDelete is false, add, delete and move up/down should work */
     noDelete?: boolean;
+    /** Show the move up/down buttons even if `noDelete` is true, so the rows can be reordered but not added or deleted */
+    allowReorder?: boolean;
     /** @deprecated don't use */
     objKeyName?: string;
     /** @deprecated don't use */
