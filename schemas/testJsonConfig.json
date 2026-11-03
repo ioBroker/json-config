@@ -34,6 +34,11 @@
                 "datePicker": {
                     "type": "datePicker"
                 },
+                "_dockerStatus": {
+                    "type": "checkDocker",
+                    "label": "Docker status",
+                    "noCheckbox": true
+                },
                 "fileSelector": {
                     "type": "fileSelector",
                     "pattern": "*.jsx",

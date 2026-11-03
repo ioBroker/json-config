@@ -1339,9 +1339,16 @@ admin checks the Docker of its host itself, as an older admin always does. If Do
 host - e.g. the host is not running or its js-controller is too old - the checkbox stays usable and the reason is
 shown, as Docker is unknown there and not necessarily missing.
 
+An adapter that lets the user choose Docker with another control, e.g. a `select` between Docker and an external
+server, sets `noCheckbox`: then only the label and the state are shown, e.g. `frigate: Docker version 29.9.2, api
+version: 1.56`, or in orange why Docker is not available or cannot be checked. The value of `attr` is not used then,
+so an attribute starting with `_` is enough, which is not saved. An older admin ignores `noCheckbox` and shows the
+checkbox; set `disabled: true` as well, so it cannot be clicked there.
+
 | Property      | Description                                                                                                                                                    |
 |---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `hideVersion` | If the information about docker version or error should be hidden (e.g. if used more than one such element on the page the error or version will be shown once |
+| `noCheckbox`  | Show only the state of Docker, without the checkbox. `hideVersion` is ignored then                                                                             |
 
 ### `checkLicense`
 
@@ -2011,6 +2018,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Docs: `checkDocker` checks the Docker connection the instance uses (`iobDockerApi`), also on the host of admin (ioBroker/ioBroker.admin#3715)
+- (@GermanBluefox) Added: `noCheckbox` for `checkDocker`: shows only the state of Docker, for adapters that choose Docker with another control
 
 ### 10.1.11 (2026-10-29)
 - (@GermanBluefox) Fixed: `validatorErrorText` was not shown, only the field was marked red. The text is shown now instead of the help text below the element, also in the cells of a table (ioBroker/ioBroker.admin#1911)

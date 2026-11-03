@@ -1142,6 +1142,8 @@ export interface ConfigItemCheckDocker extends ConfigItem {
     type: 'checkDocker';
     /** Hide the version of docker */
     hideVersion?: boolean;
+    /** Show only the state of Docker, without the checkbox, e.g. if Docker is chosen with another control */
+    noCheckbox?: boolean;
 }
 
 export interface ConfigItemUUID extends ConfigItem {
