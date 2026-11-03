@@ -2016,7 +2016,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.12 (2026-11-03)
 - (@GermanBluefox) Docs: `checkDocker` checks the Docker connection the instance uses (`iobDockerApi`), also on the host of admin (ioBroker/ioBroker.admin#3715)
 - (@GermanBluefox) Added: `noCheckbox` for `checkDocker`: shows only the state of Docker, for adapters that choose Docker with another control
 
