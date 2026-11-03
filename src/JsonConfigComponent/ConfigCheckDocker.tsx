@@ -1,6 +1,6 @@
 import React, { type JSX } from 'react';
 
-import { FormControlLabel, Checkbox, FormHelperText, FormControl, CircularProgress } from '@mui/material';
+import { FormControlLabel, Checkbox, FormHelperText, FormControl, FormLabel, CircularProgress } from '@mui/material';
 
 import { I18n } from '@iobroker/gui-components';
 
@@ -57,11 +57,46 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
         return this.state.host ? `${this.state.host}: ${text}` : text;
     }
 
+    private renderHelpText(): JSX.Element | null {
+        return this.props.schema.help || this.getValidatorErrorText() ? (
+            <FormHelperText>
+                {this.renderHelp(this.props.schema.help, this.props.schema.helpLink, this.props.schema.noTranslation)}
+            </FormHelperText>
+        ) : null;
+    }
+
+    /** Only the state of Docker, for adapters that let the user choose Docker with another control */
+    private renderStatus(): JSX.Element {
+        let text: string;
+        let warning = true;
+        if (this.state.uncheckable) {
+            text = `${I18n.t('jc_Docker cannot be checked')}: ${this.state.uncheckable}`;
+        } else if (this.state.errorDocker) {
+            text = `${this.withHost(I18n.t('jc_Docker is not available'))}: ${this.state.errorDocker}`;
+        } else {
+            text = this.withHost(this.state.version);
+            warning = false;
+        }
+        return (
+            <FormControl
+                style={{ width: '100%' }}
+                variant="standard"
+            >
+                {this.props.schema.label ? <FormLabel>{this.getText(this.props.schema.label)}</FormLabel> : null}
+                <FormHelperText style={warning ? { color: 'orange' } : undefined}>{text}</FormHelperText>
+                {this.renderHelpText()}
+            </FormControl>
+        );
+    }
+
     renderItem(_error: unknown, disabled: boolean): JSX.Element {
         const value = ConfigGeneric.getValue(this.props.data, this.props.attr);
 
         if (this.state.requesting) {
             return <CircularProgress />;
+        }
+        if (this.props.schema.noCheckbox) {
+            return this.renderStatus();
         }
         if (this.state.errorDocker && !value) {
             return (
@@ -111,15 +146,7 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                         {this.state.errorDocker ? this.state.errorDocker : this.withHost(this.state.version)}
                     </FormHelperText>
                 ) : null}
-                {this.props.schema.help || this.getValidatorErrorText() ? (
-                    <FormHelperText>
-                        {this.renderHelp(
-                            this.props.schema.help,
-                            this.props.schema.helpLink,
-                            this.props.schema.noTranslation,
-                        )}
-                    </FormHelperText>
-                ) : null}
+                {this.renderHelpText()}
             </FormControl>
         );
     }

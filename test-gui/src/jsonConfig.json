@@ -778,6 +778,14 @@
                     "sm": 12,
                     "md": 6,
                     "lg": 4
+                },
+                "_dockerStatus": {
+                    "type": "checkDocker",
+                    "label": "Docker status",
+                    "noCheckbox": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
                 }
             }
         },
