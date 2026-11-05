@@ -1842,7 +1842,7 @@ The following variables are available in JS function in adapter settings:
 - `_alive` - is instance being alive
 - `_common` - common settings for this instance
 - `_socket` - socket
-- `_instance` - instance number
+- `_instance` - instance number, also in the text patterns: `"help": "Instance ${_instance}"`
 - `arrayIndex` - used only in table and represent current line in an array
 - `globalData` - used only in table for all settings and not only one table line
 - `_os` - operating system of the host, on which the instance runs (`process.platform`), e.g. `linux`, `win32`, `darwin`. Empty string if unknown
@@ -1956,6 +1956,7 @@ admin moves to the next generation.
     "height": 240,
     "settings": {
         "oid": "${data.stateId}",
+        "instance": "my-adapter.${_instance}",
         "decimals": 1
     }
 }
@@ -1964,13 +1965,13 @@ admin moves to the next generation.
 JSON-Config reads the manifest, imports its module once for all items that show it and gives the element what
 every host gives:
 
-| Property   | In JSON-Config                                                                                                                                                                                    |
-|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `socket`   | the connection of admin                                                                                                                                                                           |
-| `settings` | the defaults of the manifest, then `settings` of the item, typed as the manifest declares them; a string with `${data.xxx}` takes the value from the configuration. A new object only on a change |
-| `theme`    | the colors and the font of admin (`getWebComponentTheme()`)                                                                                                                                       |
-| `dialogs`  | MUI dialogs of admin: a form is rendered by JSON-Config itself, an element is framed                                                                                                              |
-| `value`    | the value of the item's attribute, see below                                                                                                                                                      |
+| Property   | In JSON-Config                                                                                                                                                                                                                               |
+|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `socket`   | the connection of admin                                                                                                                                                                                                                      |
+| `settings` | the defaults of the manifest, then `settings` of the item, typed as the manifest declares them; a string with `${data.xxx}` takes the value from the configuration, `${_instance}` the number of the instance. A new object only on a change |
+| `theme`    | the colors and the font of admin (`getWebComponentTheme()`)                                                                                                                                                                                  |
+| `dialogs`  | MUI dialogs of admin: a form is rendered by JSON-Config itself, an element is framed                                                                                                                                                         |
+| `value`    | the value of the item's attribute, see below                                                                                                                                                                                                 |
 
 `editMode` is not set. `label`, `help`, `hidden`, `disabled`, `validator` and the sizes work as for every item; a
 disabled element is `inert` and greyed out. JSON-Config has no views, so it ignores `iob-navigate`.
@@ -2088,6 +2089,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added: `_instance` (the number of the instance) in the text patterns too, not only in the JS functions - e.g. `"settings": {"instance": "my-adapter.${_instance}"}` tells a web component which instance it belongs to
+
 ### 10.1.14 (2026-11-05)
 - (@GermanBluefox) Added: `custom` shows web components of `@iobroker/web-components` with the new attribute `webComponent` (the manifest file). The element gets the connection, the theme and the dialogs of admin, the values of `settings` (also from the configuration with `${data.xxx}`) and the value of its attribute as `value`, which it changes with the event `iob-change`
 

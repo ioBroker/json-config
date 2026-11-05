@@ -1673,6 +1673,7 @@ export default class ConfigGeneric<
                 '_arch',
                 '_host',
                 '_states',
+                '_instance',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = await f(
@@ -1691,6 +1692,7 @@ export default class ConfigGeneric<
                 this.props.oContext.hostInfo?.arch || '',
                 this.props.oContext.hostInfo || {},
                 states || this.getStateValues(),
+                this.props.oContext.instance,
             );
             if (noTranslation) {
                 return text;
@@ -1786,6 +1788,7 @@ export default class ConfigGeneric<
                 '_arch',
                 '_host',
                 '_states',
+                '_instance',
                 `return \`${ConfigGeneric.escapeString(patternStr, data)}\``,
             );
             const text = f(
@@ -1803,6 +1806,7 @@ export default class ConfigGeneric<
                 this.props.oContext.hostInfo?.arch || '',
                 this.props.oContext.hostInfo || {},
                 states || this.getStateValues(),
+                this.props.oContext.instance,
             );
             if (noTranslation) {
                 return text;
