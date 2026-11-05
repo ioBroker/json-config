@@ -18,6 +18,7 @@
     "jc_Cannot determine position: System settings are empty and GPS detection is disabled in browser": "无法确定位置：系统设置为空且浏览器中禁用了 GPS 检测",
     "jc_Cannot display the custom component \"%s\"": "无法显示自定义组件“%s”",
     "jc_Cannot import from %s: %s": "无法从 %s 导入：%s",
+    "jc_Cannot load web component %s: %s": "无法加载 Web 组件 %s：%s",
     "jc_Cannot play: %s": "无法播放：%s",
     "jc_Cannot read interfaces: %s": "无法读取网络接口：%s",
     "jc_Cannot read licenses: %s": "无法读取许可证：%s",

@@ -811,15 +811,28 @@ export interface ConfigItemCoordinates extends ConfigItem {
 
 export interface ConfigItemCustom extends ConfigItem {
     type: 'custom';
-    /** location of Widget, like "custom/customComponents.js" */
-    url: string;
+    /** location of Widget, like "custom/customComponents.js". Not used with `webComponent` */
+    url?: string;
+    /**
+     * Manifest file of a web component (`@iobroker/web-components`), like "webcomponents/my-editor.json".
+     * Resolved like `url`: relative to the admin folder of the adapter, from the root of the server with `./`,
+     * or an absolute URL. If set, `url`, `name`, `i18n` and `guiApi` are not used.
+     */
+    webComponent?: string;
+    /**
+     * `webComponent` only: the values of the settings of its manifest. The defaults of the manifest fill the rest.
+     * A string with `${data.xxx}` takes the value from the configuration.
+     */
+    settings?: Record<string, string | number | boolean>;
+    /** `webComponent` only: height of the element - a number in px or a CSS length. `size.height` of the manifest if not set */
+    height?: number | string;
     /**
      * @deprecated Ignored since GUI API generation 2 - such components are always built as ES
      * modules. Still accepted so existing configurations stay valid, and can be removed.
      */
     bundlerType?: 'module';
-    /** Component name, like "ConfigCustomBackItUpSet/Components/AdapterExist" */
-    name: string;
+    /** Component name, like "ConfigCustomBackItUpSet/Components/AdapterExist". Not used with `webComponent` */
+    name?: string;
     /**
      * Generation of the GUI API this component was built against.
      *
@@ -829,8 +842,8 @@ export interface ConfigItemCustom extends ConfigItem {
      * React/MUI singletons it was built against no longer exist.
      */
     guiApi?: number;
-    /** i18n */
-    i18n: boolean | Record<string, string>;
+    /** i18n. Not used with `webComponent` */
+    i18n?: boolean | Record<string, string>;
     /** custom properties */
     custom?: { [prop: string]: any };
 }

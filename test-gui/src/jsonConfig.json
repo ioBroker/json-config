@@ -893,6 +893,84 @@
                     "lg": 4
                 }
             }
+        },
+        "webComponentTab": {
+            "type": "panel",
+            "label": "Web component",
+            "icon": "light",
+            "items": {
+                "_headerWebComponent": {
+                    "type": "header",
+                    "text": "Web components of @iobroker/web-components",
+                    "size": 2
+                },
+                "wcStateId": {
+                    "newLine": true,
+                    "type": "objectId",
+                    "label": "State shown by the component",
+                    "default": "system.adapter.admin.0.memRss",
+                    "sm": 12,
+                    "md": 6
+                },
+                "wcDisabled": {
+                    "type": "checkbox",
+                    "label": "Disable the component",
+                    "sm": 12,
+                    "md": 6
+                },
+                "wcLevel": {
+                    "newLine": true,
+                    "type": "custom",
+                    "webComponent": "./webcomponents/iob-demo-level.json",
+                    "label": "Level (drag the bar)",
+                    "help": "The value of this item is a number, set by the web component with the event iob-change",
+                    "settings": {
+                        "oid": "${data.wcStateId}",
+                        "unit": "%"
+                    },
+                    "disabled": "data.wcDisabled",
+                    "default": 30,
+                    "onChange": {
+                        "alsoDependsOn": ["wcLevelSet"],
+                        "calculateFunc": "data.wcLevelSet",
+                        "ignoreOwnChanges": true
+                    },
+                    "sm": 12,
+                    "md": 8
+                },
+                "wcLevelSet": {
+                    "newLine": true,
+                    "type": "number",
+                    "label": "Set the level from outside",
+                    "help": "The web component gets it as value",
+                    "sm": 12,
+                    "md": 4
+                },
+                "_wcLevelShow": {
+                    "type": "staticText",
+                    "text": "Level in the configuration: ${data.wcLevel}",
+                    "sm": 12,
+                    "md": 4
+                },
+                "wcRows": {
+                    "newLine": true,
+                    "type": "table",
+                    "label": "In a table",
+                    "sm": 12,
+                    "items": [
+                        { "type": "text", "attr": "name", "title": "Name", "width": "30%" },
+                        {
+                            "type": "custom",
+                            "attr": "level",
+                            "title": "Level",
+                            "width": "70%",
+                            "webComponent": "./webcomponents/iob-demo-level.json",
+                            "settings": { "unit": "dB", "max": 120 },
+                            "height": 80
+                        }
+                    ]
+                }
+            }
         }
     }
 }

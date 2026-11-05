@@ -23,12 +23,34 @@
             "type": "divider",
             "sm": 12
         },
+        "schedule": {
+            "newLine": true,
+            "type": "custom",
+            "webComponent": "webcomponents/my-schedule.json",
+            "label": "Schedule",
+            "help": "Drag the bars",
+            "height": 240,
+            "settings": {
+                "oid": "${data.stateId}",
+                "decimals": 1,
+                "toggle": true
+            },
+            "sm": 12
+        },
         "myTable": {
             "newLine": true,
             "sm": 12,
             "noDelete": false,
             "type": "table",
             "items": [
+                {
+                    "type": "custom",
+                    "attr": "color",
+                    "width": 120,
+                    "title": "Color",
+                    "webComponent": "webcomponents/my-color.json",
+                    "height": "40px"
+                },
                 {
                     "type": "text",
                     "attr": "ip",

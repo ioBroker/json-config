@@ -18,6 +18,7 @@
     "jc_Cannot determine position: System settings are empty and GPS detection is disabled in browser": "Неможливо визначити положення: системні налаштування порожні, а визначення GPS вимкнено в браузері",
     "jc_Cannot display the custom component \"%s\"": "Не вдається відобразити користувацький компонент \"%s\"",
     "jc_Cannot import from %s: %s": "Не вдалося імпортувати з %s: %s",
+    "jc_Cannot load web component %s: %s": "Не вдалося завантажити веб-компонент %s: %s",
     "jc_Cannot play: %s": "Не вдалося відтворити: %s",
     "jc_Cannot read interfaces: %s": "Не вдалося прочитати мережеві інтерфейси: %s",
     "jc_Cannot read licenses: %s": "Неможливо прочитати ліцензії: %s",

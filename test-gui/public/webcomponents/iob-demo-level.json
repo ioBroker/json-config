@@ -1,0 +1,19 @@
+{
+    "manifestVersion": 1,
+    "tag": "iob-demo-level",
+    "name": { "en": "Demo level", "de": "Demo-Pegel" },
+    "description": {
+        "en": "Sets a number by dragging a bar and shows a state - a web component of @iobroker/web-components",
+        "de": "Stellt eine Zahl mit einem Balken ein und zeigt einen Datenpunkt - eine Web-Komponente von @iobroker/web-components"
+    },
+    "module": "iob-demo-level.js",
+    "size": { "width": 400, "height": 120 },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "oid": { "type": "objectId", "label": { "en": "State", "de": "Datenpunkt" } },
+            "unit": { "type": "text", "label": { "en": "Unit", "de": "Einheit" }, "default": "%" },
+            "max": { "type": "number", "label": "Maximum", "min": 1, "default": 100 }
+        }
+    }
+}

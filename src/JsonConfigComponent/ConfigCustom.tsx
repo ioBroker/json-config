@@ -70,7 +70,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
         } else {
             url = `${window.location.protocol}//${window.location.host}/adapter/${this.props.oContext.adapterName}/${this.props.schema.url}`;
         }
-        const [uniqueName, fileToLoad, ...componentNameParts] = this.props.schema.name.split('/');
+        const [uniqueName, fileToLoad, ...componentNameParts] = (this.props.schema.name || '').split('/');
         const componentName = componentNameParts.join('/');
         if (!url) {
             console.error(
@@ -221,7 +221,7 @@ export default class ConfigCustom extends ConfigGeneric<ConfigCustomProps, Confi
             // The custom component is third-party code, so a render error must not take down the
             // whole configuration page with it.
             <ConfigCustomErrorBoundary
-                name={schema.name}
+                name={schema.name || ''}
                 url={schema.url}
             >
                 <CustomComponent

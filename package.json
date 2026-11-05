@@ -39,6 +39,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@iobroker/gui-components": "^10.4.1",
+    "@iobroker/web-components": "^0.6.0",
     "@module-federation/runtime": "^2.9.3",
     "@mui/icons-material": "^9.5.0",
     "@mui/material": "^9.5.0",

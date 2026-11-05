@@ -18,6 +18,7 @@
     "jc_Cannot determine position: System settings are empty and GPS detection is disabled in browser": "Kan positie niet bepalen: systeeminstellingen zijn leeg en GPS-detectie is uitgeschakeld in browser",
     "jc_Cannot display the custom component \"%s\"": "Kan het aangepaste component \"%s\" niet weergeven.",
     "jc_Cannot import from %s: %s": "Kan niet importeren van %s: %s",
+    "jc_Cannot load web component %s: %s": "Kan webcomponent %s niet laden: %s",
     "jc_Cannot play: %s": "Kan niet afspelen: %s",
     "jc_Cannot read interfaces: %s": "Kan netwerkinterfaces niet lezen: %s",
     "jc_Cannot read licenses: %s": "Kan licenties niet lezen: %s",

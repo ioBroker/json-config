@@ -68,6 +68,7 @@ import ConfigUser from './ConfigUser';
 import ConfigYamlEditor from './ConfigYamlEditor';
 import ConfigQrCode from './ConfigQrCode';
 import ConfigQrCodeSendTo from './ConfigQrCodeSendTo';
+import ConfigWebComponent from './ConfigWebComponent';
 
 const components: Record<string, typeof ConfigGeneric<any, any>> = {
     accordion: ConfigAccordion,
@@ -208,9 +209,11 @@ export default class ConfigPanel extends ConfigGeneric<ConfigPanelProps, ConfigP
                   let ItemComponent: typeof ConfigGeneric<ConfigGenericProps, any>;
                   let socket: string | AdminConnection = 'Use this.props.oContext.socket!';
                   if (type === 'custom') {
-                      // name
-                      // url
-                      if (items[attr].url) {
+                      // webComponent: a custom element of @iobroker/web-components
+                      // url + name: a React component loaded via module federation
+                      if (items[attr].webComponent) {
+                          ItemComponent = ConfigWebComponent;
+                      } else if (items[attr].url) {
                           ItemComponent = ConfigCustom;
                       } else if (this.props.oContext.customs && this.props.oContext.customs[items[attr].component]) {
                           ItemComponent = this.props.oContext.customs[items[attr].component];

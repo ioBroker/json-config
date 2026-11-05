@@ -18,6 +18,7 @@
     "jc_Cannot determine position: System settings are empty and GPS detection is disabled in browser": "Cannot determine position: System settings are empty and GPS detection is disabled in browser",
     "jc_Cannot display the custom component \"%s\"": "Cannot display the custom component \"%s\"",
     "jc_Cannot import from %s: %s": "Cannot import from %s: %s",
+    "jc_Cannot load web component %s: %s": "Cannot load web component %s: %s",
     "jc_Cannot play: %s": "Cannot play: %s",
     "jc_Cannot read interfaces: %s": "Cannot read interfaces: %s",
     "jc_Cannot read licenses: %s": "Cannot read licenses: %s",
