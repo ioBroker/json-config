@@ -9,6 +9,7 @@ import type {
 } from '@iobroker/gui-components';
 import type { ConfigGeneric, DeviceManagerPropsProps } from './JsonConfigComponent/ConfigGeneric';
 import type { AceEditorComponent } from './JsonConfigComponent/wrapper/Components/Editor';
+import type { OsmMapComponent } from './JsonConfigComponent/wrapper/Components/OsmMap';
 
 declare module '@mui/material/Button' {
     interface ButtonPropsColorOverrides {
@@ -807,6 +808,14 @@ export interface ConfigItemCoordinates extends ConfigItem {
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
+    /** Show the position on an OpenStreetMap under the fields. A click on the map or dragging the marker sets the position. The host must provide the map (`OsmMap`), else only a link to openstreetmap.org is shown */
+    map?: boolean;
+    /** Height of the map in pixels. Default 300 */
+    mapHeight?: number;
+    /** Zoom level the map starts with (1 - the whole world, 18 - a house). Default 13 */
+    mapZoom?: number;
+    /** Only show the position: the fields cannot be edited, the buttons are hidden and the map does not change the position */
+    readOnly?: boolean;
 }
 
 export interface ConfigItemCustom extends ConfigItem {
@@ -1363,6 +1372,8 @@ export type JsonConfigContext = {
     DeviceManager?: React.FC<DeviceManagerPropsProps>;
     /** Code editor of the host, see `AceEditorComponent`. Without it the editors are text areas. */
     AceEditor?: AceEditorComponent;
+    /** Map of the host for `coordinates` with `map: true`, see `OsmMapComponent`. Without it only a link to openstreetmap.org is shown. */
+    OsmMap?: OsmMapComponent;
     changeLanguage?: () => void;
     customs?: Record<string, typeof ConfigGeneric>;
     embedded?: boolean;

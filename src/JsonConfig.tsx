@@ -28,6 +28,7 @@ import ConfigGeneric, {
 } from './JsonConfigComponent/ConfigGeneric';
 import JsonConfigComponent from './JsonConfigComponent';
 import type { AceEditorComponent } from './JsonConfigComponent/wrapper/Components/Editor';
+import type { OsmMapComponent } from './JsonConfigComponent/wrapper/Components/OsmMap';
 
 const styles: Record<string, React.CSSProperties> = {
     root: {
@@ -207,6 +208,8 @@ interface JsonConfigProps {
     DeviceManager?: React.FC<DeviceManagerPropsProps>;
     /** Code editor for the editor items, see `JsonConfigComponentProps.AceEditor` */
     AceEditor?: AceEditorComponent;
+    /** Map for the coordinates items, see `JsonConfigComponentProps.OsmMap` */
+    OsmMap?: OsmMapComponent;
     customComponents?: { [componentType: string]: typeof ConfigGeneric<ConfigGenericProps, any> };
 }
 
@@ -229,7 +232,7 @@ interface JsonConfigState {
 /** How long the import button shows the check mark */
 const IMPORTED_DURATION = 2500;
 
-class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
+export default class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
     private fileSubscribed: string[] = [];
 
     private fileLangSubscribed = '';
@@ -795,6 +798,7 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                     }}
                     DeviceManager={this.props.DeviceManager}
                     AceEditor={this.props.AceEditor}
+                    OsmMap={this.props.OsmMap}
                     theme={this.state.theme}
                     customComponents={this.props.customComponents}
                     imagePrefix={'.'}
@@ -817,5 +821,3 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
         );
     }
 }
-
-export default JsonConfig;

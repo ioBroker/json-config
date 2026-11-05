@@ -151,6 +151,27 @@
                     "md": 6,
                     "lg": 4
                 },
+                "coordinatesMap": {
+                    "newLine": true,
+                    "type": "coordinates",
+                    "label": "Position (click on the map or drag the marker)",
+                    "attr": "position",
+                    "map": true,
+                    "mapZoom": 15,
+                    "sm": 12,
+                    "md": 6
+                },
+                "coordinatesReadOnly": {
+                    "type": "coordinates",
+                    "label": "Read-only: the position of the first coordinates",
+                    "longitudeName": "longitude",
+                    "latitudeName": "latitude",
+                    "readOnly": true,
+                    "map": true,
+                    "mapHeight": 200,
+                    "sm": 12,
+                    "md": 6
+                },
                 "_headerTime": {
                     "newLine": true,
                     "type": "header",

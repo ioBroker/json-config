@@ -1311,6 +1311,26 @@ Determines current location and used `system.config` coordinates if not possible
 | `longitudeName` | if defined, the longitude will be stored in this attribute, divider will be ignored                                                                                    |
 | `latitudeName`  | if defined, the latitude will be stored in this attribute, divider will be ignored                                                                                     |
 | `useSystemName` | if defined, the checkbox with "Use system settings" will be shown and latitude, longitude will be read from `system.config`, a boolean will be saved to the given name |
+| `map`           | show the position on an OpenStreetMap under the fields. A click on the map or dragging the marker sets the position (From 10.1.16)                                      |
+| `mapHeight`     | height of the map in pixels. Default 300 (From 10.1.16)                                                                                                                 |
+| `mapZoom`       | zoom level the map starts with: 1 - the whole world, 18 - a house. Default 13 (From 10.1.16)                                                                            |
+| `readOnly`      | only show the position: the fields cannot be edited, the buttons are hidden and the map does not change the position. Shows the data as they are now (From 10.1.16)    |
+
+The map does not belong to this library: the host hands it in with the property `OsmMap` of `JsonConfig` /
+`JsonConfigComponent`, best as `React.lazy(() => import('./OsmMap'))`, so that `leaflet` is only loaded when a
+map is really shown. It gets the props `OsmMapProps` (`position`, `center`, `zoom`, `onChange`, `themeType`,
+`style`); without `onChange` it is read-only. `test-gui/src/OsmMap.tsx` is an implementation with `leaflet`.
+Without a map from the host, only a link to the position on openstreetmap.org is shown.
+
+```json
+"position": {
+    "type": "coordinates",
+    "label": "Position",
+    "longitudeName": "longitude",
+    "latitudeName": "latitude",
+    "map": true
+}
+```
 
 ### `interface`
 
@@ -1842,7 +1862,7 @@ The following variables are available in JS function in adapter settings:
 - `_alive` - is instance being alive
 - `_common` - common settings for this instance
 - `_socket` - socket
-- `_instance` - instance number, also in the text patterns: `"help": "Instance ${_instance}"`
+- `_instance` - instance number
 - `arrayIndex` - used only in table and represent current line in an array
 - `globalData` - used only in table for all settings and not only one table line
 - `_os` - operating system of the host, on which the instance runs (`process.platform`), e.g. `linux`, `win32`, `darwin`. Empty string if unknown
@@ -1956,7 +1976,6 @@ admin moves to the next generation.
     "height": 240,
     "settings": {
         "oid": "${data.stateId}",
-        "instance": "my-adapter.${_instance}",
         "decimals": 1
     }
 }
@@ -1965,13 +1984,13 @@ admin moves to the next generation.
 JSON-Config reads the manifest, imports its module once for all items that show it and gives the element what
 every host gives:
 
-| Property   | In JSON-Config                                                                                                                                                                                                                               |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `socket`   | the connection of admin                                                                                                                                                                                                                      |
-| `settings` | the defaults of the manifest, then `settings` of the item, typed as the manifest declares them; a string with `${data.xxx}` takes the value from the configuration, `${_instance}` the number of the instance. A new object only on a change |
-| `theme`    | the colors and the font of admin (`getWebComponentTheme()`)                                                                                                                                                                                  |
-| `dialogs`  | MUI dialogs of admin: a form is rendered by JSON-Config itself, an element is framed                                                                                                                                                         |
-| `value`    | the value of the item's attribute, see below                                                                                                                                                                                                 |
+| Property   | In JSON-Config                                                                                                                                                                                    |
+|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `socket`   | the connection of admin                                                                                                                                                                           |
+| `settings` | the defaults of the manifest, then `settings` of the item, typed as the manifest declares them; a string with `${data.xxx}` takes the value from the configuration. A new object only on a change |
+| `theme`    | the colors and the font of admin (`getWebComponentTheme()`)                                                                                                                                       |
+| `dialogs`  | MUI dialogs of admin: a form is rendered by JSON-Config itself, an element is framed                                                                                                              |
+| `value`    | the value of the item's attribute, see below                                                                                                                                                      |
 
 `editMode` is not set. `label`, `help`, `hidden`, `disabled`, `validator` and the sizes work as for every item; a
 disabled element is `inert` and greyed out. JSON-Config has no views, so it ignores `iob-navigate`.
@@ -2089,6 +2108,11 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added: `coordinates` shows the position on an OpenStreetMap with `map: true` (`mapHeight`, `mapZoom`). A click on the map or dragging the marker sets the position. The host hands the map in with the new property `OsmMap` of `JsonConfig` / `JsonConfigComponent`, lazy loaded, so that `leaflet` does not land in every bundle that uses this library. Without it a link to openstreetmap.org is shown
+- (@GermanBluefox) Added: `readOnly` for `coordinates`, to only show a position: no editing, no buttons, the map does not change the position, and the shown values follow the data
+- (@GermanBluefox) Fixed: the buttons of `coordinates` "Take position from browser" / "from system settings" were active also if the item was disabled
+
 ### 10.1.15 (2026-11-05)
 - (@GermanBluefox) Added: `_instance` (the number of the instance) in the text patterns too, not only in the JS functions - e.g. `"settings": {"instance": "my-adapter.${_instance}"}` tells a web component which instance it belongs to
 

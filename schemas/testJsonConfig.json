@@ -662,6 +662,14 @@
                             "type": "datePicker"
                         },
                         {
+                            "type": "coordinates",
+                            "attr": "position",
+                            "width": 200,
+                            "map": true,
+                            "mapHeight": 150,
+                            "readOnly": true
+                        },
+                        {
                             "type": "timePicker",
                             "tooltip": "test",
                             "format": "HH:mm:ss",
@@ -978,6 +986,23 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4
+                },
+                "coordinatesMap": {
+                    "newLine": true,
+                    "type": "coordinates",
+                    "label": "Position",
+                    "longitudeName": "longitude",
+                    "latitudeName": "latitude",
+                    "map": true,
+                    "mapHeight": 250,
+                    "mapZoom": 15
+                },
+                "coordinatesReadOnly": {
+                    "type": "coordinates",
+                    "label": "Position",
+                    "divider": ";",
+                    "map": true,
+                    "readOnly": true
                 }
             }
         }

@@ -8,6 +8,7 @@ import type { BackEndCommand, ConfigItemPanel, ConfigItemTabs, JsonConfigContext
 import type ConfigGeneric from './ConfigGeneric';
 import { type DeviceManagerPropsProps, type ConfigGenericProps } from './ConfigGeneric';
 import type { AceEditorComponent } from './wrapper/Components/Editor';
+import type { OsmMapComponent } from './wrapper/Components/OsmMap';
 import ConfigTabs from './ConfigTabs';
 import ConfigPanel from './ConfigPanel';
 import { StatePool } from './statePool';
@@ -89,6 +90,14 @@ interface JsonConfigComponentProps {
      * whole `ace-builds` into every bundle that uses it. Without it the editors are text areas.
      */
     AceEditor?: AceEditorComponent;
+    /**
+     * Map for the items `coordinates` with `map: true`.
+     *
+     * An OpenStreetMap drawn with `leaflet`, best handed in as `React.lazy(() => import('./OsmMap'))`,
+     * so that leaflet is only loaded when a map is shown. It is handed in so that this library does not
+     * pull leaflet into every bundle that uses it. Without it only a link to openstreetmap.org is shown.
+     */
+    OsmMap?: OsmMapComponent;
     style?: React.CSSProperties;
     theme: IobTheme;
     expertMode?: boolean;
@@ -533,6 +542,7 @@ export class JsonConfigComponent extends Component<JsonConfigComponentProps, Jso
         this.oContext = {
             DeviceManager: this.props.DeviceManager,
             AceEditor: this.props.AceEditor,
+            OsmMap: this.props.OsmMap,
             adapterName: this.props.adapterName,
             changeLanguage: this.changeLanguage,
             common: this.props.common,

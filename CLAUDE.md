@@ -41,6 +41,14 @@ with the modes `json`, `json5`, `yaml` and the themes `clouds_midnight`, `chrome
 custom components of all adapters included. Without an injected editor the fields fall back to a text
 area. `test-gui/src/AceEditor.tsx` shows how a host provides it.
 
+### The map comes from the host too
+
+`coordinates` with `map: true` renders `wrapper/Components/OsmMap.tsx`, which draws the host's `OsmMap`
+(`OsmMapProps`: `position`, `center`, `zoom`, `onChange` - missing means read-only - `themeType`, `style`)
+inside `Suspense` and an error boundary. The host passes it as `React.lazy(() => import('./OsmMap'))`, so
+leaflet and its CSS load only when a map is shown. Do not import `leaflet` here. Without it a link to
+openstreetmap.org is shown. `test-gui/src/OsmMap.tsx` is the leaflet implementation.
+
 ### Type system
 
 `src/types.d.ts` defines 80+ discriminated-union config item types (`ConfigItemText`, `ConfigItemSelect`, etc.) plus `JsonConfigContext`, backend command types, and icon enums.

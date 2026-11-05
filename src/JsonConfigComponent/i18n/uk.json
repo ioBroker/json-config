@@ -156,5 +156,6 @@
     "jc_true": "ПРАВДА",
     "jc_via internet": "через інтернет",
     "sch_all": "все",
-    "jc_Format JSON": "Форматувати JSON"
+    "jc_Format JSON": "Форматувати JSON",
+    "jc_Show on OpenStreetMap": "Показати на OpenStreetMap"
 }

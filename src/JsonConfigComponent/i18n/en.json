@@ -156,5 +156,6 @@
     "jc_true": "TRUE",
     "jc_via internet": "via internet",
     "sch_all": "all",
-    "jc_Format JSON": "Format JSON"
+    "jc_Format JSON": "Format JSON",
+    "jc_Show on OpenStreetMap": "Show on OpenStreetMap"
 }

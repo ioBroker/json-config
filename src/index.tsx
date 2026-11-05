@@ -10,6 +10,7 @@ export type {
 } from './JsonConfigComponent/ConfigGeneric';
 
 export type { AceEditorComponent } from './JsonConfigComponent/wrapper/Components/Editor';
+export type { OsmMapComponent, OsmMapProps, OsmMapPosition } from './JsonConfigComponent/wrapper/Components/OsmMap';
 
 export type {
     ConfigItemType,

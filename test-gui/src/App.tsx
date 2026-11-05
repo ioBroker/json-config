@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, lazy } from 'react';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { Box, IconButton, MenuItem, Select, Tab, Tabs } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -34,6 +34,9 @@ import type { ConfigItemTabs } from '../../src/types';
 
 import AceEditor from './AceEditor';
 import demoSchema from './jsonConfig.json';
+
+// leaflet is only loaded when a coordinates item shows a map
+const OsmMap = lazy(() => import('./OsmMap'));
 
 const LANGUAGES: ioBroker.Languages[] = ['en', 'de', 'ru', 'pt', 'nl', 'fr', 'it', 'es', 'pl', 'uk', 'zh-cn'];
 
@@ -136,6 +139,8 @@ export default class App extends Component<object, AppState> {
                 expertMode={this.state.expertMode}
                 // the library does not bring the editor any more, the host provides it
                 AceEditor={AceEditor}
+                // the library does not bring leaflet either: the host provides the map, lazy loaded
+                OsmMap={OsmMap}
                 schema={demoSchema as unknown as ConfigItemTabs}
                 data={this.state.data}
                 updateData={this.state.updateData}
