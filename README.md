@@ -2088,7 +2088,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.14 (2026-11-05)
 - (@GermanBluefox) Added: `custom` shows web components of `@iobroker/web-components` with the new attribute `webComponent` (the manifest file). The element gets the connection, the theme and the dialogs of admin, the values of `settings` (also from the configuration with `${data.xxx}`) and the value of its attribute as `value`, which it changes with the event `iob-change`
 
 ### 10.1.13 (2026-11-05)
