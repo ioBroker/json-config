@@ -14,6 +14,10 @@ interface ConfigImageUploadProps extends ConfigGenericProps {
 interface ConfigImageUploadState extends ConfigGenericState {
     image?: string;
     oContext?: string;
+    /** The image is being written into the file */
+    uploading?: boolean;
+    /** Writing the image failed: `UploadImage` shows a cross instead of the check mark */
+    uploadError?: boolean;
 }
 
 class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImageUploadState> {
@@ -62,6 +66,24 @@ class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImag
             .catch(e => console.error(e));
     }
 
+    /**
+     * Writes the image into the file `attr` of the instance. `UploadImage` shows the upload in the corner of the image
+     * and then a check mark or a cross: `uploadError` must change together with `uploading`.
+     */
+    uploadImage(fileName: string, base64: string): void {
+        if (base64.startsWith('data')) {
+            base64 = base64.split(',')[1];
+        }
+        this.setState({ uploading: true, uploadError: false });
+        this.props.oContext.socket
+            .writeFile64(`${this.props.oContext.adapterName}.${this.props.oContext.instance}`, fileName, base64)
+            .then(() => this.setState({ uploading: false, uploadError: false }))
+            .catch(e => {
+                console.error(e);
+                this.setState({ uploading: false, uploadError: true });
+            });
+    }
+
     renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element {
         return (
             <FormControl
@@ -78,6 +100,8 @@ class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImag
                     crop={this.props.schema.crop}
                     maxSize={this.props.schema.maxSize || 256 * 1024}
                     icon={this.state.value || undefined}
+                    uploading={!!this.state.uploading}
+                    uploadError={!!this.state.uploadError}
                     removeIconFunc={() =>
                         this.setState({ value: null }, () => {
                             if (this.props.attr) {
@@ -102,21 +126,15 @@ class ConfigImageUpload extends ConfigGeneric<ConfigImageUploadProps, ConfigImag
                         this.setState({ value: base64 }, () => {
                             if (this.props.attr) {
                                 if (this.props.schema.base64) {
+                                    // the image is stored in the configuration, not in a file
                                     const mayBePromise = this.onChange(this.props.attr, this.state.value);
                                     if (mayBePromise instanceof Promise) {
                                         void mayBePromise.catch(e => console.error(`Cannot set value: ${e}`));
                                     }
-                                } else if (base64.startsWith('data')) {
-                                    base64 = base64.split(',')[1];
+                                } else {
+                                    // upload file to /instance/attr
+                                    this.uploadImage(this.props.attr, base64);
                                 }
-                                // upload file to /instance/attr
-                                this.props.oContext.socket
-                                    .writeFile64(
-                                        `${this.props.oContext.adapterName}.${this.props.oContext.instance}`,
-                                        this.props.attr,
-                                        base64,
-                                    )
-                                    .catch(e => console.error(e));
                             }
                         })
                     }

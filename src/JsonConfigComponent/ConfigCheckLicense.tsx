@@ -19,7 +19,7 @@ import {
 
 import { Check as IconCheck, Send as IconSend } from '@mui/icons-material';
 
-import { DialogConfirm, I18n, type IobTheme } from '@iobroker/gui-components';
+import { DialogConfirm, I18n, IconResult, type IobTheme } from '@iobroker/gui-components';
 
 import type { ConfigItemCheckLicense } from '../types';
 import { isLicenseVersionValid } from '../licenseVersion';
@@ -267,8 +267,16 @@ class ConfigCheckLicense extends ConfigGeneric<ConfigCheckLicenseProps, ConfigCh
                     <DialogTitle>
                         <Box
                             component="span"
-                            sx={this.state.result ? styles.okTitle : styles.errorTitle}
+                            sx={[
+                                this.state.result ? styles.okTitle : styles.errorTitle,
+                                { display: 'flex', alignItems: 'center', gap: 1 },
+                            ]}
                         >
+                            {/* a check mark or a cross draws itself, a cross shakes once */}
+                            <IconResult
+                                type={this.state.result ? 'success' : 'error'}
+                                style={{ color: 'inherit' }}
+                            />
                             {I18n.t('jc_License %s', this.state.result ? 'OK' : 'INVALID')}
                         </Box>
                     </DialogTitle>

@@ -30,30 +30,37 @@ import {
     FormHelperText,
     Box,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 import {
     Add as AddIcon,
-    Delete as DeleteIcon,
     Close as CloseIcon,
     ArrowUpward as UpIcon,
     ArrowDownward as DownIcon,
-    FilterAlt as IconFilterOn,
-    FilterAltOff as IconFilterOff,
     ContentCopy as CopyContentIcon,
-    Download as ExportIcon,
     Warning as ErrorIcon,
-    UploadFile as ImportIcon,
     Close as IconClose,
     ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 
-import { I18n, type IobTheme } from '@iobroker/gui-components';
+import { I18n, IconFilter, IconTrash, IconUpload, type IobTheme } from '@iobroker/gui-components';
 
 import type { ConfigItemTableIndexed, ConfigItemPanel, ConfigItemTable } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import ConfigPanel from './ConfigPanel';
 
 const MAX_SIZE = 1024 * 1024; // 1MB
+
+/** Duration of the fade-out of a deleted row */
+const ROW_REMOVE_DURATION = 250;
+
+/** Duration of the highlight of an added, cloned or moved row */
+const ROW_HIGHLIGHT_DURATION = 1200;
+
+/** True if the user asked the system for less motion */
+function prefersReducedMotion(): boolean {
+    return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
 
 const styles: Record<string, any> = {
     fullWidth: {
@@ -161,9 +168,7 @@ const styles: Record<string, any> = {
         display: 'flex',
     },
     uploadCenterIcon: {
-        paddingTop: 10,
-        width: 48,
-        height: 48,
+        marginTop: 10,
     },
     uploadCenterText: {
         fontSize: 16,
@@ -192,6 +197,18 @@ const styles: Record<string, any> = {
     tooltip: {
         pointerEvents: 'none',
     },
+    /** Files are dragged over the drop area: its border pulses */
+    uploadCenterDivDragging: (theme: IobTheme): any => ({
+        borderColor: theme.palette.primary.main,
+        animation: 'jc-table-drop-pulse 1.2s ease-in-out infinite',
+        '@keyframes jc-table-drop-pulse': {
+            '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.4)}` },
+            '70%, 100%': { boxShadow: `0 0 0 14px ${alpha(theme.palette.primary.main, 0)}` },
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+        },
+    }),
     cardHeader: (theme: IobTheme): any => ({
         color: theme.palette.mode === 'light' ? theme.palette.secondary.main : theme.palette.text.primary,
         height: '100%',
@@ -273,6 +290,12 @@ interface ConfigTableState extends ConfigGenericState {
     tableErrors: Record<number, Record<string, string>>;
     collapsed: number[];
     filterLabelMap: Record<string, Record<string, string>>;
+    /** Row that was just added, cloned or moved: it lights up for a moment */
+    highlightRow?: number | null;
+    /** Row that is being deleted: it fades out before it is removed */
+    removingRow?: number | null;
+    /** The dropped CSV file is being read */
+    importing?: boolean;
 }
 
 function encrypt(secret: string, value: string): string {
@@ -308,6 +331,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
 
     /** Error state last reported to the parent, so the same state is not reported twice */
     private reportedTableError: string = '';
+
+    private highlightTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    private removeTimeout: ReturnType<typeof setTimeout> | null = null;
 
     constructor(props: ConfigTableProps) {
         super(props);
@@ -421,7 +448,61 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             clearTimeout(this.refreshBecauseOfHiddenElements);
             this.refreshBecauseOfHiddenElements = null;
         }
+        if (this.highlightTimeout) {
+            clearTimeout(this.highlightTimeout);
+            this.highlightTimeout = null;
+        }
+        if (this.removeTimeout) {
+            clearTimeout(this.removeTimeout);
+            this.removeTimeout = null;
+        }
         super.componentWillUnmount();
+    }
+
+    /** Lets the row light up for a moment, e.g. after it was added or moved */
+    highlightRow(idx: number): void {
+        if (this.highlightTimeout) {
+            clearTimeout(this.highlightTimeout);
+        }
+        // without the animation for one render, it starts again if the same row is highlighted again
+        this.setState({ highlightRow: null }, () => {
+            this.setState({ highlightRow: idx });
+            this.highlightTimeout = setTimeout(() => {
+                this.highlightTimeout = null;
+                this.setState({ highlightRow: null });
+            }, ROW_HIGHLIGHT_DURATION);
+        });
+    }
+
+    /** Style of a row or a card: red outline on errors, the highlight and the fade-out on delete */
+    getRowSx(idx: number): Record<string, any> | undefined {
+        const error = this.hasRowErrors(idx);
+        const removing = this.state.removingRow === idx;
+        const highlighted = !removing && this.state.highlightRow === idx;
+        if (!error && !removing && !highlighted) {
+            return undefined;
+        }
+        const primary = this.props.oContext.theme.palette.primary.main;
+        return {
+            ...(error ? { outline: '1px solid red' } : undefined),
+            ...(removing
+                ? {
+                      pointerEvents: 'none',
+                      animation: `jc-table-row-remove ${ROW_REMOVE_DURATION}ms ease-in forwards`,
+                      '@keyframes jc-table-row-remove': {
+                          to: { opacity: 0, transform: 'translateX(-24px)' },
+                      },
+                  }
+                : undefined),
+            ...(highlighted
+                ? {
+                      animation: `jc-table-row-highlight ${ROW_HIGHLIGHT_DURATION}ms ease-out`,
+                      '@keyframes jc-table-row-highlight': {
+                          from: { backgroundColor: alpha(primary, 0.35) },
+                      },
+                  }
+                : undefined),
+        };
     }
 
     itemTable(attrItem: string, data: Record<string, any>, idx: number, asCard: boolean): JSX.Element | null {
@@ -740,7 +821,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     }
                 }}
             >
-                {this.state.filterOn.includes(headCell.attr) ? <IconFilterOff /> : <IconFilterOn />}
+                {/* a red cross pops up while the filter input is shown: a click hides it and clears the filter */}
+                <IconFilter active={this.state.filterOn.includes(headCell.attr)} />
             </IconButton>
         );
     }
@@ -757,7 +839,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             size="small"
                             onClick={() => this.setState({ showImportDialog: true })}
                         >
-                            <ImportIcon />
+                            {/* the arrow lifts on hover */}
+                            <IconUpload />
                         </IconButton>
                     </Tooltip>
                 ) : null}
@@ -770,7 +853,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             size="small"
                             onClick={() => this.onExport()}
                         >
-                            <ExportIcon />
+                            {/* turned: the arrow goes down into the bar on hover */}
+                            <IconUpload style={{ transform: 'rotate(180deg)' }} />
                         </IconButton>
                     </Tooltip>
                 ) : null}
@@ -779,7 +863,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                         disabled
                         size="small"
                     >
-                        <DeleteIcon />
+                        <IconTrash />
                     </IconButton>
                 )}
             </>
@@ -843,6 +927,23 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
     }
 
     onDelete = (index: number) => (): void => {
+        if (this.removeTimeout) {
+            // another row is just fading out: the indexes of the rows change after it
+            return;
+        }
+        if (prefersReducedMotion()) {
+            this.deleteRow(index);
+            return;
+        }
+        // the row fades out first; its trash can stays open meanwhile
+        this.setState({ removingRow: index });
+        this.removeTimeout = setTimeout(() => {
+            this.removeTimeout = null;
+            this.deleteRow(index);
+        }, ROW_REMOVE_DURATION);
+    };
+
+    deleteRow(index: number): void {
         const newValue: Record<string, any>[] = JSON.parse(JSON.stringify(this.state.value));
         newValue.splice(index, 1);
 
@@ -858,6 +959,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 value: newValue,
                 iteration: this.state.iteration + 10_000,
                 tableErrors,
+                // in the same render as the deletion, so the row does not show up again for a moment
+                removingRow: null,
+                highlightRow: null,
             },
             () =>
                 this.applyFilter(false, undefined, () => {
@@ -865,7 +969,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     this.onChangeWrapper(newValue);
                 }),
         );
-    };
+    }
 
     onExport(): void {
         const { schema } = this.props;
@@ -951,7 +1055,20 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             if (this.state.value?.length) {
                 this.setState({ showTypeOfImportDialog: values, showImportDialog: false });
             } else {
-                this.setState({ value: values, showImportDialog: false });
+                // like "Replace": without onChangeWrapper the imported rows were only shown, but not taken into the settings
+                this.setState(
+                    {
+                        value: values,
+                        showImportDialog: false,
+                        iteration: this.state.iteration + 10000,
+                        tableErrors: {},
+                    },
+                    () =>
+                        this.applyFilter(false, undefined, () => {
+                            this.validateUniqueProps();
+                            this.onChangeWrapper(values);
+                        }),
+                );
             }
         } else {
             window.alert(I18n.t('jc_No data found in file'));
@@ -996,6 +1113,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                 this.applyFilter(false, undefined, () => {
                     this.validateUniqueProps();
                     this.onChangeWrapper(newValue);
+                    // the clone is at the position of the original
+                    this.highlightRow(index);
                 }),
         );
     };
@@ -1102,6 +1221,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
             this.applyFilter(false, undefined, () => {
                 this.validateUniqueProps();
                 this.onChangeWrapper(newValue);
+                this.highlightRow(newValue.length - 1);
             }),
         );
     };
@@ -1170,7 +1290,11 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     rowIndex === idx ? idx - 1 : rowIndex === idx - 1 ? idx : rowIndex,
                 ),
             },
-            () => this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+            () =>
+                this.applyFilter(false, undefined, () => {
+                    this.onChangeWrapper(newValue);
+                    this.highlightRow(idx - 1);
+                }),
         );
     }
 
@@ -1188,28 +1312,41 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     rowIndex === idx ? idx + 1 : rowIndex === idx + 1 ? idx : rowIndex,
                 ),
             },
-            () => this.applyFilter(false, undefined, () => this.onChangeWrapper(newValue)),
+            () =>
+                this.applyFilter(false, undefined, () => {
+                    this.onChangeWrapper(newValue);
+                    this.highlightRow(idx + 1);
+                }),
         );
     }
 
     onDrop(acceptedFiles: File[]): void {
         const file = acceptedFiles[0];
+        if (file.size > MAX_SIZE) {
+            window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(MAX_SIZE / 1024)));
+            return;
+        }
         const reader = new FileReader();
 
-        reader.onabort = () => console.log('file reading was aborted');
-        reader.onerror = () => console.log('file reading has failed');
+        // the arrow of the drop area moves up while the file is read
+        reader.onabort = () => {
+            console.log('file reading was aborted');
+            this.setState({ importing: false });
+        };
+        reader.onerror = () => {
+            console.log('file reading has failed');
+            this.setState({ importing: false });
+        };
         reader.onload = () => {
-            if (file.size > MAX_SIZE) {
-                window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(MAX_SIZE / 1024)));
-                return;
-            }
             const text = new Uint8Array(reader.result as ArrayBufferLike).reduce(
                 (data, byte) => data + String.fromCharCode(byte),
                 '',
             );
 
+            this.setState({ importing: false });
             this.onImport(text);
         };
+        this.setState({ importing: true });
         reader.readAsArrayBuffer(file);
     }
 
@@ -1332,9 +1469,22 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 {...getRootProps()}
                             >
                                 <input {...getInputProps()} />
-                                <div style={styles.uploadCenterDiv}>
+                                <Box
+                                    style={styles.uploadCenterDiv}
+                                    sx={
+                                        this.state.uploadFile === 'dragging'
+                                            ? styles.uploadCenterDivDragging(this.props.oContext.theme)
+                                            : undefined
+                                    }
+                                >
                                     <div style={styles.uploadCenterTextAndIcon}>
-                                        <ImportIcon style={styles.uploadCenterIcon} />
+                                        {/* bobs while the file is over the drop area, moves up while it is read */}
+                                        <IconUpload
+                                            fontSize={48}
+                                            style={styles.uploadCenterIcon}
+                                            ready={this.state.uploadFile === 'dragging'}
+                                            uploading={!!this.state.importing}
+                                        />
                                         <div style={styles.uploadCenterText}>
                                             {this.state.uploadFile === 'dragging'
                                                 ? I18n.t('jc_Drop file here')
@@ -1343,7 +1493,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                   )}
                                         </div>
                                     </div>
-                                </div>
+                                </Box>
                             </div>
                         )}
                     </Dropzone>
@@ -1576,7 +1726,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                             xl: schema.xl || undefined,
                         }}
                     >
-                        <Card sx={this.hasRowErrors(idx) ? { outline: '1px solid red' } : undefined}>
+                        <Card sx={this.getRowSx(idx)}>
                             <Paper style={styles.paper}>
                                 {this.props.schema.titleAttribute ? (
                                     <Box sx={styles.cardHeader}>
@@ -1627,7 +1777,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                         size="small"
                                                         onClick={this.onDelete(idx)}
                                                     >
-                                                        <DeleteIcon />
+                                                        <IconTrash open={this.state.removingRow === idx} />
                                                     </IconButton>
                                                 </Tooltip>
                                             ) : null}
@@ -1773,7 +1923,9 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                                         size="small"
                                                                         onClick={this.onDelete(idx)}
                                                                     >
-                                                                        <DeleteIcon />
+                                                                        <IconTrash
+                                                                            open={this.state.removingRow === idx}
+                                                                        />
                                                                     </IconButton>
                                                                 </Tooltip>
                                                             ) : null}
@@ -1850,7 +2002,7 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                 <TableRow
                                     hover
                                     key={`${idx}_${i}`}
-                                    sx={this.hasRowErrors(idx) ? { outline: '1px solid red' } : undefined}
+                                    sx={this.getRowSx(idx)}
                                 >
                                     {schema.items?.map((headCell: ConfigItemTableIndexed) => (
                                         <TableCell
@@ -1910,7 +2062,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                                         size="small"
                                                         onClick={this.onDelete(idx)}
                                                     >
-                                                        <DeleteIcon />
+                                                        {/* the lid stays open while the row fades out */}
+                                                        <IconTrash open={this.state.removingRow === idx} />
                                                     </IconButton>
                                                 </Tooltip>
                                             ) : null}
@@ -1956,7 +2109,8 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                                     size="small"
                                     onClick={() => this.applyFilter(true)}
                                 >
-                                    <CloseIcon />
+                                    {/* clears all filters */}
+                                    <IconFilter active />
                                 </IconButton>
                             </Typography>
                         </div>

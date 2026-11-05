@@ -1,7 +1,8 @@
 import React, { type JSX } from 'react';
 
 import { Tabs, Tab, IconButton, Toolbar, Menu, MenuItem, ListItemIcon, Box } from '@mui/material';
-import { Menu as MenuIcon, Error as ErrorIcon } from '@mui/icons-material';
+
+import { IconMenuArrow, IconResult } from '@iobroker/gui-components';
 
 import type { ConfigItemTabs } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -489,7 +490,8 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                             this.setState({ openMenu: event.currentTarget })
                         }
                     >
-                        <MenuIcon />
+                        {/* the bars turn into an arrow while the menu is open */}
+                        <IconMenuArrow open={!!this.state.openMenu} />
                     </IconButton>
                     {this.state.openMenu ? (
                         <Menu
@@ -512,7 +514,12 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                                         {withIcons ? <ListItemIcon>{el.icon}</ListItemIcon> : null}
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, width: '100%' }}>
                                             {el.label}
-                                            {hasErrors && <ErrorIcon sx={{ fontSize: 16, color: 'error.main' }} />}
+                                            {hasErrors && (
+                                                <IconResult
+                                                    type="error"
+                                                    fontSize={16}
+                                                />
+                                            )}
                                         </Box>
                                     </MenuItem>
                                 );
@@ -541,7 +548,11 @@ export default class ConfigTabs extends ConfigGeneric<ConfigTabsProps, ConfigTab
                         const label = hasErrors ? (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {el.label}
-                                <ErrorIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                                {/* the cross draws itself and shakes once, when the tab gets an error */}
+                                <IconResult
+                                    type="error"
+                                    fontSize={16}
+                                />
                             </Box>
                         ) : (
                             el.label

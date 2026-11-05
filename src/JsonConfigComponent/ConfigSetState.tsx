@@ -36,10 +36,13 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
 
         try {
             await this.props.oContext.socket.setState(id, { val, ack: !!this.props.schema.ack });
+            // the button confirms it with a check mark, also without `okText`
+            this.showActionResult('success');
             if (this.props.schema.okText) {
                 window.alert(this.getText(this.props.schema.okText));
             }
         } catch (e) {
+            this.showActionResult('error');
             if (this.props.schema.error && this.props.schema.error[e.toString()]) {
                 window.alert(this.getText(this.props.schema.error[e.toString()]));
             } else {
@@ -78,7 +81,8 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
     }
 
     renderItem(_error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
-        const icon = this.getIcon();
+        // a named icon is animated while the click is being confirmed, e.g. the lid of `delete` stays open
+        const icon = this.getIcon(undefined, { confirming: this.state.confirmDialog });
         return (
             <Button
                 variant={this.props.schema.variant || undefined}
@@ -93,6 +97,7 @@ class ConfigSetState extends ConfigGeneric<ConfigInstanceSelectProps, ConfigGene
                     }
                 }}
                 startIcon={icon || undefined}
+                endIcon={this.renderActionResult()}
             >
                 {this.getText(this.props.schema.label, this.props.schema.noTranslation)}
             </Button>

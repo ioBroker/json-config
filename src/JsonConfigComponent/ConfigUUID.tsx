@@ -2,9 +2,7 @@ import React, { type JSX } from 'react';
 
 import { TextField, IconButton } from '@mui/material';
 
-import { ContentCopy as IconCopy } from '@mui/icons-material';
-
-import { Utils, I18n } from '@iobroker/gui-components';
+import { Utils, I18n, IconCopyToClipboard } from '@iobroker/gui-components';
 
 import type { ConfigItemUUID } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -38,12 +36,10 @@ export default class ConfigUUID extends ConfigGeneric<ConfigUUIDProps, ConfigUUI
                         endAdornment: (
                             <IconButton
                                 tabIndex={-1}
-                                onClick={() => {
-                                    Utils.copyToClipboard(this.state.uuid || '');
-                                    window.alert(I18n.t('jc_Copied %s', this.state.uuid));
-                                }}
+                                // the icon confirms the copy with a check mark
+                                onClick={() => Utils.copyToClipboard(this.state.uuid || '')}
                             >
-                                <IconCopy />
+                                <IconCopyToClipboard />
                             </IconButton>
                         ),
                     },

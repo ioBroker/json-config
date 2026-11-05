@@ -1,12 +1,15 @@
 import React, { type JSX } from 'react';
 
-import { I18n } from '@iobroker/gui-components';
+import { I18n, IconStatusLed } from '@iobroker/gui-components';
 import type { ConfigItemAlive } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
 const styles: Record<string, React.CSSProperties> = {
     root: {
         width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
     },
     notAlive: {
         color: '#a30000',
@@ -94,19 +97,29 @@ export default class ConfigAlive extends ConfigGeneric<ConfigAliveProps, ConfigA
         }
 
         const instance = this.state.instance?.replace(/^system\.adapter\./, '');
+        const text = this.state.alive
+            ? this.props.schema.textAlive !== undefined
+                ? this.props.schema.textAlive
+                    ? I18n.t(this.props.schema.textAlive, instance)
+                    : ''
+                : I18n.t('jc_Instance %s is alive', instance)
+            : this.props.schema.textNotAlive !== undefined
+              ? this.props.schema.textNotAlive
+                  ? I18n.t(this.props.schema.textNotAlive, instance)
+                  : ''
+              : I18n.t('jc_Instance %s is not alive', instance);
+
         return (
             <div style={{ ...styles.root, ...(!this.state.alive ? styles.notAlive : undefined) }}>
-                {this.state.alive
-                    ? this.props.schema.textAlive !== undefined
-                        ? this.props.schema.textAlive
-                            ? I18n.t(this.props.schema.textAlive, instance)
-                            : ''
-                        : I18n.t('jc_Instance %s is alive', instance)
-                    : this.props.schema.textNotAlive !== undefined
-                      ? this.props.schema.textNotAlive
-                          ? I18n.t(this.props.schema.textNotAlive, instance)
-                          : ''
-                      : I18n.t('jc_Instance %s is not alive', instance)}
+                {/* only with a text: an empty `textAlive` or `textNotAlive` hides the element in this state */}
+                {text ? (
+                    <IconStatusLed
+                        // pops when the instance starts, shakes when it stops
+                        color={this.state.alive ? 'green' : 'red'}
+                        fontSize="small"
+                    />
+                ) : null}
+                {text}
             </div>
         );
     }

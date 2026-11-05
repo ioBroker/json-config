@@ -12,7 +12,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run build          # tsc && tsc-alias && node after_build (copies types.d.ts to build/)
 npm run lint           # eslint -c eslint.config.mjs
 npm test               # compiles test/testSchema.ts to CJS, then runs AJV schema validation
-npm run clean          # rimraf build
 ```
 
 There is no watch mode or dev server — this is a library consumed by ioBroker admin.

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, IconButton, TextField } from '@mui/material';
 import { Close as CloseIcon, CloudUpload } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/gui-components';
+import { I18n, IconResult } from '@iobroker/gui-components';
 
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import type { ConfigItemOAuth2 } from '../types';
@@ -222,7 +222,8 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                       this.props.schema.identifier[0].toUpperCase() + this.props.schema.identifier.slice(1),
                   );
         }
-        const icon = this.getIcon();
+        // a named icon is animated while the authorization runs, e.g. `refresh` turns
+        const icon = this.getIcon(undefined, { busy: this.state.running });
 
         return (
             <div style={{ width: '100%', margin: '0 0 1rem 0' }}>
@@ -314,7 +315,18 @@ export default class ConfigOAuth2 extends ConfigGeneric<ConfigOAuth2Props, Confi
                     </div>
                 ) : null}
                 {this.state.accessTokens ? (
-                    <div style={{ color: 'green', fontSize: 16, marginTop: 20 }}>
+                    <div
+                        style={{
+                            color: 'green',
+                            fontSize: 16,
+                            marginTop: 20,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                        }}
+                    >
+                        {/* draws itself when the tokens arrive */}
+                        <IconResult type="success" />
                         {this.props.alive
                             ? I18n.t(
                                   'jc_Successfully authorized. Token valid till %s and will be automatically renewed.',

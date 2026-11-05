@@ -15,18 +15,14 @@ import {
 
 import {
     Add as AddIcon,
-    Delete as DeleteIcon,
     ArrowUpward as UpIcon,
     ArrowDownward as DownIcon,
     ContentCopy as CopyContentIcon,
     ExpandMore as ExpandMoreIcon,
-    Error as ErrorIcon,
-    FileDownload as FileDownloadIcon,
-    FileUpload as FileUploadIcon,
     AddCircle as AddCircleIcon,
 } from '@mui/icons-material';
 
-import { I18n, type IobTheme, Utils } from '@iobroker/gui-components';
+import { I18n, IconResult, IconTrash, IconUpload, type IobTheme, Utils } from '@iobroker/gui-components';
 
 import type { ConfigItemAccordion, ConfigItemAny, ConfigItemIndexed, ConfigItemPanel } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -464,7 +460,8 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                         color="primary"
                                         onClick={this.onExport}
                                     >
-                                        <FileDownloadIcon />
+                                        {/* turned: the arrow goes down into the bar on hover */}
+                                        <IconUpload style={{ transform: 'rotate(180deg)' }} />
                                     </IconButton>
                                 </Tooltip>
                                 <Tooltip title={I18n.t('jc_Import and replace configuration section')}>
@@ -473,7 +470,8 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                         color="primary"
                                         onClick={() => this.onImport(true)}
                                     >
-                                        <FileUploadIcon />
+                                        {/* the arrow lifts on hover */}
+                                        <IconUpload />
                                     </IconButton>
                                 </Tooltip>
                                 <Tooltip title={I18n.t('jc_Import and add configuration section')}>
@@ -510,7 +508,13 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                 {schema.titleAttr && (
                                     <Typography style={styles.accordionTitle}>{idx[schema.titleAttr]}</Typography>
                                 )}
-                                {this.hasAccordionErrors(i) && <ErrorIcon sx={{ fontSize: 20, color: 'error.main' }} />}
+                                {/* the cross draws itself and shakes once, when the section gets an error */}
+                                {this.hasAccordionErrors(i) && (
+                                    <IconResult
+                                        type="error"
+                                        fontSize={20}
+                                    />
+                                )}
                             </Box>
                         </AccordionSummary>
                         <AccordionDetails
@@ -560,7 +564,7 @@ class ConfigAccordion extends ConfigGeneric<ConfigAccordionProps, ConfigAccordio
                                             size="small"
                                             onClick={this.onDelete(i)}
                                         >
-                                            <DeleteIcon />
+                                            <IconTrash />
                                         </IconButton>
                                     </Tooltip>
                                 ) : null}

@@ -2,21 +2,15 @@ import React, { type JSX } from 'react';
 
 import {
     Add,
-    Delete,
     Edit,
-    Refresh,
     Search,
-    Wifi,
-    WifiOff,
     Visibility,
     LinkOff,
     Link as LinkIcon,
     NotListedLocation,
-    PlayArrow,
     Stop,
     FastForward,
     FastRewind,
-    Pause,
     Lightbulb,
     Power,
     Fluorescent,
@@ -27,15 +21,21 @@ import {
     QrCode,
 } from '@mui/icons-material';
 
+import { IconConnectionState, IconPlayPause, IconRefresh, IconTrash } from '@iobroker/gui-components';
+
+/**
+ * Icon for the given name. `play`/`pause` and `connection`/`no-connection` are the same animated component each, so
+ * if a state switches between them (e.g. `trueImage: 'pause'`, `falseImage: 'play'`), one symbol turns into the other.
+ */
 export default function getIconByName(name: string | undefined, style?: React.CSSProperties): JSX.Element | null {
     if (name === 'edit' || name === 'rename') {
         return <Edit style={style} />;
     }
     if (name === 'delete') {
-        return <Delete style={style} />;
+        return <IconTrash style={style} />;
     }
     if (name === 'refresh') {
-        return <Refresh style={style} />;
+        return <IconRefresh style={style} />;
     }
     if (name === 'newDevice' || name === 'new' || name === 'add') {
         return <Add style={style} />;
@@ -53,13 +53,23 @@ export default function getIconByName(name: string | undefined, style?: React.CS
         return <NotListedLocation style={style} />;
     }
     if (name === 'play') {
-        return <PlayArrow style={style} />;
+        return (
+            <IconPlayPause
+                running={false}
+                style={style}
+            />
+        );
     }
     if (name === 'stop') {
         return <Stop style={style} />;
     }
     if (name === 'pause') {
-        return <Pause style={style} />;
+        return (
+            <IconPlayPause
+                running
+                style={style}
+            />
+        );
     }
     if (name === 'forward' || name === 'next') {
         return <FastForward style={style} />;
@@ -92,10 +102,20 @@ export default function getIconByName(name: string | undefined, style?: React.CS
         return <QrCode style={style} />;
     }
     if (name === 'connection') {
-        return <Wifi style={style} />;
+        return (
+            <IconConnectionState
+                state="connected"
+                style={style}
+            />
+        );
     }
     if (name === 'no-connection') {
-        return <WifiOff style={style} />;
+        return (
+            <IconConnectionState
+                state="disconnected"
+                style={style}
+            />
+        );
     }
     if (name === 'visible') {
         return <Visibility style={style} />;

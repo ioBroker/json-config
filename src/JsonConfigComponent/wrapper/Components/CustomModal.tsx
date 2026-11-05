@@ -54,6 +54,8 @@ interface CustomModalProps {
     onClose: () => void;
     children: JSX.Element | JSX.Element[] | string | string[] | undefined | null;
     titleButtonApply?: string;
+    /** Icon of the apply button instead of the check mark */
+    iconButtonApply?: JSX.Element;
     titleButtonClose?: string;
     onApply?: (value: string) => void;
     textInput?: boolean;
@@ -76,6 +78,7 @@ const CustomModal = ({
     onClose,
     children,
     titleButtonApply,
+    iconButtonApply,
     titleButtonClose,
     onApply,
     textInput,
@@ -146,7 +149,7 @@ const CustomModal = ({
                 ) : null}
                 {applyButton !== false && (
                     <Button
-                        startIcon={<CheckIcon />}
+                        startIcon={iconButtonApply || <CheckIcon />}
                         disabled={progress || (applyDisabled && defaultValue === value)}
                         onClick={() => onApply?.(textInput ? value || '' : '')}
                         variant="contained"

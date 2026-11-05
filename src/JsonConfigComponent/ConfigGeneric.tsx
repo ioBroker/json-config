@@ -12,12 +12,9 @@ import {
     Search as IconSearch,
     MenuBook as IconMenuBook,
     Help as IconHelp,
-    UploadFile as IconUploadFile,
     Edit as IconEdit,
     Person as IconPerson,
     Group as IconGroup,
-    Delete as IconDelete,
-    Refresh as IconRefresh,
     Add as IconAdd,
     LinkOff as IconLinkOff,
     Link as LinkIcon,
@@ -29,8 +26,6 @@ import {
     Lightbulb as IconLight,
     Reorder as IconLines,
     SkipNext as IconNext,
-    Pause as IconPause,
-    PlayArrow as IconPlay,
     SkipPrevious as IconPrevious,
     QrCode as IconQrCode,
     Settings as IconSettings,
@@ -41,6 +36,11 @@ import {
 import {
     DialogConfirm,
     Icon,
+    IconPlayPause,
+    IconRefresh,
+    IconResult,
+    IconTrash,
+    IconUpload,
     Utils,
     I18n,
     type Connection,
@@ -61,16 +61,27 @@ import type {
 
 const DEFAULT_SM_SIZE = window.innerWidth <= 600 ? 12 : undefined;
 
+/** What the button of a named icon is doing, so that an animated icon can show it */
+export interface NamedIconState {
+    /** The action of the button runs, e.g. a `sendTo` waits for the answer */
+    busy?: boolean;
+    /** The confirmation dialog of the button is open */
+    confirming?: boolean;
+}
+
 /**
  * All named icons a schema may use. `Record<ConfigNamedIcon, ...>` is deliberate: adding a name to `ConfigNamedIcon`
  * without a renderer here is a compile error, instead of silently falling through to the image path below.
+ *
+ * Some of them are animated: the lid of the trash can opens on hover and while the deletion is confirmed, the
+ * refresh symbol turns, the upload arrow moves up and a ring turns around the play symbol while the action runs.
  */
-const NAMED_ICONS: Record<ConfigNamedIcon, () => JSX.Element> = {
+const NAMED_ICONS: Record<ConfigNamedIcon, (state: NamedIconState) => JSX.Element> = {
     add: () => <IconAdd />,
     auth: () => <IconAuth />,
     backlight: () => <IconBacklight />,
     book: () => <IconMenuBook />,
-    delete: () => <IconDelete />,
+    delete: state => <IconTrash open={!!(state.busy || state.confirming)} />,
     dimmer: () => <IconDimmer />,
     edit: () => <IconEdit />,
     error: () => <IconError />,
@@ -83,11 +94,23 @@ const NAMED_ICONS: Record<ConfigNamedIcon, () => JSX.Element> = {
     next: () => <IconNext />,
     open: () => <OpenInNew />,
     pair: () => <LinkIcon />,
-    pause: () => <IconPause />,
-    play: () => <IconPlay />,
+    // play and pause are the same component: if a button switches between them, one turns into the other
+    pause: () => <IconPlayPause running />,
+    play: state => (
+        <IconPlayPause
+            running={false}
+            pending={!!state.busy}
+        />
+    ),
     previous: () => <IconPrevious />,
     qrcode: () => <IconQrCode />,
-    refresh: () => <IconRefresh />,
+    // no check mark at the end: the button shows the result itself
+    refresh: state => (
+        <IconRefresh
+            loading={!!state.busy}
+            showDone={false}
+        />
+    ),
     save: () => <Save />,
     search: () => <IconSearch />,
     send: () => <IconSend />,
@@ -95,7 +118,7 @@ const NAMED_ICONS: Record<ConfigNamedIcon, () => JSX.Element> = {
     socket: () => <IconSocket />,
     stop: () => <IconStop />,
     unpair: () => <IconLinkOff />,
-    upload: () => <IconUploadFile />,
+    upload: state => <IconUpload uploading={!!state.busy} />,
     user: () => <IconPerson />,
     warning: () => <IconWarning />,
     web: () => <IconWeb />,
@@ -193,7 +216,12 @@ export interface ConfigGenericState {
         hidden: boolean;
         defaultValue: null | string | number | boolean;
     };
+    /** Result of the last action of a button, shown for a moment by `renderActionResult()` */
+    actionResult?: { type: 'success' | 'warning' | 'error'; count: number } | null;
 }
+
+/** How long the result of an action stays visible */
+const ACTION_RESULT_DURATION = 3000;
 
 export default class ConfigGeneric<
     Props extends ConfigGenericProps = ConfigGenericProps,
@@ -211,6 +239,7 @@ export default class ConfigGeneric<
     private noPlaceRequired: any;
     private reportedHidden: boolean = false;
     private calculateTimeout: ReturnType<typeof setTimeout> | null = null;
+    private actionResultTimeout: ReturnType<typeof setTimeout> | null = null;
     private readonly AsyncFunction: FunctionConstructor;
     /** Resolved `dependsOnStates` of this element: alias => state ID */
     protected stateAliases: Record<string, string> | null = null;
@@ -535,6 +564,39 @@ export default class ConfigGeneric<
             clearTimeout(this.calculateTimeout);
             this.calculateTimeout = null;
         }
+        if (this.actionResultTimeout) {
+            clearTimeout(this.actionResultTimeout);
+            this.actionResultTimeout = null;
+        }
+    }
+
+    /**
+     * Shows the result of an action for a moment: a check mark, an exclamation mark or a cross draws itself.
+     * The element places it with `renderActionResult()`, e.g. as `endIcon` of its button.
+     */
+    // eslint-disable-next-line react/no-unused-class-component-methods
+    showActionResult(type: 'success' | 'warning' | 'error'): void {
+        if (this.actionResultTimeout) {
+            clearTimeout(this.actionResultTimeout);
+        }
+        this.setState({ actionResult: { type, count: (this.state.actionResult?.count || 0) + 1 } });
+        this.actionResultTimeout = setTimeout(() => {
+            this.actionResultTimeout = null;
+            this.setState({ actionResult: null });
+        }, ACTION_RESULT_DURATION);
+    }
+
+    // eslint-disable-next-line react/no-unused-class-component-methods
+    renderActionResult(): JSX.Element | undefined {
+        if (!this.state.actionResult) {
+            return undefined;
+        }
+        return (
+            <IconResult
+                type={this.state.actionResult.type}
+                replay={this.state.actionResult.count}
+            />
+        );
     }
 
     onUpdate = (data: Record<string, any>): void => {
@@ -753,8 +815,14 @@ export default class ConfigGeneric<
         );
     }
 
+    /**
+     * Icon of the element: a named icon or an image
+     *
+     * @param iconSettings the icon, if not the one of the schema
+     * @param state what the button is doing, so an animated named icon can show it
+     */
     // eslint-disable-next-line react/no-unused-class-component-methods
-    getIcon(iconSettings?: ConfigIconType | null): JSX.Element | null {
+    getIcon(iconSettings?: ConfigIconType | null, state?: NamedIconState): JSX.Element | null {
         iconSettings = iconSettings || this.props.schema.icon;
         if (!iconSettings) {
             return null;
@@ -762,7 +830,7 @@ export default class ConfigGeneric<
 
         const namedIcon = NAMED_ICONS[iconSettings as ConfigNamedIcon];
         if (namedIcon) {
-            return namedIcon();
+            return namedIcon(state || {});
         }
 
         // not a known name, so it must be an image

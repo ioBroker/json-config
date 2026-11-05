@@ -3,10 +3,11 @@ import JSON5 from 'json5';
 import MD5 from 'crypto-js/md5';
 
 import { Box, Fab, Tooltip, LinearProgress } from '@mui/material';
-import { Publish as PublishIcon } from '@mui/icons-material';
 
 import {
     I18n,
+    IconResult,
+    IconUpload,
     Router,
     SaveCloseButtons,
     Theme,
@@ -221,7 +222,12 @@ interface JsonConfigState {
     saveConfigDialog: boolean;
     hash: string;
     error?: boolean;
+    /** The settings were imported from a file: counts the imports, so that every import shows the check mark */
+    imported?: number;
 }
+
+/** How long the import button shows the check mark */
+const IMPORTED_DURATION = 2500;
 
 class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
     private fileSubscribed: string[] = [];
@@ -229,6 +235,8 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
     private fileLangSubscribed = '';
 
     private secret: string;
+
+    private importedTimeout: ReturnType<typeof setTimeout> | null = null;
 
     constructor(props: JsonConfigProps) {
         super(props);
@@ -284,6 +292,10 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
 
     componentWillUnmount(): void {
         super.componentWillUnmount();
+        if (this.importedTimeout) {
+            clearTimeout(this.importedTimeout);
+            this.importedTimeout = null;
+        }
         if (this.fileSubscribed.length) {
             this.props.socket.unsubscribeFiles(
                 `${this.props.adapterName}.admin`,
@@ -314,7 +326,19 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                 const contents = e.target.result as string;
                 try {
                     const data = JSON.parse(contents);
-                    this.setState({ data, changed: JSON.stringify(data) !== JSON.stringify(this.state.originalData) });
+                    this.setState({
+                        data,
+                        changed: JSON.stringify(data) !== JSON.stringify(this.state.originalData),
+                        // the import button confirms the import with a check mark
+                        imported: (this.state.imported || 0) + 1,
+                    });
+                    if (this.importedTimeout) {
+                        clearTimeout(this.importedTimeout);
+                    }
+                    this.importedTimeout = setTimeout(() => {
+                        this.importedTimeout = null;
+                        this.setState({ imported: 0 });
+                    }, IMPORTED_DURATION);
                 } catch {
                     window.alert(I18n.t('jc_[JsonConfig] Failed to parse JSON file'));
                 }
@@ -351,7 +375,15 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                             input.click();
                         }}
                     >
-                        <PublishIcon />
+                        {this.state.imported ? (
+                            <IconResult
+                                type="success"
+                                replay={this.state.imported}
+                            />
+                        ) : (
+                            // the arrow lifts on hover
+                            <IconUpload />
+                        )}
                     </Fab>
                 </Tooltip>
                 <Tooltip
@@ -372,7 +404,8 @@ class JsonConfig extends Router<JsonConfigProps, JsonConfigState> {
                             );
                         }}
                     >
-                        <PublishIcon style={{ transform: 'rotate(180deg)' }} />
+                        {/* turned: the arrow goes down into the bar on hover */}
+                        <IconUpload style={{ transform: 'rotate(180deg)' }} />
                     </Fab>
                 </Tooltip>
             </Box>

@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { TextField, IconButton } from '@mui/material';
 
-import { I18n, Icon, IconCopy, Utils } from '@iobroker/gui-components';
+import { I18n, Icon, IconCopyToClipboard, Utils } from '@iobroker/gui-components';
 
 import type { ConfigItemSendTo } from '../types';
 import getIconByName from './Icons';
@@ -131,12 +131,10 @@ class ConfigTextSendTo extends ConfigGeneric<ConfigTextSendToProps, ConfigTextSe
                                 <IconButton
                                     tabIndex={-1}
                                     size="small"
-                                    onClick={() => {
-                                        Utils.copyToClipboard(this.state.text || '');
-                                        window.alert(I18n.t('jc_Copied'));
-                                    }}
+                                    // the icon confirms the copy with a check mark
+                                    onClick={() => Utils.copyToClipboard(this.state.text || '')}
                                 >
-                                    <IconCopy />
+                                    <IconCopyToClipboard />
                                 </IconButton>
                             ) : undefined,
                         },

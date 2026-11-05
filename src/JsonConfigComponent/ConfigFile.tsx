@@ -2,18 +2,13 @@ import React, { type JSX } from 'react';
 
 import { Button, TextField, IconButton } from '@mui/material';
 
-import {
-    Article as IconText,
-    Code as IconCode,
-    PlayArrow as IconPlay,
-    Videocam as IconVideo,
-} from '@mui/icons-material';
+import { Article as IconText, Code as IconCode, Videocam as IconVideo } from '@mui/icons-material';
 
-import { DialogSelectFile, I18n } from '@iobroker/gui-components';
+import { DialogSelectFile, I18n, IconPlayPause } from '@iobroker/gui-components';
 
 import type { ConfigItemFile } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
-import ConfigFileSelector from './ConfigFileSelector';
+import { playBase64Audio } from './audioPlayer';
 
 const styles: Record<string, React.CSSProperties> = {
     fullWidth: {
@@ -47,10 +42,20 @@ interface ConfigFileProps extends ConfigGenericProps {
 
 interface ConfigFileState extends ConfigGenericState {
     showFileBrowser?: boolean;
+    /** The sound is being loaded or plays */
+    playing?: 'loading' | 'playing';
 }
 
 export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFileState> {
     private imagePrefix = '../..';
+
+    /** Stops the sound that plays */
+    private stopAudio: (() => void) | null = null;
+
+    componentWillUnmount(): void {
+        this.stopAudio?.();
+        super.componentWillUnmount();
+    }
 
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
@@ -82,23 +87,41 @@ export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFil
         return Promise.resolve(null);
     }
 
-    play(): void {
-        void this.loadFile().then(data => {
-            if (typeof AudioContext !== 'undefined' && data?.file) {
-                const oContext = new AudioContext();
-                const buf: ArrayBuffer = ConfigFileSelector.base64ToArrayBuffer(data.file) as ArrayBuffer;
-                void oContext.decodeAudioData(
-                    buf,
-                    (buffer: AudioBuffer): void => {
-                        const source = oContext.createBufferSource(); // creates a sound source
-                        source.buffer = buffer; // tell the source which sounds to play
-                        source.connect(oContext.destination); // connect the source to the oContext's destination (the speakers)
-                        source.start(0);
-                    },
-                    (err: DOMException): void => window.alert(I18n.t('jc_Cannot play: %s', err.message)),
-                );
-            }
-        });
+    /** Plays the sound, or stops it if it plays. The button shows pause meanwhile. */
+    togglePlay(): void {
+        if (this.stopAudio) {
+            // `onEnded` resets the button
+            this.stopAudio();
+            return;
+        }
+        if (this.state.playing) {
+            // still loading
+            return;
+        }
+        let ended = false;
+        this.setState({ playing: 'loading' });
+        this.loadFile()
+            .then(data =>
+                data?.file
+                    ? playBase64Audio(data.file, () => {
+                          ended = true;
+                          this.stopAudio = null;
+                          this.setState({ playing: undefined });
+                      })
+                    : null,
+            )
+            .then(stop => {
+                if (!stop) {
+                    this.setState({ playing: undefined });
+                } else if (!ended) {
+                    this.stopAudio = stop;
+                    this.setState({ playing: 'playing' });
+                }
+            })
+            .catch((err: Error) => {
+                this.setState({ playing: undefined });
+                window.alert(I18n.t('jc_Cannot play: %s', err?.message || String(err)));
+            });
     }
 
     getIcon(): JSX.Element | null {
@@ -119,9 +142,13 @@ export default class ConfigFile extends ConfigGeneric<ConfigFileProps, ConfigFil
             return (
                 <IconButton
                     style={{ color: '#00FF00' }}
-                    onClick={() => this.play()}
+                    onClick={() => this.togglePlay()}
                 >
-                    <IconPlay />
+                    {/* pause while the sound plays: a click stops it */}
+                    <IconPlayPause
+                        running={this.state.playing === 'playing'}
+                        pending={this.state.playing === 'loading'}
+                    />
                 </IconButton>
             );
         }

@@ -776,7 +776,7 @@ class ConfigState extends ConfigGeneric<ConfigStateProps, ConfigStateState> {
                 } else {
                     text = this.getText(this.props.schema.trueText, this.props.schema.noTranslation);
                     if (this.props.schema.trueImage) {
-                        icon = getIconByName(this.props.schema.falseImage, text ? { marginRight: 8 } : undefined);
+                        icon = getIconByName(this.props.schema.trueImage, text ? { marginRight: 8 } : undefined);
                     }
                     style = this.props.schema.trueTextStyle;
                 }

@@ -10,24 +10,31 @@ import {
     IconButton,
     ListItemText,
     ListItemIcon,
+    Box,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 import {
-    Refresh as IconRefresh,
-    UploadFile as IconUpload,
-    Delete as IconDelete,
-    PlayArrow as IconPlay,
     MusicNote as IconAudio,
     Videocam as IconVideo,
     Article as IconText,
     Code as IconCode,
-    UploadFile as UploadIcon,
 } from '@mui/icons-material';
 
-import { DialogConfirm, Utils, I18n } from '@iobroker/gui-components';
+import {
+    DialogConfirm,
+    IconPlayPause,
+    IconRefresh,
+    IconTrash,
+    IconUpload,
+    Utils,
+    I18n,
+    type IobTheme,
+} from '@iobroker/gui-components';
 
 import type { ConfigItemFileSelector } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
+import { base64ToArrayBuffer, playBase64Audio } from './audioPlayer';
 
 const styles: Record<string, React.CSSProperties> = {
     fullWidth: {
@@ -63,23 +70,10 @@ const styles: Record<string, React.CSSProperties> = {
         opacity: 1,
         background: 'rgba(128,255,128,0.1)',
     },
-    uploadCenterDiv: {
-        margin: 5,
-        border: '3px dashed grey',
-        borderRadius: 5,
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        display: 'flex',
-    },
-    uploadCenterIcon: {
-        paddingTop: 10,
-        width: 48,
-        height: 48,
-    },
     uploadCenterText: {
         fontSize: 16,
     },
+    /** The drop area has only the height of the selector: icon and text side by side */
     uploadCenterTextAndIcon: {
         textAlign: 'center',
         position: 'absolute',
@@ -88,9 +82,10 @@ const styles: Record<string, React.CSSProperties> = {
         left: 0,
         right: 0,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: 8,
     },
     disabledOpacity: {
         opacity: 0.3,
@@ -108,6 +103,28 @@ const styles: Record<string, React.CSSProperties> = {
     },
 };
 
+/** Drop area over the selector while a file is dragged over it: its border pulses */
+const uploadCenterDivSx = (theme: IobTheme, error?: boolean): Record<string, any> => ({
+    border: error ? '2px solid red' : `3px dashed ${theme.palette.primary.main}`,
+    borderRadius: '5px',
+    // over the whole selector including its buttons, but not wider
+    position: 'absolute',
+    inset: 0,
+    boxSizing: 'border-box',
+    display: 'flex',
+    zIndex: 1,
+    // the text must be readable over the value of the selector
+    backgroundColor: alpha(theme.palette.background.paper, 0.9),
+    animation: 'jc-file-drop-pulse 1.2s ease-in-out infinite',
+    '@keyframes jc-file-drop-pulse': {
+        '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.4)}` },
+        '70%, 100%': { boxShadow: `0 0 0 10px ${alpha(theme.palette.primary.main, 0)}` },
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+        animation: 'none',
+    },
+});
+
 const IMAGE_EXT = ['jpg', 'jpeg', 'svg', 'png', 'webp', 'gif', 'apng', 'avif', 'webp'];
 const AUDIO_EXT = ['mp3', 'ogg', 'wav', 'aac'];
 const VIDEO_EXT = ['avi', 'mp4', 'mov'];
@@ -124,6 +141,12 @@ interface ConfigFileSelectorState extends ConfigGenericState {
     uploadError?: boolean;
     files?: { name: string; size: string }[];
     deleteFile: string;
+    /** The dropped file is being uploaded: the upload arrow moves up */
+    uploading?: boolean;
+    /** The refresh button was clicked and the files are read: the refresh symbol turns */
+    refreshing?: boolean;
+    /** The sound is being loaded or plays */
+    playing?: 'loading' | 'playing';
 }
 
 export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelectorProps, ConfigFileSelectorState> {
@@ -134,6 +157,9 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
     private objectID!: string;
 
     private path!: string;
+
+    /** Stops the sound that plays */
+    private stopAudio: (() => void) | null = null;
 
     constructor(props: ConfigFileSelectorProps) {
         super(props);
@@ -179,9 +205,11 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
     };
 
     componentWillUnmount(): void {
-        this.props.oContext.socket
-            .subscribeFiles(this.objectID, `${this.path}/*`, this.onFolderChanged)
-            .catch(e => console.error(`Cannot subscribe: ${e}`));
+        // it subscribed here before instead of unsubscribing, so every remount added one more handler
+        if (this.objectID) {
+            this.props.oContext.socket.unsubscribeFiles(this.objectID, `${this.path}/*`, this.onFolderChanged);
+        }
+        this.stopAudio?.();
 
         super.componentWillUnmount();
     }
@@ -189,6 +217,15 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
     async updateFiles(): Promise<void> {
         const files = await this.readFiles(this.props.schema.pattern);
         await new Promise<void>(resolve => this.setState({ files }, resolve));
+    }
+
+    /** Reads the files again; the refresh button turns meanwhile */
+    refresh(): void {
+        this.setState({ refreshing: true }, () =>
+            this.updateFiles()
+                .catch(e => console.error(`Cannot update files: ${e}`))
+                .finally(() => this.setState({ refreshing: false })),
+        );
     }
 
     async readFolder(
@@ -261,34 +298,51 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
 
     onDrop(acceptedFiles: File[]): void {
         const file = acceptedFiles[0];
-        const reader = new FileReader();
         const maxSize = this.props.schema.maxSize || 2 * 1024 * 1024;
+        if (file.size > maxSize) {
+            window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(maxSize / 1024)));
+            return;
+        }
 
-        reader.onabort = () => console.log('file reading was aborted');
-        reader.onerror = () => console.log('file reading has failed');
+        const reader = new FileReader();
+        // the upload button shows the progress: the arrow moves up while uploading, then a check mark or a cross
+        const failed = (): void => {
+            this.setState({ uploading: false });
+            this.showActionResult('error');
+        };
+
+        reader.onabort = () => {
+            console.log('file reading was aborted');
+            failed();
+        };
+        reader.onerror = () => {
+            console.log('file reading has failed');
+            failed();
+        };
         reader.onload = (/* e: ProgressEvent<FileReader> */): void => {
-            if (file.size > maxSize) {
-                window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(maxSize / 1024)));
-                return;
-            }
-
             const content = reader.result;
             if (content === null) {
                 console.error(`Cannot read file ${file.name}`);
+                failed();
                 return;
             }
 
             this.props.oContext.socket
                 .writeFile64(this.objectID, this.path + file.name, content)
                 .then(() => this.updateFiles())
-                .then(() =>
+                .then(() => {
+                    this.showActionResult('success');
                     // Automatically select the new uploaded file
-                    this.setState({ value: this.path + file.name }, () =>
+                    this.setState({ uploading: false, value: this.path + file.name }, () =>
                         this.onChange(this.props.attr, this.path + file.name),
-                    ),
-                )
-                .catch(e => window.alert(I18n.t('jc_Cannot upload file: %s', String(e))));
+                    );
+                })
+                .catch(e => {
+                    failed();
+                    window.alert(I18n.t('jc_Cannot upload file: %s', String(e)));
+                });
         };
+        this.setState({ uploading: true });
         reader.readAsArrayBuffer(file);
     }
 
@@ -318,36 +372,44 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
     }
 
     static base64ToArrayBuffer(base64: string): ArrayBufferLike {
-        const binaryString = window.atob(base64);
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-        return bytes.buffer;
+        return base64ToArrayBuffer(base64);
     }
 
     loadFile(): Promise<{ file: string; mimeType: string }> {
         return this.props.oContext.socket.readFile(this.objectID, this.state.value, true);
     }
 
-    play(): void {
-        void this.loadFile().then(data => {
-            if (typeof AudioContext !== 'undefined') {
-                const oContext = new AudioContext();
-                const buf: ArrayBuffer = ConfigFileSelector.base64ToArrayBuffer(data.file) as ArrayBuffer;
-                void oContext.decodeAudioData(
-                    buf,
-                    (buffer: AudioBuffer): void => {
-                        const source = oContext.createBufferSource(); // creates a sound source
-                        source.buffer = buffer; // tell the source which sound to play
-                        source.connect(oContext.destination); // connect the source to the oContext's destination (the speakers)
-                        source.start(0);
-                    },
-                    (err: DOMException): void => window.alert(I18n.t('jc_Cannot play: %s', err.message)),
-                );
-            }
-        });
+    /** Plays the selected sound, or stops it if it plays. The button shows pause meanwhile. */
+    togglePlay(): void {
+        if (this.stopAudio) {
+            // `onEnded` resets the button
+            this.stopAudio();
+            return;
+        }
+        if (this.state.playing) {
+            // still loading
+            return;
+        }
+        let ended = false;
+        this.setState({ playing: 'loading' });
+        this.loadFile()
+            .then(data =>
+                playBase64Audio(data.file, () => {
+                    ended = true;
+                    this.stopAudio = null;
+                    this.setState({ playing: undefined });
+                }),
+            )
+            .then(stop => {
+                if (!ended) {
+                    this.stopAudio = stop;
+                    this.setState({ playing: 'playing' });
+                }
+            })
+            .catch((err: Error) => {
+                this.setState({ playing: undefined });
+                window.alert(I18n.t('jc_Cannot play: %s', err?.message || String(err)));
+            });
     }
 
     getFileIcon(item: { value: string; label: string; extension?: string } | undefined | null): JSX.Element | null {
@@ -456,6 +518,8 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                             </>
                         )}
                         onChange={e => {
+                            // the play button belongs to the previous file
+                            this.stopAudio?.();
                             this.setState({ value: e.target.value === '_' ? '' : e.target.value }, () =>
                                 this.onChange(this.props.attr, this.state.value),
                             );
@@ -477,7 +541,8 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                                             this.setState({ deleteFile: it.value });
                                         }}
                                     >
-                                        <IconDelete />
+                                        {/* the lid stays open while the deletion is confirmed */}
+                                        <IconTrash open={this.state.deleteFile === it.value} />
                                     </IconButton>
                                 ) : null}
                             </MenuItem>
@@ -494,21 +559,32 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                     ) : null}
                 </FormControl>
                 {this.props.schema.refresh && (
-                    <IconButton onClick={() => this.updateFiles()}>
-                        <IconRefresh />
+                    <IconButton
+                        disabled={!!this.state.refreshing}
+                        onClick={() => this.refresh()}
+                    >
+                        <IconRefresh loading={!!this.state.refreshing} />
                     </IconButton>
                 )}
                 {this.props.schema.upload && (
-                    <IconButton onClick={() => this.dropzoneRef.current?.open()}>
-                        <IconUpload />
+                    <IconButton
+                        disabled={!!this.state.uploading}
+                        onClick={() => this.dropzoneRef.current?.open()}
+                    >
+                        {/* the arrow moves up while uploading, then the result draws itself */}
+                        {this.renderActionResult() || <IconUpload uploading={!!this.state.uploading} />}
                     </IconButton>
                 )}
                 {play && (
                     <IconButton
                         style={{ color: '#00FF00' }}
-                        onClick={() => this.play()}
+                        onClick={() => this.togglePlay()}
                     >
-                        <IconPlay />
+                        {/* pause while the sound plays: a click stops it */}
+                        <IconPlayPause
+                            running={this.state.playing === 'playing'}
+                            pending={this.state.playing === 'loading'}
+                        />
                     </IconButton>
                 )}
             </div>
@@ -605,14 +681,13 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                     >
                         <input {...getInputProps()} />
                         {this.state.uploadFile === 'dragging' ? (
-                            <div
-                                style={{
-                                    ...styles.uploadCenterDiv,
-                                    ...(this.state.uploadError ? styles.error : undefined),
-                                }}
-                            >
+                            <Box sx={uploadCenterDivSx(this.props.oContext.theme, this.state.uploadError)}>
                                 <div style={styles.uploadCenterTextAndIcon}>
-                                    <UploadIcon style={styles.uploadCenterIcon} />
+                                    {/* bobs while the file is over the drop area */}
+                                    <IconUpload
+                                        ready
+                                        fontSize={28}
+                                    />
                                     <div style={styles.uploadCenterText}>
                                         {this.state.uploadFile === 'dragging'
                                             ? I18n.t('jc_Drop file here')
@@ -621,7 +696,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                                               )}
                                     </div>
                                 </div>
-                            </div>
+                            </Box>
                         ) : null}
                         {element}
                         {this.renderDeleteDialog()}

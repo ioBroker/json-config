@@ -4,7 +4,7 @@ import { Button, CircularProgress } from '@mui/material';
 
 import { Warning as IconWarning, Error as IconError, Info as IconInfo } from '@mui/icons-material';
 
-import { DialogConfirm, DialogError, DialogMessage, I18n, copy } from '@iobroker/gui-components';
+import { DialogConfirm, DialogError, DialogMessage, I18n, IconCopyToClipboard, copy } from '@iobroker/gui-components';
 
 import type { BackEndCommand, ConfigItemSendTo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -151,6 +151,17 @@ interface ConfigSendToState extends ConfigGenericState {
 }
 
 export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, ConfigSendToState> {
+    /** Closes the copy dialog, after the check mark of the copy button was shown */
+    private closeCopyDialogTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    componentWillUnmount(): void {
+        if (this.closeCopyDialogTimeout) {
+            clearTimeout(this.closeCopyDialogTimeout);
+            this.closeCopyDialogTimeout = null;
+        }
+        super.componentWillUnmount();
+    }
+
     async componentDidMount(): Promise<void> {
         await super.componentDidMount();
 
@@ -221,12 +232,18 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                         this.setState({ _copyDialog: null });
                     }}
                     onApply={() => {
-                        // Copy to clipboard
+                        // Copy to clipboard. The icon of the button confirms it with a check mark, then the dialog closes.
                         copy(this.state._copyDialog!.text);
-                        window.alert(I18n.t('jc_Copied'));
-                        this.setState({ _copyDialog: null });
+                        if (this.closeCopyDialogTimeout) {
+                            clearTimeout(this.closeCopyDialogTimeout);
+                        }
+                        this.closeCopyDialogTimeout = setTimeout(() => {
+                            this.closeCopyDialogTimeout = null;
+                            this.setState({ _copyDialog: null });
+                        }, 900);
                     }}
                     titleButtonApply={I18n.t('jc_Copy content')}
+                    iconButtonApply={<IconCopyToClipboard />}
                 >
                     <div style={{ width: 'calc(100vw - 40px)', height: 'calc(100vh - 188px)' }}>
                         <Editor
@@ -281,6 +298,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 () => {
                     this.props.oContext.onCommandRunning(false);
                     this.setState({ _error: I18n.t('jc_Request timed out'), running: false });
+                    this.showActionResult('error');
                 },
                 parseInt(this.props.schema.timeout as any as string, 10) || 10000,
             );
@@ -292,6 +310,13 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
         if (instance !== `${this.props.oContext.adapterName}.${this.props.oContext.instance}`) {
             const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
             if (!alive?.val) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                // the button must not stay in the running state
+                this.props.oContext.onCommandRunning(false);
+                this.setState({ running: false });
+                this.showActionResult('error');
                 window.alert(I18n.t('jc_Instance %s is not alive', instance));
                 return;
             }
@@ -321,6 +346,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                         timeout = undefined;
                     }
                     if (response?.error) {
+                        this.showActionResult('error');
                         if (this.props.schema.error?.[response.error]) {
                             let error = this.getText(this.props.schema.error[response.error]);
                             response.args?.forEach((arg: string) => (error = error.replace('%s', arg)));
@@ -335,6 +361,8 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                             });
                         }
                     } else {
+                        // the button confirms the success with a check mark
+                        this.showActionResult('success');
                         if (response?.command) {
                             // If backend requested to refresh the config
                             this.props.oContext.onBackEndCommand?.(response.command);
@@ -365,9 +393,8 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                             );
                         } else if (response?.copyDialog) {
                             this.setState({ _copyDialog: response.copyDialog });
-                        } else {
-                            window.alert(I18n.t('jc_Ok'));
                         }
+                        // else: the check mark in the button says that it worked, an "Ok" alert is not needed
 
                         if (response?.saveConfig) {
                             this.props.onChange(undefined, null, undefined, true);
@@ -376,6 +403,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 },
             )
             .catch((e: any) => {
+                this.showActionResult('error');
                 if (this.props.schema.error && this.props.schema.error[e.toString()]) {
                     this.setState({ _error: this.getText(this.props.schema.error[e.toString()]) });
                 } else {
@@ -418,7 +446,8 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
     }
 
     renderItem(error: Error | undefined, disabled: boolean): JSX.Element {
-        const icon = this.getIcon();
+        // named icons are animated while the request runs or is being confirmed, e.g. `refresh` turns
+        const icon = this.getIcon(undefined, { busy: this.state.running, confirming: this.state.confirmDialog });
 
         return (
             <div style={styles.fullWidth}>
@@ -428,6 +457,7 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                     style={{ ...styles.fullWidth, ...(this.props.schema.controlStyle || undefined) }}
                     disabled={disabled || !this.props.alive}
                     startIcon={icon}
+                    endIcon={this.renderActionResult()}
                     title={
                         this.props.alive
                             ? this.getText(this.props.schema.title) || ''

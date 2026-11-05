@@ -4,7 +4,7 @@ import { Autocomplete, TextField, TextareaAutosize, InputAdornment, IconButton }
 
 import { Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n, IconCopy, Utils } from '@iobroker/gui-components';
+import { I18n, IconCopyToClipboard, Utils } from '@iobroker/gui-components';
 
 import type { ConfigItemText } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -212,12 +212,10 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                     tabIndex={-1}
                     style={actionButtonStyle}
                     size="small"
-                    onClick={() => {
-                        Utils.copyToClipboard(this.state.value);
-                        window.alert(I18n.t('jc_Copied'));
-                    }}
+                    // the icon confirms the copy with a check mark
+                    onClick={() => Utils.copyToClipboard(this.state.value)}
                 >
-                    <IconCopy />
+                    <IconCopyToClipboard />
                 </IconButton>
             );
         } else if (!this.props.schema.readOnly && !disabled && this.state.value && !this.props.schema.noClearButton) {

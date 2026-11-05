@@ -1,8 +1,7 @@
 import React, { type JSX } from 'react';
 
 import { Box, Checkbox } from '@mui/material';
-import { ContentCopy } from '@mui/icons-material';
-import { I18n, Icon, type IobTheme, Utils } from '@iobroker/gui-components';
+import { Icon, IconCopyToClipboard, type IobTheme, Utils } from '@iobroker/gui-components';
 
 import type { ConfigItemStaticInfo } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -275,18 +274,15 @@ class ConfigStaticInfo extends ConfigGeneric<ConfigStaticInfoProps, ConfigGeneri
         let copyButton: React.JSX.Element | undefined;
         if (this.props.schema.copyToClipboard) {
             copyButton = (
-                <ContentCopy
+                // confirms the copy with a check mark
+                <IconCopyToClipboard
                     className="staticCopyButton"
                     style={{
                         position: 'absolute',
                         top: 'calc(50% - 12px)',
                         right: 0,
-                        cursor: 'pointer',
                     }}
-                    onClick={() => {
-                        Utils.copyToClipboard(valueTxt);
-                        window.alert(I18n.t('jc_Copied'));
-                    }}
+                    onClick={() => Utils.copyToClipboard(valueTxt)}
                 />
             );
         }

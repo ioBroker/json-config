@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { IconButton, TextField } from '@mui/material';
 
-import { I18n, IconCopy, Utils } from '@iobroker/gui-components';
+import { IconCopyToClipboard, Utils } from '@iobroker/gui-components';
 import type { ConfigItemPattern } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 
@@ -57,6 +57,7 @@ class ConfigPattern extends ConfigGeneric<ConfigPatternProps, ConfigPatternState
                             <IconButton
                                 tabIndex={-1}
                                 size="small"
+                                // the icon confirms the copy with a check mark
                                 onClick={async () => {
                                     Utils.copyToClipboard(
                                         await this.getPatternAsync(
@@ -65,10 +66,9 @@ class ConfigPattern extends ConfigGeneric<ConfigPatternProps, ConfigPatternState
                                             this.props.schema.noTranslation,
                                         ),
                                     );
-                                    window.alert(I18n.t('jc_Copied'));
                                 }}
                             >
-                                <IconCopy />
+                                <IconCopyToClipboard />
                             </IconButton>
                         ) : undefined,
                     },

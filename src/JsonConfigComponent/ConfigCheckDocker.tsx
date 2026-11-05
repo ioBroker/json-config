@@ -2,7 +2,7 @@ import React, { type JSX } from 'react';
 
 import { FormControlLabel, Checkbox, FormHelperText, FormControl, FormLabel, CircularProgress } from '@mui/material';
 
-import { I18n } from '@iobroker/gui-components';
+import { I18n, IconResult } from '@iobroker/gui-components';
 
 import type { ConfigItemCheckDocker } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
@@ -83,7 +83,21 @@ export default class ConfigCheckDocker extends ConfigGeneric<ConfigCheckDockerPr
                 variant="standard"
             >
                 {this.props.schema.label ? <FormLabel>{this.getText(this.props.schema.label)}</FormLabel> : null}
-                <FormHelperText style={warning ? { color: 'orange' } : undefined}>{text}</FormHelperText>
+                <FormHelperText
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        ...(warning ? { color: 'orange' } : undefined),
+                    }}
+                >
+                    {/* draws itself when the answer arrives; a warning shakes once */}
+                    <IconResult
+                        type={warning ? 'warning' : 'success'}
+                        fontSize={16}
+                    />
+                    {text}
+                </FormHelperText>
                 {this.renderHelpText()}
             </FormControl>
         );

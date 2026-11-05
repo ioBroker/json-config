@@ -18,7 +18,6 @@
   "types": "./build/index.d.ts",
   "scripts": {
     "build": "tsc && tsc-alias && node after_build",
-    "clean": "rimraf build",
     "npm": "npm i && cd test-gui && npm i",
     "prepublishOnly": "npm run build",
     "build:ts": "tsc -p tsconfig.json",
@@ -39,11 +38,11 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@iobroker/gui-components": "^10.3.12",
-    "@module-federation/runtime": "^2.9.2",
+    "@iobroker/gui-components": "^10.4.1",
+    "@module-federation/runtime": "^2.9.3",
     "@mui/icons-material": "^9.5.0",
     "@mui/material": "^9.5.0",
-    "@mui/x-date-pickers": "^9.16.0",
+    "@mui/x-date-pickers": "^9.17.0",
     "crypto-js": "^4.2.0",
     "json5": "^2.2.3",
     "react": "^19.3.1",
@@ -59,13 +58,13 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/types": "^7.2.5",
     "@types/crypto-js": "^4.2.2",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "ajv": "^8.20.0",
     "date-fns": "^4.4.0",
     "react-ace": "^15.0.0",
-    "tsc-alias": "^1.9.8",
+    "tsc-alias": "^1.9.10",
     "typescript": "~6.0.3"
   },
   "overrides": {
