@@ -2021,7 +2021,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.13 (2026-11-05)
 - (@GermanBluefox) Changed: the animated icons of `@iobroker/gui-components` are used everywhere: the trash can for the delete buttons (`table`, `accordion`, `fileSelector`, named icon `delete`), the upload symbol for upload, import and export, the refresh symbol, the funnel with the red cross for the filters of `table`, play/pause and the connection symbol for `state` and `textSendTo`, the menu symbol of the tabs on small displays
 - (@GermanBluefox) Changed: the copy buttons of `text`, `uuid`, `pattern`, `textSendTo`, `staticInfo` and of the copy dialog of `sendTo` confirm the copy with a check mark instead of the alert "Copied"
 - (@GermanBluefox) Changed: `fileSelector` shows the upload: the arrow moves up while the file is uploaded, then a check mark (or a cross) draws itself; the drop area pulses while a file is dragged over it; the refresh button turns while the files are read
