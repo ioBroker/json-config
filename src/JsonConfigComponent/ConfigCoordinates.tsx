@@ -8,7 +8,7 @@ import { I18n } from '@iobroker/gui-components';
 
 import type { ConfigItemCoordinates } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
-import OsmMap, { type OsmMapPosition } from './wrapper/Components/OsmMap';
+import OsmMap, { type OsmMapPosition, type OsmMapStyle } from './wrapper/Components/OsmMap';
 
 const styles: Record<string, React.CSSProperties> = {
     width: {
@@ -199,6 +199,14 @@ export default class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesPr
             return null;
         }
         const systemConfig = this.props.oContext.systemConfig;
+        const themeType = this.props.oContext.themeType;
+        // `auto` darkens the map only in a dark theme
+        const mapStyle: OsmMapStyle =
+            this.props.schema.mapStyle === 'auto'
+                ? themeType === 'dark'
+                    ? 'dark'
+                    : 'standard'
+                : this.props.schema.mapStyle || 'standard';
         return (
             <OsmMap
                 OsmMap={this.props.oContext.OsmMap}
@@ -206,7 +214,8 @@ export default class ConfigCoordinates extends ConfigGeneric<ConfigCoordinatesPr
                 center={systemConfig ? toPosition(systemConfig.latitude, systemConfig.longitude) : null}
                 zoom={this.props.schema.mapZoom || 13}
                 height={this.props.schema.mapHeight || 300}
-                themeType={this.props.oContext.themeType}
+                mapStyle={mapStyle}
+                themeType={themeType}
                 onChange={
                     readOnly
                         ? undefined

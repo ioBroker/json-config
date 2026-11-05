@@ -667,6 +667,7 @@
                             "width": 200,
                             "map": true,
                             "mapHeight": 150,
+                            "mapStyle": "grey",
                             "readOnly": true
                         },
                         {
@@ -995,7 +996,8 @@
                     "latitudeName": "latitude",
                     "map": true,
                     "mapHeight": 250,
-                    "mapZoom": 15
+                    "mapZoom": 15,
+                    "mapStyle": "auto"
                 },
                 "coordinatesReadOnly": {
                     "type": "coordinates",

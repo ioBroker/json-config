@@ -814,6 +814,8 @@ export interface ConfigItemCoordinates extends ConfigItem {
     mapHeight?: number;
     /** Zoom level the map starts with (1 - the whole world, 18 - a house). Default 13 */
     mapZoom?: number;
+    /** Colors of the map: `standard` - as on openstreetmap.org (default), `dark` - darkened, `grey` - grey tones, `auto` - darkened only in a dark theme */
+    mapStyle?: 'standard' | 'dark' | 'grey' | 'auto';
     /** Only show the position: the fields cannot be edited, the buttons are hidden and the map does not change the position */
     readOnly?: boolean;
 }

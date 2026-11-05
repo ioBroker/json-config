@@ -12,6 +12,14 @@ export interface OsmMapPosition {
 }
 
 /**
+ * Colors of the map tiles:
+ * - `standard`: as on openstreetmap.org
+ * - `dark`: darkened for a dark theme (the tiles are inverted and turned back to their hues)
+ * - `grey`: in grey tones
+ */
+export type OsmMapStyle = 'standard' | 'dark' | 'grey';
+
+/**
  * What the map of the host has to accept.
  *
  * Described here and not imported from `leaflet`, so that neither this library nor anything that
@@ -29,6 +37,9 @@ export interface OsmMapProps {
      * Not set if the map is read-only: then neither the marker can be moved nor a position be set.
      */
     onChange?: (position: OsmMapPosition) => void;
+    /** Colors of the tiles. Missing means `standard` */
+    mapStyle?: OsmMapStyle;
+    /** Theme of the GUI, e.g. for the controls of the map. The colors of the tiles come from `mapStyle` */
     themeType: ThemeType;
     style?: React.CSSProperties;
 }

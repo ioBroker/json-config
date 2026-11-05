@@ -22,7 +22,7 @@ import {
 } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import type { OsmMapProps } from '../../src';
+import type { OsmMapProps, OsmMapStyle } from '../../src';
 
 /**
  * The default marker of leaflet is a PNG, which it finds over its CSS. Bundlers rename the file, and
@@ -38,8 +38,13 @@ const PIN = divIcon({
 /** Without a position and a center the map shows the whole world */
 const WORLD: LatLngTuple = [20, 0];
 
-/** Darkens the tiles in the dark theme: inverted and turned back to the original colors */
-const DARK_TILES = 'invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9)';
+/** The colors of `mapStyle`, made with a CSS filter on the tiles, so all styles use the same OSM tiles */
+const TILE_FILTERS: Record<OsmMapStyle, string> = {
+    standard: '',
+    // inverted and turned back to the original hues
+    dark: 'invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9)',
+    grey: 'grayscale(1)',
+};
 
 export default function OsmMap(props: OsmMapProps): JSX.Element {
     const divRef = useRef<HTMLDivElement>(null);
@@ -136,12 +141,13 @@ export default function OsmMap(props: OsmMapProps): JSX.Element {
         }
     }, [editable]);
 
+    const mapStyle = props.mapStyle || 'standard';
     useEffect(() => {
         const pane = mapRef.current?.getPane('tilePane');
         if (pane) {
-            pane.style.filter = props.themeType === 'dark' ? DARK_TILES : '';
+            pane.style.filter = TILE_FILTERS[mapStyle] || '';
         }
-    }, [props.themeType]);
+    }, [mapStyle]);
 
     return (
         <div
