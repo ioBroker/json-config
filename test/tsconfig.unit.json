@@ -10,5 +10,5 @@
         "rootDir": "..",
         "outDir": "./build-test"
     },
-    "include": ["./testEncryptedNative.ts", "./testLicenseVersion.ts"]
+    "include": ["./testEncryptedNative.ts", "./testLicenseVersion.ts", "./testDialogData.ts"]
 }

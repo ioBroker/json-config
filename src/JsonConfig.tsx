@@ -21,6 +21,7 @@ import {
 
 import type { ConfigItemAny, ConfigItemPanel, ConfigItemTabs } from './types';
 import { AES_192_CBC_PREFIX, replaceEncryptedNative } from './encryptedNative';
+import { writeDialogData } from './dialogData';
 import { fileContentToString } from './fileContent';
 import ConfigGeneric, {
     type ConfigGenericProps,
@@ -276,6 +277,7 @@ export default class JsonConfig extends Router<JsonConfigProps, JsonConfigState>
                             this.setState({
                                 schema: schema || undefined,
                                 data: obj.native,
+                                originalData: JSON.parse(JSON.stringify(obj.native)),
                                 common: obj.common,
                                 hash: MD5(JSON.stringify(schema)).toString(),
                             });
@@ -685,17 +687,16 @@ export default class JsonConfig extends Router<JsonConfigProps, JsonConfigState>
                 return;
             }
 
-            const doNotSaveAttributes: Record<string, any> = {};
-
-            for (const attr of Object.keys(this.state.data)) {
-                const item = this.findAttr(attr);
-                if ((!item || !item.doNotSave || item.type === 'state') && !attr.startsWith('_')) {
-                    ConfigGeneric.setValue(obj.native, attr, this.state.data[attr]);
-                } else {
-                    ConfigGeneric.setValue(obj.native, attr, null);
-                    doNotSaveAttributes[attr] = this.state.data[attr];
-                }
-            }
+            const doNotSaveAttributes = writeDialogData(
+                obj.native,
+                this.state.data,
+                this.state.originalData,
+                attr => {
+                    const item = this.findAttr(attr);
+                    return (!item || !item.doNotSave || item.type === 'state') && !attr.startsWith('_');
+                },
+                (native, attr, value) => ConfigGeneric.setValue(native, attr, value),
+            );
 
             try {
                 const encryptedObj = JSON.parse(JSON.stringify(obj));
@@ -722,7 +723,7 @@ export default class JsonConfig extends Router<JsonConfigProps, JsonConfigState>
                     changed: false,
                     data: nativeWithNonSaved,
                     updateData: this.state.updateData + 1,
-                    originalData: nativeWithNonSaved,
+                    originalData: JSON.parse(JSON.stringify(nativeWithNonSaved)),
                 },
                 () => close && Router.doNavigate(null),
             );
