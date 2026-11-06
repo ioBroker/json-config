@@ -26,6 +26,7 @@ import ConfigCoordinates from './ConfigCoordinates';
 import ConfigCustom from './ConfigCustom';
 import ConfigDatePicker from './ConfigDatePicker';
 import ConfigDeviceManager from './ConfigDeviceManager';
+import ConfigDiskSelector from './ConfigDiskSelector';
 import ConfigFile from './ConfigFile';
 import ConfigFileSelector from './ConfigFileSelector';
 import ConfigFunc from './ConfigFunc';
@@ -90,6 +91,7 @@ const components: Record<string, typeof ConfigGeneric<any, any>> = {
     custom: ConfigCustom,
     datePicker: ConfigDatePicker,
     deviceManager: ConfigDeviceManager,
+    diskSelector: ConfigDiskSelector,
     divider: ConfigStaticDivider,
     file: ConfigFile,
     fileSelector: ConfigFileSelector,

@@ -60,6 +60,8 @@ interface AppState {
     updateData: number;
     error: boolean;
     changed: boolean;
+    /** `common` of the instance, as admin passes it: e.g. `host` tells on which host it runs */
+    common?: Record<string, any>;
 }
 
 export default class App extends Component<object, AppState> {
@@ -113,6 +115,10 @@ export default class App extends Component<object, AppState> {
             },
             onReady: (): void => {
                 this.setState({ loaded: true });
+                this.socket
+                    .getObject(`system.adapter.${ADAPTER_NAME}.${INSTANCE}`)
+                    .then(obj => this.setState({ common: obj?.common }))
+                    .catch(e => console.error(`Cannot read the instance: ${e}`));
             },
             onError: (err: string): void => {
                 console.error(err);
@@ -133,6 +139,7 @@ export default class App extends Component<object, AppState> {
                 themeType={this.state.themeName === 'dark' || this.state.themeName === 'blue' ? 'dark' : 'light'}
                 adapterName={ADAPTER_NAME}
                 instance={INSTANCE}
+                common={this.state.common}
                 isFloatComma={this.state.language !== 'en'}
                 dateFormat="DD.MM.YYYY"
                 imagePrefix={`${window.location.protocol}//${window.location.hostname}:8081`}

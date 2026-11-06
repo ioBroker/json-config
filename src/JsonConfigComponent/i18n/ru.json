@@ -157,5 +157,21 @@
     "jc_via internet": "через интернет",
     "sch_all": "все",
     "jc_Format JSON": "Форматировать JSON",
-    "jc_Show on OpenStreetMap": "Показать на OpenStreetMap"
+    "jc_Show on OpenStreetMap": "Показать на OpenStreetMap",
+    "jc_Select file": "Выбрать файл",
+    "jc_Select folder": "Выбрать папку",
+    "jc_Select": "Выбрать",
+    "jc_Open": "Открыть",
+    "jc_One level up": "На уровень выше",
+    "jc_Filter": "Фильтр",
+    "jc_Refresh": "Обновить",
+    "jc_Drives": "Диски",
+    "jc_The folder is empty": "Папка пуста",
+    "jc_Only the first %s entries are shown": "Показаны только первые %s записей",
+    "jc_Cannot read the folder: %s": "Не удаётся прочитать папку: %s",
+    "jc_Host \"%s\" is offline or does not answer": "Хост \"%s\" недоступен или не отвечает",
+    "jc_Host \"%s\" cannot list its disk. Update js-controller on this host": "Хост \"%s\" не может показать содержимое своего диска. Обновите js-controller на этом хосте",
+    "jc_The host of the instance is unknown": "Хост экземпляра неизвестен",
+    "jc_You have no permission to read the disk of the host": "У вас нет прав на чтение диска хоста",
+    "jc_No answer from the host": "Нет ответа от хоста"
 }

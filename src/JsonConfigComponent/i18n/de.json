@@ -157,5 +157,21 @@
     "jc_via internet": "übers Internet",
     "sch_all": "alle",
     "jc_Format JSON": "JSON formatieren",
-    "jc_Show on OpenStreetMap": "Auf OpenStreetMap anzeigen"
+    "jc_Show on OpenStreetMap": "Auf OpenStreetMap anzeigen",
+    "jc_Select file": "Datei auswählen",
+    "jc_Select folder": "Ordner auswählen",
+    "jc_Select": "Auswählen",
+    "jc_Open": "Öffnen",
+    "jc_One level up": "Eine Ebene höher",
+    "jc_Filter": "Filter",
+    "jc_Refresh": "Aktualisieren",
+    "jc_Drives": "Laufwerke",
+    "jc_The folder is empty": "Der Ordner ist leer",
+    "jc_Only the first %s entries are shown": "Nur die ersten %s Einträge werden angezeigt",
+    "jc_Cannot read the folder: %s": "Der Ordner kann nicht gelesen werden: %s",
+    "jc_Host \"%s\" is offline or does not answer": "Host \"%s\" ist offline oder antwortet nicht",
+    "jc_Host \"%s\" cannot list its disk. Update js-controller on this host": "Host \"%s\" kann seine Festplatte nicht auflisten. Aktualisiere js-controller auf diesem Host",
+    "jc_The host of the instance is unknown": "Der Host der Instanz ist unbekannt",
+    "jc_You have no permission to read the disk of the host": "Du hast keine Berechtigung, die Festplatte des Hosts zu lesen",
+    "jc_No answer from the host": "Keine Antwort vom Host"
 }

@@ -917,6 +917,63 @@
                 }
             }
         },
+        "diskTab": {
+            "type": "panel",
+            "label": "Disk",
+            "items": {
+                "_headerDisk": {
+                    "type": "header",
+                    "text": "Files and folders on the disk of the host of the instance",
+                    "size": 2
+                },
+                "diskFile": {
+                    "newLine": true,
+                    "type": "diskSelector",
+                    "label": "Any file on the disk",
+                    "help": "Typed or selected, everything the user ioBroker may read",
+                    "sm": 12,
+                    "md": 6
+                },
+                "diskFolder": {
+                    "type": "diskSelector",
+                    "mode": "folder",
+                    "label": "Folder for the backups",
+                    "sm": 12,
+                    "md": 6
+                },
+                "diskCert": {
+                    "newLine": true,
+                    "type": "diskSelector",
+                    "label": "Certificate in iobroker-data",
+                    "root": "%DATA_DIR%",
+                    "pattern": "*.pem;*.crt;*.key",
+                    "help": "Fixed to iobroker-data, only *.pem, *.crt and *.key",
+                    "sm": 12,
+                    "md": 6
+                },
+                "diskTable": {
+                    "newLine": true,
+                    "type": "table",
+                    "label": "Paths in a table",
+                    "sm": 12,
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Name",
+                            "width": "30%"
+                        },
+                        {
+                            "type": "diskSelector",
+                            "attr": "path",
+                            "title": "Path",
+                            "width": "70%",
+                            "pattern": "*.json"
+                        }
+                    ]
+                }
+            }
+        },
         "webComponentTab": {
             "type": "panel",
             "label": "Web component",

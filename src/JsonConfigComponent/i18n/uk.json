@@ -157,5 +157,21 @@
     "jc_via internet": "через інтернет",
     "sch_all": "все",
     "jc_Format JSON": "Форматувати JSON",
-    "jc_Show on OpenStreetMap": "Показати на OpenStreetMap"
+    "jc_Show on OpenStreetMap": "Показати на OpenStreetMap",
+    "jc_Select file": "Вибрати файл",
+    "jc_Select folder": "Вибрати папку",
+    "jc_Select": "Вибрати",
+    "jc_Open": "Відкрити",
+    "jc_One level up": "На рівень вище",
+    "jc_Filter": "Фільтр",
+    "jc_Refresh": "Оновити",
+    "jc_Drives": "Диски",
+    "jc_The folder is empty": "Папка порожня",
+    "jc_Only the first %s entries are shown": "Показано лише перші %s записів",
+    "jc_Cannot read the folder: %s": "Не вдається прочитати папку: %s",
+    "jc_Host \"%s\" is offline or does not answer": "Хост \"%s\" недоступний або не відповідає",
+    "jc_Host \"%s\" cannot list its disk. Update js-controller on this host": "Хост \"%s\" не може показати вміст свого диска. Оновіть js-controller на цьому хості",
+    "jc_The host of the instance is unknown": "Хост екземпляра невідомий",
+    "jc_You have no permission to read the disk of the host": "У вас немає дозволу на читання диска хоста",
+    "jc_No answer from the host": "Немає відповіді від хоста"
 }

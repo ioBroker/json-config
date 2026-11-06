@@ -157,5 +157,21 @@
     "jc_via internet": "通过互联网",
     "sch_all": "全选",
     "jc_Format JSON": "格式化 JSON",
-    "jc_Show on OpenStreetMap": "在 OpenStreetMap 上显示"
+    "jc_Show on OpenStreetMap": "在 OpenStreetMap 上显示",
+    "jc_Select file": "选择文件",
+    "jc_Select folder": "选择文件夹",
+    "jc_Select": "选择",
+    "jc_Open": "打开",
+    "jc_One level up": "上一级",
+    "jc_Filter": "筛选",
+    "jc_Refresh": "刷新",
+    "jc_Drives": "驱动器",
+    "jc_The folder is empty": "文件夹为空",
+    "jc_Only the first %s entries are shown": "仅显示前 %s 个条目",
+    "jc_Cannot read the folder: %s": "无法读取文件夹：%s",
+    "jc_Host \"%s\" is offline or does not answer": "主机 \"%s\" 离线或无响应",
+    "jc_Host \"%s\" cannot list its disk. Update js-controller on this host": "主机 \"%s\" 无法列出其磁盘内容。请更新该主机上的 js-controller",
+    "jc_The host of the instance is unknown": "实例的主机未知",
+    "jc_You have no permission to read the disk of the host": "您没有读取主机磁盘的权限",
+    "jc_No answer from the host": "主机无响应"
 }

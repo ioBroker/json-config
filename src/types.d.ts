@@ -73,6 +73,7 @@ export type ConfigItemType =
     | 'custom'
     | 'datePicker'
     | 'deviceManager'
+    | 'diskSelector'
     | 'divider'
     | 'file'
     | 'fileSelector'
@@ -1292,6 +1293,32 @@ export interface ConfigItemFileSelector extends ConfigItem {
     noSize?: boolean;
 }
 
+/**
+ * Selects a file or a folder on the disk of the host where the instance runs, and stores its absolute path.
+ *
+ * The host lists the folders with the rights of the user ioBroker runs as: what this user may not read is not shown.
+ * Needs a js-controller that supports the feature `CONTROLLER_READ_DISK_DIR`, and a user with the permission for
+ * `cmdExec` (administrators). Otherwise the path can only be typed.
+ */
+export interface ConfigItemDiskSelector extends ConfigItem {
+    type: 'diskSelector';
+    /** What to select: `file` (default) or `folder` */
+    mode?: 'file' | 'folder';
+    /**
+     * Folder above which nothing can be selected: an absolute path on the host. It may start with `%DATA_DIR%`
+     * (`iobroker-data`), `%INSTANCE_DATA_DIR%` (`iobroker-data/<adapter>.<instance>`), `%IOBROKER_DIR%` (e.g.
+     * `/opt/iobroker`) or `%HOME%` (home of the user ioBroker runs as), and `%INSTANCE%` is replaced with the number of
+     * the instance. Default: the whole disk
+     */
+    root?: string;
+    /** Patterns of the files to show, e.g. `*.pem` or `*.pem;*.crt` (case-insensitive). Only in the `file` mode */
+    pattern?: string;
+    /** Show the files and folders whose names start with a dot */
+    showHidden?: boolean;
+    /** The path can only be selected in the dialog, not typed. Default: `true` if `root` is set, else `false` */
+    disableEdit?: boolean;
+}
+
 export type ConfigItemAny =
     | ConfigItemAlive
     | ConfigItemAutocomplete
@@ -1338,6 +1365,7 @@ export type ConfigItemAny =
     | ConfigItemComponent
     | ConfigItemFile
     | ConfigItemFileSelector
+    | ConfigItemDiskSelector
     | ConfigItemIFrame
     | ConfigItemIFrameSendTo
     | ConfigItemImageSendTo

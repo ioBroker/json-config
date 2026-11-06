@@ -157,5 +157,21 @@
     "jc_via internet": "via internet",
     "sch_all": "allemaal",
     "jc_Format JSON": "JSON opmaken",
-    "jc_Show on OpenStreetMap": "Toon op OpenStreetMap"
+    "jc_Show on OpenStreetMap": "Toon op OpenStreetMap",
+    "jc_Select file": "Bestand selecteren",
+    "jc_Select folder": "Map selecteren",
+    "jc_Select": "Selecteren",
+    "jc_Open": "Openen",
+    "jc_One level up": "Een niveau omhoog",
+    "jc_Filter": "Filter",
+    "jc_Refresh": "Vernieuwen",
+    "jc_Drives": "Stations",
+    "jc_The folder is empty": "De map is leeg",
+    "jc_Only the first %s entries are shown": "Alleen de eerste %s items worden getoond",
+    "jc_Cannot read the folder: %s": "Kan de map niet lezen: %s",
+    "jc_Host \"%s\" is offline or does not answer": "Host \"%s\" is offline of antwoordt niet",
+    "jc_Host \"%s\" cannot list its disk. Update js-controller on this host": "Host \"%s\" kan zijn schijf niet weergeven. Werk js-controller op deze host bij",
+    "jc_The host of the instance is unknown": "De host van de instantie is onbekend",
+    "jc_You have no permission to read the disk of the host": "Je hebt geen toestemming om de schijf van de host te lezen",
+    "jc_No answer from the host": "Geen antwoord van de host"
 }

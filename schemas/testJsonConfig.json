@@ -45,6 +45,20 @@
                     "maxSize": 2097152,
                     "noSize": true
                 },
+                "certFile": {
+                    "type": "diskSelector",
+                    "label": "Certificate",
+                    "root": "%INSTANCE_DATA_DIR%/certs",
+                    "pattern": "*.pem;*.crt",
+                    "showHidden": true,
+                    "placeholder": { "en": "Select a certificate", "de": "Zertifikat auswählen" }
+                },
+                "backupFolder": {
+                    "type": "diskSelector",
+                    "mode": "folder",
+                    "disableEdit": false,
+                    "help": "Folder for the backups"
+                },
                 "bind": {
                     "type": "ip",
                     "listenOnAllPorts": true,
@@ -692,6 +706,13 @@
                         {
                             "type": "fileSelector",
                             "pattern": "*.js"
+                        },
+                        {
+                            "type": "diskSelector",
+                            "attr": "path",
+                            "title": "Path",
+                            "filter": true,
+                            "pattern": "*.json"
                         },
                         {
                             "type": "objectId",
