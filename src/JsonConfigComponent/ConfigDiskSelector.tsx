@@ -51,8 +51,8 @@ interface DiskDirEntry {
     isDir: boolean;
     /** Only files */
     size?: number;
-    /** ms */
-    modified?: number;
+    /** Time of the last modification in ms */
+    mtime?: number;
 }
 
 /** The answer of the host command `readDiskDir` of js-controller */
@@ -389,8 +389,8 @@ export default class ConfigDiskSelector extends ConfigGeneric<ConfigDiskSelector
         if (!entry.isDir && entry.size !== undefined) {
             details.push(Utils.formatBytes(entry.size));
         }
-        if (entry.modified) {
-            details.push(new Date(entry.modified).toLocaleString());
+        if (entry.mtime) {
+            details.push(new Date(entry.mtime).toLocaleString());
         }
 
         return (
