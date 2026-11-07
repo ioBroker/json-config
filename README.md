@@ -2148,7 +2148,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.18 (2026-11-07)
 - (@GermanBluefox) Added the control `diskSelector`: selects a file or a folder on the disk of the host where the instance runs, with only the entries the user ioBroker may read, optionally fixed to a root folder (`mode`, `root`, `pattern`, `showHidden`, `disableEdit`). Needs js-controller with `CONTROLLER_READ_DISK_DIR`
 
 ### 10.1.17 (2026-11-05)
