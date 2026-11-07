@@ -24,7 +24,7 @@
     "lint": "eslint -c eslint.config.mjs",
     "test": "npm run test:unit && npm run test:integration",
     "test:integration": "npm run test:tsc && node test/testSchema.js",
-    "test:unit": "tsc -p test/tsconfig.unit.json && node test/build-test/test/testEncryptedNative.js && node test/build-test/test/testLicenseVersion.js",
+    "test:unit": "tsc -p test/tsconfig.unit.json && node test/build-test/test/testEncryptedNative.js && node test/build-test/test/testLicenseVersion.js && node test/build-test/test/testDialogData.js",
     "test:tsc": "tsc -p test/tsconfig.build.json",
     "release": "release-script --noPush --yes --lf",
     "release-patch": "release-script patch --yes --lf",
