@@ -79,6 +79,7 @@ class ConfigCRON extends ConfigGeneric<ConfigCRONProps, ConfigCRONState> {
                         title={I18n.t('jc_Define schedule')}
                         simple={schema.simple}
                         complex={schema.complex}
+                        noWizard
                         cron={value}
                         onClose={() => this.setState({ showDialog: false })}
                         cancel={I18n.t('jc_Cancel')}

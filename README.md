@@ -2148,6 +2148,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Fixed: `cron` does not offer the wizard of schedules anymore: its OK wrote the JSON text `{}` into a field for CRON expressions
+
 ### 10.1.19 (2026-11-07)
 - (@krobipd) Fixed: saving the configuration writes only the top-level settings that were changed in the dialog; every other setting keeps the value the instance object holds when saving, so a setting the adapter wrote into its native while the dialog was open (e.g. its device list) is no longer set back to the state of the opening, unless the same setting was changed in the dialog
 
