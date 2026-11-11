@@ -455,8 +455,9 @@ export default class ConfigGeneric<
                     if (!this.props.attr) {
                         return;
                     }
+                    const defaultValue = this.prepareDefaultValue(this.defaultValue);
                     if (this.props.custom) {
-                        this.props.onChange(this.props.attr, this.defaultValue, () =>
+                        this.props.onChange(this.props.attr, defaultValue, () =>
                             setTimeout(
                                 () =>
                                     this.props.attr &&
@@ -465,7 +466,7 @@ export default class ConfigGeneric<
                             ),
                         );
                     } else {
-                        ConfigGeneric.setValue(this.props.data, this.props.attr, this.defaultValue);
+                        ConfigGeneric.setValue(this.props.data, this.props.attr, defaultValue);
                         this.props.onChange(
                             this.props.data,
                             undefined,
@@ -478,6 +479,17 @@ export default class ConfigGeneric<
         } else if (this.props.schema.defaultSendTo) {
             this.defaultSendTo().catch(e => console.error(e));
         }
+    }
+
+    /**
+     * Called right before the default value is written into the configuration, e.g. to translate it
+     *
+     * @param value default value from `default` or `defaultFunc`
+     * @returns the value to write
+     */
+    // eslint-disable-next-line class-methods-use-this
+    protected prepareDefaultValue(value: any): any {
+        return value;
     }
 
     private async defaultSendTo(): Promise<void> {

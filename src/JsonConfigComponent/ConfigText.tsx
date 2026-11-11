@@ -51,7 +51,60 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
             return;
         }
 
-        this.setState({ value, oldValue: value, jsonError: this.validateJson(value) });
+        this.setState({ value, oldValue: value, jsonError: this.validateJson(value) }, () => this.reportFilterLabel());
+    }
+
+    componentDidUpdate(_prevProps: ConfigTextProps, prevState: ConfigTextState): void {
+        if (prevState.value !== this.state.value) {
+            this.reportFilterLabel();
+        }
+    }
+
+    /**
+     * An editable text with `translate` gets its default as i18n key: it is translated once into the language of the user
+     * and from then on it is a normal text. A read-only text keeps the key.
+     *
+     * @param schema schema of the text
+     * @param value default value
+     * @returns the value to write into the configuration
+     */
+    static translateDefault(schema: ConfigItemText, value: unknown): unknown {
+        if (schema.translate && !schema.readOnly && typeof value === 'string' && value) {
+            return I18n.t(value);
+        }
+        return value;
+    }
+
+    protected prepareDefaultValue(value: any): any {
+        return ConfigText.translateDefault(this.props.schema, value);
+    }
+
+    /** The value of a read-only text with `translate` is an i18n key and is shown translated */
+    private showsTranslation(): boolean {
+        return !!this.props.schema.translate && !!this.props.schema.readOnly;
+    }
+
+    private getDisplayValue(): string {
+        const value = this.state.value;
+        if (this.showsTranslation() && typeof value === 'string' && value) {
+            return I18n.t(value);
+        }
+        return value ?? '';
+    }
+
+    /** Tell the table the shown text, so the filter of the column finds it */
+    private reportFilterLabel(): void {
+        const value = this.state.value;
+        if (
+            this.showsTranslation() &&
+            this.props.table &&
+            this.props.onFilterLabelUpdate &&
+            this.props.attr &&
+            typeof value === 'string' &&
+            value
+        ) {
+            this.props.onFilterLabelUpdate(this.props.attr, { [value]: I18n.t(value) });
+        }
     }
 
     validateJson(value: string | null | undefined): boolean {
@@ -213,7 +266,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                     style={actionButtonStyle}
                     size="small"
                     // the icon confirms the copy with a check mark
-                    onClick={() => Utils.copyToClipboard(this.state.value)}
+                    onClick={() => Utils.copyToClipboard(this.getDisplayValue())}
                 >
                     <IconCopyToClipboard />
                 </IconButton>
@@ -267,7 +320,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
                         }}
                         minRows={this.props.schema.minRows}
                         maxRows={this.props.schema.maxRows}
-                        value={this.state.value ?? ''}
+                        value={this.getDisplayValue()}
                         disabled={!!disabled}
                         readOnly={this.props.schema.readOnly || false}
                         onChange={e => {
@@ -292,7 +345,7 @@ class ConfigText extends ConfigGeneric<ConfigTextProps, ConfigTextState> {
             <TextField
                 variant="standard"
                 fullWidth
-                value={this.state.value ?? ''}
+                value={this.getDisplayValue()}
                 error={!!error || !!this.state.jsonError}
                 disabled={!!disabled}
                 slotProps={{

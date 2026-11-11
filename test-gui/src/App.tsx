@@ -102,6 +102,11 @@ export default class App extends Component<object, AppState> {
         };
 
         I18n.setTranslations(translations);
+        // The demo schema brings its own words, like the `i18n` object of an adapter (JsonConfig loads it, but here
+        // JsonConfigComponent is rendered directly)
+        if (demoSchema.i18n && typeof demoSchema.i18n === 'object') {
+            I18n.extendTranslations(demoSchema.i18n as Record<string, Record<string, string>>);
+        }
         I18n.setLanguage(language);
 
         this.socket = new AdminConnection({

@@ -168,6 +168,12 @@
                     "label": "COM port",
                     "os": "win32"
                 },
+                "myTranslatedText": {
+                    "type": "text",
+                    "label": "Translated",
+                    "translate": true,
+                    "readOnly": true
+                },
                 "mySerialPort": {
                     "type": "text",
                     "label": "Serial port",
@@ -674,6 +680,20 @@
                         },
                         {
                             "type": "datePicker"
+                        },
+                        {
+                            "type": "text",
+                            "attr": "label",
+                            "width": 150,
+                            "translate": true,
+                            "default": "Some_key"
+                        },
+                        {
+                            "type": "text",
+                            "attr": "fixedLabel",
+                            "width": 150,
+                            "translate": true,
+                            "readOnly": true
                         },
                         {
                             "type": "coordinates",

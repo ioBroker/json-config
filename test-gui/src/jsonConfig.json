@@ -1,7 +1,10 @@
 {
     "$schema": "../../schemas/jsonConfig.json",
     "type": "tabs",
-    "i18n": false,
+    "i18n": {
+        "demo_First_row": { "en": "First row", "de": "Erste Zeile", "ru": "Первая строка", "pt": "Primeira linha", "nl": "Eerste rij", "fr": "Première ligne", "it": "Prima riga", "es": "Primera fila", "pl": "Pierwszy wiersz", "uk": "Перший рядок", "zh-cn": "第一行" },
+        "demo_Second_row": { "en": "Second row", "de": "Zweite Zeile", "ru": "Вторая строка", "pt": "Segunda linha", "nl": "Tweede rij", "fr": "Deuxième ligne", "it": "Seconda riga", "es": "Segunda fila", "pl": "Drugi wiersz", "uk": "Другий рядок", "zh-cn": "第二行" }
+    },
     "iconPosition": "start",
     "items": {
         "textTab": {
@@ -710,6 +713,53 @@
                             "width": 60,
                             "default": true
                         }
+                    ]
+                },
+                "_headerTranslatedTable": {
+                    "newLine": true,
+                    "type": "header",
+                    "text": "Table with translate",
+                    "size": 2
+                },
+                "translatedTable": {
+                    "newLine": true,
+                    "type": "table",
+                    "sm": 12,
+                    "noDelete": true,
+                    "allowReorder": true,
+                    "items": [
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": "15%"
+                        },
+                        {
+                            "type": "text",
+                            "attr": "key",
+                            "title": "Fixed (readOnly + translate)",
+                            "width": "30%",
+                            "readOnly": true,
+                            "translate": true,
+                            "filter": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Label (translate)",
+                            "width": "30%",
+                            "translate": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "desc",
+                            "title": "Description",
+                            "width": "25%"
+                        }
+                    ],
+                    "default": [
+                        { "enabled": true, "key": "demo_First_row", "name": "demo_First_row", "desc": "demo_First_row" },
+                        { "enabled": false, "key": "demo_Second_row", "name": "demo_Second_row", "desc": "this is 200" }
                     ]
                 },
                 "_headerAccordion": {

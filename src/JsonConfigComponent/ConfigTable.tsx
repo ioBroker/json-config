@@ -48,6 +48,7 @@ import { I18n, IconFilter, IconTrash, IconUpload, type IobTheme } from '@iobroke
 import type { ConfigItemTableIndexed, ConfigItemPanel, ConfigItemTable } from '../types';
 import ConfigGeneric, { type ConfigGenericProps, type ConfigGenericState } from './ConfigGeneric';
 import ConfigPanel from './ConfigPanel';
+import ConfigText from './ConfigText';
 
 const MAX_SIZE = 1024 * 1024; // 1MB
 
@@ -503,6 +504,25 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                   }
                 : undefined),
         };
+    }
+
+    /** The rows in `default` of the table: translate the keys of the editable text columns with `translate` */
+    protected prepareDefaultValue(value: any): any {
+        if (!Array.isArray(value) || !this.props.schema.items) {
+            return value;
+        }
+        return value.map(row => {
+            if (!row || typeof row !== 'object') {
+                return row;
+            }
+            const newRow = { ...row };
+            for (const item of this.props.schema.items || []) {
+                if (item.type === 'text' && item.attr && item.attr in newRow) {
+                    newRow[item.attr] = ConfigText.translateDefault(item, newRow[item.attr]);
+                }
+            }
+            return newRow;
+        });
     }
 
     itemTable(attrItem: string, data: Record<string, any>, idx: number, asCard: boolean): JSX.Element | null {
@@ -1206,6 +1226,10 @@ export default class ConfigTable extends ConfigGeneric<ConfigTableProps, ConfigT
                     }
                 } else {
                     defaultValue = currentValue.default ?? null;
+                }
+
+                if (currentValue.type === 'text') {
+                    defaultValue = ConfigText.translateDefault(currentValue, defaultValue);
                 }
 
                 if (currentValue.attr) {

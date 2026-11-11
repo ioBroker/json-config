@@ -426,6 +426,12 @@ export interface ConfigItemText extends ConfigItem {
     allowEmpty?: boolean;
     /** the value is time in ms or a string. Used only with readOnly flag */
     time?: boolean;
+    /**
+     * The value is an i18n key. With `readOnly` the key is stored and shown translated.
+     * Without `readOnly` the key in `default` is translated once, when the default is written into the configuration,
+     * and from then on it is a normal text.
+     */
+    translate?: boolean;
 }
 
 export interface ConfigItemColor extends ConfigItem {
