@@ -59,6 +59,8 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
                 if (!alive?.val) {
                     window.alert(I18n.t('jc_Instance %s is not alive', instance));
+                    // no answer: the options of the schema, or a text field - not an endless spinner
+                    this.showOptions(value, selectOptions);
                     return;
                 }
             }
@@ -90,20 +92,32 @@ export default class ConfigAutocompleteSendTo extends ConfigGeneric<
                 })
                 .catch(error => {
                     console.error('Error in autocompleteSendTo:', error);
-                    // Clear loading state on error
-                    this.setState({ loading: false });
+                    // no answer: the options of the schema, or a text field
+                    this.showOptions(value, selectOptions);
                 });
-        } else if (Array.isArray(value)) {
+        } else {
+            this.showOptions(value, selectOptions);
+        }
+    }
+
+    /**
+     * Show the options of the schema only - the instance gave none
+     *
+     * @param value the value of the field
+     * @param selectOptions the options of the schema
+     */
+    private showOptions(value: any, selectOptions: ConfigItemSelectOption[]): void {
+        if (Array.isArray(value)) {
             // if __different
             selectOptions.unshift({
                 label: I18n.t(ConfigGeneric.DIFFERENT_LABEL),
                 value: ConfigGeneric.DIFFERENT_VALUE,
             });
             this.reportFilterLabels(selectOptions);
-            this.setState({ value: ConfigGeneric.DIFFERENT_VALUE, selectOptions });
+            this.setState({ value: ConfigGeneric.DIFFERENT_VALUE, selectOptions, loading: false });
         } else {
             this.reportFilterLabels(selectOptions);
-            this.setState({ value, selectOptions });
+            this.setState({ value, selectOptions, loading: false });
         }
     }
 

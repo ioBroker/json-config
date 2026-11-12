@@ -147,6 +147,8 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                     const alive = await this.props.oContext.socket.getState(`system.adapter.${instance}.alive`);
                     if (!alive?.val) {
                         window.alert(I18n.t('jc_Instance %s is not alive', instance));
+                        // no answer: the value stays editable in a text field instead of an endless spinner
+                        this.setState({ list: undefined, running: false });
                         return;
                     }
                 }
@@ -164,6 +166,8 @@ export default class ConfigSelectSendTo extends ConfigGeneric<ConfigSelectSendTo
                     this.setState({ list, running: false });
                 } catch (e) {
                     console.error(`Cannot send command: ${e}`);
+                    // no answer, or none that is a list: the value stays editable in a text field
+                    this.setState({ list: undefined, running: false });
                 }
             });
         } else {
