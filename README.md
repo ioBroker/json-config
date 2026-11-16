@@ -2175,7 +2175,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.23 (2026-11-16)
 - (@GermanBluefox) Changed: the dialog of `diskSelector` is now `DialogSelectDiskPath` of `@iobroker/gui-components` (`@iobroker/gui-components` 10.4.7)
 
 ### 10.1.22 (2026-11-13)
