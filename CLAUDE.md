@@ -49,6 +49,12 @@ inside `Suspense` and an error boundary. The host passes it as `React.lazy(() =>
 leaflet and its CSS load only when a map is shown. Do not import `leaflet` here. Without it a link to
 openstreetmap.org is shown. `test-gui/src/OsmMap.tsx` is the leaflet implementation.
 
+### Dialogs come from gui-components
+
+Selection dialogs (`DialogSelectID`, `DialogSelectFile`, `DialogSelectDiskPath`) live in `@iobroker/gui-components`
+(repository `C:\iot\adapter-react-v5`, with their `ra_` translations). The `Config*` components here only render the
+field and pass the schema options to the dialog; a new dialog is written there, not here.
+
 ### Type system
 
 `src/types.d.ts` defines 80+ discriminated-union config item types (`ConfigItemText`, `ConfigItemSelect`, etc.) plus `JsonConfigContext`, backend command types, and icon enums.
