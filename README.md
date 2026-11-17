@@ -2175,7 +2175,7 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 10.1.24 (2026-11-17)
 - (@GermanBluefox) Fixed: `sendTo` showed a success when the answer of the instance did not arrive in time or the connection was lost; an answer after the `timeout` of the schema is dropped (ioBroker.admin#3737)
 
 ### 10.1.23 (2026-11-16)
