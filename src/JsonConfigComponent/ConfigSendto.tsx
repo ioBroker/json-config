@@ -293,9 +293,16 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
             };
         }
         let timeout: ReturnType<typeof setTimeout> | undefined;
+        /**
+         * The `timeout` of the schema elapsed and the button reported an error. An answer that comes
+         * later is dropped: it must not turn the reported error into a success, apply `native` behind
+         * the user's back or end a request that was started by the next click.
+         */
+        let timedOut = false;
         if (this.props.schema.timeout) {
             timeout = setTimeout(
                 () => {
+                    timedOut = true;
                     this.props.oContext.onCommandRunning(false);
                     this.setState({ _error: I18n.t('jc_Request timed out'), running: false });
                     this.showActionResult('error');
@@ -341,9 +348,27 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                         type?: 'json' | 'css' | 'html' | 'json5' | 'yaml';
                     };
                 }) => {
+                    if (timedOut) {
+                        return;
+                    }
                     if (timeout) {
                         clearTimeout(timeout);
                         timeout = undefined;
+                    }
+                    // The ws client of ioBroker answers by itself when the answer of the adapter takes
+                    // longer than its `callbackTimeout` (30 s by default) or the connection is closed.
+                    // That is no answer of the adapter and was shown as a success (ioBroker.admin#3737).
+                    const ownAnswer = response as unknown;
+                    if (ownAnswer === 'timeout' || ownAnswer === 'disconnected') {
+                        this.showActionResult('error');
+                        this.setState({
+                            _error: I18n.t(
+                                ownAnswer === 'timeout'
+                                    ? 'jc_Request timed out'
+                                    : 'jc_Something went wrong: may be no connection?',
+                            ),
+                        });
+                        return;
                     }
                     if (response?.error) {
                         this.showActionResult('error');
@@ -403,6 +428,9 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 },
             )
             .catch((e: any) => {
+                if (timedOut) {
+                    return;
+                }
                 this.showActionResult('error');
                 if (this.props.schema.error && this.props.schema.error[e.toString()]) {
                     this.setState({ _error: this.getText(this.props.schema.error[e.toString()]) });
@@ -411,8 +439,11 @@ export default class ConfigSendto extends ConfigGeneric<ConfigSendToProps, Confi
                 }
             })
             .then(() => {
-                this.props.oContext.onCommandRunning(false);
-                this.setState({ running: false });
+                // after the timeout the button was released already and may run the next request
+                if (!timedOut) {
+                    this.props.oContext.onCommandRunning(false);
+                    this.setState({ running: false });
+                }
             });
     }
 
