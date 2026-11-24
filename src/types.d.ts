@@ -1277,8 +1277,10 @@ export interface ConfigItemFile extends ConfigItem {
 
 export interface ConfigItemFileSelector extends ConfigItem {
     type: 'fileSelector';
-    /** File extension pattern. Allowed `**\/*.ext` to show all files from subfolders too, `*.ext` to show from the root folder or `folderName\/*.ext` to show all files in subfolder `folderName`. Default `**\/*.*`. */
+    /** File extension pattern. Allowed `**\/*.ext` to show all files from subfolders too, `*.ext` to show from the root folder or `folderName\/*.ext` to show all files in subfolder `folderName`. Default `**\/*.*`. Several patterns are separated by `|`, e.g. `ttsVoices\/*.onnx|ttsVoices\/*.json`. */
     pattern: string;
+    /** Allow uploading several files at once. The selected value stays one file. */
+    multipleUpload?: boolean;
     /** type of files: `audio`, `image`, `text` */
     fileTypes?: 'audio' | 'image' | 'text';
     /** Object ID of the type `meta`. You can use special placeholder `%INSTANCE%`: like `myAdapter.%INSTANCE%.files` */

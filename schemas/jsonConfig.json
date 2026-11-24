@@ -2033,7 +2033,11 @@
             "properties": {
                 "pattern": {
                     "type": "string",
-                    "description": "File extension pattern. Allowed '**/*.ext' to show all files from sub-folders too, '*.ext' to show from root folder or 'folderName/*.ext' to show all files in sub-folder folderName. Default '**/*.*'"
+                    "description": "File extension pattern. Allowed '**/*.ext' to show all files from sub-folders too, '*.ext' to show from root folder or 'folderName/*.ext' to show all files in sub-folder folderName. Default '**/*.*'. Several patterns are separated by '|', e.g. 'ttsVoices/*.onnx|ttsVoices/*.json'"
+                },
+                "multipleUpload": {
+                    "type": "boolean",
+                    "description": "Allow uploading several files at once. The selected value stays one file"
                 },
                 "fileTypes": {
                     "enum": ["audio", "image", "text"],
