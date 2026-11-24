@@ -214,8 +214,17 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
         super.componentWillUnmount();
     }
 
+    /** The patterns of the schema: several patterns are separated by `|`, e.g. `ttsVoices/*.onnx|ttsVoices/*.json` */
+    getPatterns(): string[] {
+        const patterns = (this.props.schema.pattern || '')
+            .split('|')
+            .map(pattern => pattern.trim())
+            .filter(pattern => pattern);
+        return patterns.length ? patterns : ['**/*.*'];
+    }
+
     async updateFiles(): Promise<void> {
-        const files = await this.readFiles(this.props.schema.pattern);
+        const files = await this.readFiles();
         await new Promise<void>(resolve => this.setState({ files }, resolve));
     }
 
@@ -226,6 +235,21 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                 .catch(e => console.error(`Cannot update files: ${e}`))
                 .finally(() => this.setState({ refreshing: false })),
         );
+    }
+
+    /** Checks if the file name (without folder) matches the filter of a pattern, like `*.onnx` */
+    static matchFilter(fileName: string, filter: string): boolean {
+        if (filter === '*.*' && fileName.includes('.')) {
+            return true;
+        }
+        if (!filter || filter === '*') {
+            return true;
+        }
+        if (filter === '.*' && fileName.startsWith('.')) {
+            return true;
+        }
+        const regExp = new RegExp(`^${filter.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`);
+        return regExp.test(fileName);
     }
 
     async readFolder(
@@ -240,25 +264,11 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                 if (file.isDir) {
                     // read it
                     await this.readFolder(`${folderName + file.file}/`, files, filter);
-                } else {
-                    let ok = false;
-                    if (filter === '*.*' && file.file.includes('.')) {
-                        ok = true;
-                    } else if (!filter || filter === '*') {
-                        ok = true;
-                    } else if (filter === '.*' && file.file.startsWith('.')) {
-                        ok = true;
-                    } else {
-                        const regExp = new RegExp(`^${filter.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`);
-                        ok = regExp.test(file.file);
-                    }
-
-                    if (ok) {
-                        files.push({
-                            name: folderName + file.file,
-                            size: file.stats?.size ? Utils.formatBytes(file.stats.size) : '--',
-                        });
-                    }
+                } else if (ConfigFileSelector.matchFilter(file.file, filter)) {
+                    files.push({
+                        name: folderName + file.file,
+                        size: file.stats?.size ? Utils.formatBytes(file.stats.size) : '--',
+                    });
                 }
             }
         } catch (e) {
@@ -268,82 +278,104 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
         return files;
     }
 
-    async readFiles(pattern: string): Promise<{ name: string; size: string }[]> {
+    /** Reads the files of all patterns (or of the given ones); a file found by several patterns is listed once */
+    async readFiles(patterns?: string[]): Promise<{ name: string; size: string }[]> {
         const files: { name: string; size: string }[] = [];
-        pattern ||= this.props.schema.pattern;
-        pattern ||= '**/*.*';
-        let filter;
-        const pos = pattern.lastIndexOf('/');
-        if (pos === -1) {
-            filter = pattern;
-        } else {
-            filter = pattern.substring(pos + 1);
-        }
-
-        if (pattern.startsWith('**')) {
-            // read all folders
-            await this.readFolder('/', files, filter);
-        } else {
-            const pos_ = pattern.lastIndexOf('/');
-            if (pos_ === -1) {
-                await this.readFolder('/', files, filter);
+        for (const pattern of patterns || this.getPatterns()) {
+            const patternFiles: { name: string; size: string }[] = [];
+            let filter;
+            const pos = pattern.lastIndexOf('/');
+            if (pos === -1) {
+                filter = pattern;
             } else {
-                const folder = pattern.substring(0, pos_ + 1);
-                await this.readFolder(folder, files, filter);
+                filter = pattern.substring(pos + 1);
             }
+
+            if (pattern.startsWith('**')) {
+                // read all folders
+                await this.readFolder('/', patternFiles, filter);
+            } else {
+                const pos_ = pattern.lastIndexOf('/');
+                if (pos_ === -1) {
+                    await this.readFolder('/', patternFiles, filter);
+                } else {
+                    const folder = pattern.substring(0, pos_ + 1);
+                    await this.readFolder(folder, patternFiles, filter);
+                }
+            }
+            patternFiles.forEach(file => {
+                if (!files.find(f => f.name === file.name)) {
+                    files.push(file);
+                }
+            });
         }
 
         return files;
     }
 
-    onDrop(acceptedFiles: File[]): void {
-        const file = acceptedFiles[0];
+    static readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onabort = () => reject(new Error(`Reading of ${file.name} was aborted`));
+            reader.onerror = () => reject(new Error(`Cannot read file ${file.name}`));
+            reader.onload = (): void => {
+                if (reader.result === null) {
+                    reject(new Error(`Cannot read file ${file.name}`));
+                } else {
+                    resolve(reader.result as ArrayBuffer);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    /** Uploads all dropped files one after another, then selects the first one that matches the first pattern */
+    async onDrop(acceptedFiles: File[]): Promise<void> {
         const maxSize = this.props.schema.maxSize || 2 * 1024 * 1024;
-        if (file.size > maxSize) {
-            window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(maxSize / 1024)));
+        const files = acceptedFiles.filter(file => {
+            if (file.size > maxSize) {
+                window.alert(I18n.t('jc_File is too big. Max %sk allowed. Try use SVG.', Math.round(maxSize / 1024)));
+                return false;
+            }
+            return true;
+        });
+        if (!files.length) {
             return;
         }
 
-        const reader = new FileReader();
         // the upload button shows the progress: the arrow moves up while uploading, then a check mark or a cross
-        const failed = (): void => {
+        this.setState({ uploading: true });
+        const uploaded: string[] = [];
+        try {
+            for (const file of files) {
+                const content = await ConfigFileSelector.readFileAsArrayBuffer(file);
+                await this.props.oContext.socket.writeFile64(this.objectID, this.path + file.name, content);
+                uploaded.push(this.path + file.name);
+            }
+        } catch (e) {
+            console.error(`Cannot upload file: ${e}`);
+            window.alert(I18n.t('jc_Cannot upload file: %s', String(e)));
+        }
+
+        try {
+            await this.updateFiles();
+        } catch (e) {
+            console.error(`Cannot update files: ${e}`);
+        }
+
+        if (!uploaded.length) {
             this.setState({ uploading: false });
             this.showActionResult('error');
-        };
+            return;
+        }
+        this.showActionResult(uploaded.length === files.length ? 'success' : 'error');
 
-        reader.onabort = () => {
-            console.log('file reading was aborted');
-            failed();
-        };
-        reader.onerror = () => {
-            console.log('file reading has failed');
-            failed();
-        };
-        reader.onload = (/* e: ProgressEvent<FileReader> */): void => {
-            const content = reader.result;
-            if (content === null) {
-                console.error(`Cannot read file ${file.name}`);
-                failed();
-                return;
-            }
-
-            this.props.oContext.socket
-                .writeFile64(this.objectID, this.path + file.name, content)
-                .then(() => this.updateFiles())
-                .then(() => {
-                    this.showActionResult('success');
-                    // Automatically select the new uploaded file
-                    this.setState({ uploading: false, value: this.path + file.name }, () =>
-                        this.onChange(this.props.attr, this.path + file.name),
-                    );
-                })
-                .catch(e => {
-                    failed();
-                    window.alert(I18n.t('jc_Cannot upload file: %s', String(e)));
-                });
-        };
-        this.setState({ uploading: true });
-        reader.readAsArrayBuffer(file);
+        // Automatically select the new uploaded file: the first one that matches the first pattern
+        const firstPattern = this.getPatterns()[0];
+        const filter = firstPattern.substring(firstPattern.lastIndexOf('/') + 1);
+        const value =
+            uploaded.find(name => ConfigFileSelector.matchFilter(name.split('/').pop() || '', filter)) || uploaded[0];
+        this.setState({ uploading: false, value }, () => this.onChange(this.props.attr, value));
     }
 
     renderDeleteDialog(): JSX.Element | null {
@@ -441,6 +473,53 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
             return <IconCode />;
         }
         return null;
+    }
+
+    /** The files that the upload accepts for one pattern, e.g. `{ '*\/*': ['.onnx'] }` for `ttsVoices/*.onnx*` */
+    static getAccept(pattern: string): Record<string, string[]> {
+        const last = (pattern.split('/').pop() || '')
+            .toLowerCase()
+            .replace(/.*\./, '')
+            .replace(/\*+$/, '');
+        if (!last) {
+            return { '*/*': [] };
+        }
+        if (
+            last === 'png' ||
+            last === 'jpg' ||
+            last === 'svg' ||
+            last === 'gif' ||
+            last === 'apng' ||
+            last === 'avif' ||
+            last === 'webp'
+        ) {
+            return {
+                'image/*': ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'],
+            };
+        }
+        if (last === 'mp3' || last === 'ogg' || last === 'wav') {
+            return {
+                'audio/*': ['.mp3', '.ogg', '.wav', '.mp4'],
+            };
+        }
+        if (last === 'ics') {
+            return {
+                'text/calendar': ['.ics'],
+            };
+        }
+        if (last === 'txt') {
+            return {
+                'text/plain': ['.txt'],
+            };
+        }
+        if (last === 'pem') {
+            return {
+                'text/plain': ['.pem'],
+            };
+        }
+        return {
+            '*/*': [`.${last}`],
+        };
     }
 
     renderItem(error: string, disabled: boolean /* , defaultValue */): JSX.Element | null {
@@ -613,46 +692,32 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
             };
         }
         if (this.props.schema.pattern) {
-            const last = (this.props.schema.pattern.split('/').pop() || '').toLowerCase().replace(/.*\./, '');
-            if (
-                last === 'png' ||
-                last === 'jpg' ||
-                last === 'svg' ||
-                last === 'gif' ||
-                last === 'apng' ||
-                last === 'avif' ||
-                last === 'webp'
-            ) {
-                accept = {
-                    'image/*': ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'],
-                };
-            } else if (last === 'mp3' || last === 'ogg' || last === 'wav') {
-                accept = {
-                    'audio/*': ['.mp3', '.ogg', '.wav', '.mp4'],
-                };
-            } else if (last === 'ics') {
-                accept = {
-                    'text/calendar': ['.ics'],
-                };
-            } else if (last === 'txt') {
-                accept = {
-                    'text/plain': ['.txt'],
-                };
-            } else if (last === 'pem') {
-                accept = {
-                    'text/plain': ['.pem'],
-                };
+            // every pattern adds its extension, e.g. `ttsVoices/*.onnx|ttsVoices/*.json`
+            const accepts = this.getPatterns().map(pattern => ConfigFileSelector.getAccept(pattern));
+            if (accepts.length === 1) {
+                accept = accepts[0];
+            } else if (accepts.some(a => a['*/*'] && !a['*/*'].length)) {
+                // one pattern allows all files
+                accept = { '*/*': [] };
             } else {
-                accept = {
-                    '*/*': [`.${last}`],
-                };
+                accept = {};
+                accepts.forEach(a =>
+                    Object.keys(a).forEach(mime => {
+                        accept[mime] ||= [];
+                        a[mime].forEach(ext => {
+                            if (!accept[mime].includes(ext)) {
+                                accept[mime].push(ext);
+                            }
+                        });
+                    }),
+                );
             }
         }
 
         return (
             <Dropzone
                 ref={this.dropzoneRef}
-                multiple={false}
+                multiple={!!this.props.schema.multipleUpload}
                 accept={accept}
                 noKeyboard
                 noClick
@@ -666,7 +731,7 @@ export default class ConfigFileSelector extends ConfigGeneric<ConfigFileSelector
                     if (!acceptedFiles.length) {
                         window.alert(errors?.[0]?.errors?.[0]?.message || I18n.t('jc_Cannot upload'));
                     } else {
-                        this.onDrop(acceptedFiles);
+                        void this.onDrop(acceptedFiles);
                     }
                 }}
             >

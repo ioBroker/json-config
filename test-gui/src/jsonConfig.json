@@ -493,6 +493,18 @@
                     "md": 6,
                     "lg": 4
                 },
+                "fileSelectorMultiple": {
+                    "type": "fileSelector",
+                    "label": "File selector with two patterns and multiple upload",
+                    "pattern": "ttsVoices/*.onnx|ttsVoices/*.json",
+                    "upload": "ttsVoices",
+                    "multipleUpload": true,
+                    "refresh": true,
+                    "delete": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
                 "logo.png": {
                     "type": "image",
                     "label": "Upload image",

@@ -1033,7 +1033,8 @@ only Admin6
 
 | Property     | Description                                                                                                                                                                                              |
 |--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `pattern`    | File extension pattern. Allowed `**/*.ext` to show all files from subfolders too, `*.ext` to show from root folder or `folderName/*.ext` to show all files in sub-folder `folderName`. Default `**/*.*`. |
+| `pattern`    | File extension pattern. Allowed `**/*.ext` to show all files from subfolders too, `*.ext` to show from root folder or `folderName/*.ext` to show all files in sub-folder `folderName`. Default `**/*.*`. Several patterns are separated by `\|`, e.g. `ttsVoices/*.onnx\|ttsVoices/*.json`. |
+| `multipleUpload` | [optional] Allow uploading several files at once. The selected value stays one file; after the upload, the first uploaded file that matches the first pattern is selected. |
 | `fileTypes`  | [optional] type of files: `audio`, `image`, `text`                                                                                                                                                       |
 | `objectID`   | Object ID of type `meta`. You can use special placeholder `%INSTANCE%`: like `myAdapter.%INSTANCE%.files`                                                                                                |
 | `upload`     | path, where the uploaded files will be stored. Like `folderName`. If not defined, no upload field will be shown. To upload in the root, set this field to `/`.                                           |
@@ -2192,6 +2193,9 @@ The schema is used here: https://github.com/SchemaStore/schemastore/blob/6da29cd
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (GermanBluefox) `fileSelector`: `pattern` accepts several patterns separated by `|` and the new option `multipleUpload` allows uploading several files at once (#209)
+
 ### 10.1.24 (2026-11-17)
 - (@GermanBluefox) Fixed: `sendTo` showed a success when the answer of the instance did not arrive in time or the connection was lost; an answer after the `timeout` of the schema is dropped (ioBroker.admin#3737)
 
